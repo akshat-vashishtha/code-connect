@@ -48,6 +48,7 @@ codeconnect:
     curriculum-service-uri: ${CURRICULUM_SERVICE_URI:http://localhost:8082}
     submission-service-uri: ${SUBMISSION_SERVICE_URI:http://localhost:8083}
     collab-service-uri: ${COLLAB_SERVICE_URI:http://localhost:8084}
+    error-base-uri: ${ERROR_BASE_URI:https://codeconnect.dev/errors}
   session:
     cookie-name: ${SESSION_COOKIE_NAME:APP_SESSION}
     cookie-secure: ${SESSION_COOKIE_SECURE:false}

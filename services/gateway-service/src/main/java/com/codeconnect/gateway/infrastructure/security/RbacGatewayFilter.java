@@ -1,5 +1,6 @@
 package com.codeconnect.gateway.infrastructure.security;
 
+import com.codeconnect.gateway.infrastructure.config.GatewayProperties;
 import com.codeconnect.gateway.infrastructure.session.SessionManager;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,12 +37,13 @@ public class RbacGatewayFilter implements WebFilter, Ordered {
 
     private static final String ROLE_ADMIN = "ROLE_ADMIN";
     private static final String ROLE_MENTOR = "ROLE_MENTOR";
-    private static final URI FORBIDDEN_TYPE = URI.create("https://codeconnect.dev/errors/forbidden");
 
     private final ObjectMapper objectMapper;
+    private final GatewayProperties gatewayProperties;
 
-    public RbacGatewayFilter(ObjectMapper objectMapper) {
+    public RbacGatewayFilter(ObjectMapper objectMapper, GatewayProperties gatewayProperties) {
         this.objectMapper = objectMapper;
+        this.gatewayProperties = gatewayProperties;
     }
 
     @Override
@@ -96,8 +98,9 @@ public class RbacGatewayFilter implements WebFilter, Ordered {
         response.setStatusCode(HttpStatus.FORBIDDEN);
         response.getHeaders().setContentType(MediaType.APPLICATION_PROBLEM_JSON);
 
+        String forbiddenUri = gatewayProperties.errorBaseUri() + "/forbidden";
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, detail);
-        problem.setType(FORBIDDEN_TYPE);
+        problem.setType(URI.create(forbiddenUri));
         problem.setTitle("Access Denied");
         problem.setProperty("timestamp", Instant.now());
 
@@ -105,7 +108,7 @@ public class RbacGatewayFilter implements WebFilter, Ordered {
         try {
             bytes = objectMapper.writeValueAsBytes(problem);
         } catch (JsonProcessingException e) {
-            bytes = ("{\"type\":\"https://codeconnect.dev/errors/forbidden\",\"title\":\"Access Denied\",\"status\":403,\"detail\":\"" + detail + "\"}").getBytes(StandardCharsets.UTF_8);
+            bytes = ("{\"type\":\"" + forbiddenUri + "\",\"title\":\"Access Denied\",\"status\":403,\"detail\":\"" + detail + "\"}").getBytes(StandardCharsets.UTF_8);
         }
 
         DataBuffer buffer = response.bufferFactory().wrap(bytes);

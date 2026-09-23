@@ -9,5 +9,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "codeconnect.user")
 public record UserProperties(
     String jwtSecret,
-    long sessionTimeoutSeconds
+    long sessionTimeoutSeconds,
+    String errorBaseUri
 ) {}

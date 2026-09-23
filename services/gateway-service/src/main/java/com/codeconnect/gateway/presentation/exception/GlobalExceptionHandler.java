@@ -6,6 +6,8 @@ import com.codeconnect.gateway.domain.exception.ForbiddenException;
 import com.codeconnect.gateway.domain.exception.InvalidCredentialsException;
 import com.codeconnect.gateway.domain.exception.UnauthorizedException;
 import com.codeconnect.gateway.domain.exception.ValidationException;
+import com.codeconnect.gateway.infrastructure.config.GatewayProperties;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,21 +28,16 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
 
-    private static final URI CONFLICT_TYPE = URI.create("https://codeconnect.dev/errors/email-conflict");
-    private static final URI VALIDATION_ERROR_TYPE = URI.create("https://codeconnect.dev/errors/validation-error");
-    private static final URI INVALID_CREDENTIALS_TYPE = URI.create("https://codeconnect.dev/errors/invalid-credentials");
-    private static final URI ACCOUNT_BANNED_TYPE = URI.create("https://codeconnect.dev/errors/account-banned");
-    private static final URI UNAUTHORIZED_TYPE = URI.create("https://codeconnect.dev/errors/unauthorized");
-    private static final URI FORBIDDEN_TYPE = URI.create("https://codeconnect.dev/errors/forbidden");
-    private static final URI INTERNAL_ERROR_TYPE = URI.create("https://codeconnect.dev/errors/internal-error");
+    private final GatewayProperties gatewayProperties;
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ResponseEntity<ProblemDetail> handleEmailAlreadyExists(EmailAlreadyExistsException ex) {
         log.warn("Handling EmailAlreadyExistsException: {}", ex.getMessage());
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
-        problem.setType(CONFLICT_TYPE);
+        problem.setType(buildType("email-conflict"));
         problem.setTitle("Email Conflict");
         problem.setProperty("timestamp", Instant.now());
 
@@ -53,7 +50,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ProblemDetail> handleInvalidCredentials(InvalidCredentialsException ex) {
         log.warn("Handling InvalidCredentialsException: {}", ex.getMessage());
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
-        problem.setType(INVALID_CREDENTIALS_TYPE);
+        problem.setType(buildType("invalid-credentials"));
         problem.setTitle("Invalid Credentials");
         problem.setProperty("timestamp", Instant.now());
 
@@ -66,7 +63,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ProblemDetail> handleAccountBanned(AccountBannedException ex) {
         log.warn("Handling AccountBannedException: {}", ex.getMessage());
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
-        problem.setType(ACCOUNT_BANNED_TYPE);
+        problem.setType(buildType("account-banned"));
         problem.setTitle("Account Banned");
         problem.setProperty("timestamp", Instant.now());
 
@@ -79,7 +76,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ProblemDetail> handleUnauthorized(UnauthorizedException ex) {
         log.warn("Handling UnauthorizedException: {}", ex.getMessage());
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
-        problem.setType(UNAUTHORIZED_TYPE);
+        problem.setType(buildType("unauthorized"));
         problem.setTitle("Unauthorized");
         problem.setProperty("timestamp", Instant.now());
 
@@ -92,7 +89,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ProblemDetail> handleForbiddenException(ForbiddenException ex) {
         log.warn("Handling ForbiddenException: {}", ex.getMessage());
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
-        problem.setType(FORBIDDEN_TYPE);
+        problem.setType(buildType("forbidden"));
         problem.setTitle("Access Denied");
         problem.setProperty("timestamp", Instant.now());
 
@@ -105,7 +102,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ProblemDetail> handleValidationException(ValidationException ex) {
         log.warn("Handling ValidationException: {}", ex.getMessage());
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
-        problem.setType(VALIDATION_ERROR_TYPE);
+        problem.setType(buildType("validation-error"));
         problem.setTitle("Invalid Request");
         problem.setProperty("timestamp", Instant.now());
 
@@ -125,7 +122,7 @@ public class GlobalExceptionHandler {
 
         log.warn("Handling WebExchangeBindException: {}", fieldErrors);
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Validation failed for request fields");
-        problem.setType(VALIDATION_ERROR_TYPE);
+        problem.setType(buildType("validation-error"));
         problem.setTitle("Validation Failed");
         problem.setProperty("errors", fieldErrors);
         problem.setProperty("timestamp", Instant.now());
@@ -142,12 +139,15 @@ public class GlobalExceptionHandler {
             HttpStatus.INTERNAL_SERVER_ERROR,
             "An unexpected internal error occurred"
         );
-        problem.setType(INTERNAL_ERROR_TYPE);
+        problem.setType(buildType("internal-error"));
         problem.setTitle("Internal Server Error");
         problem.setProperty("timestamp", Instant.now());
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .contentType(MediaType.APPLICATION_PROBLEM_JSON)
             .body(problem);
+    }
+    private URI buildType(String path) {
+        return URI.create(gatewayProperties.errorBaseUri() + "/" + path);
     }
 }

@@ -1,6 +1,8 @@
 package com.codeconnect.user.presentation.exception;
 
 import com.codeconnect.user.domain.exception.ResourceNotFoundException;
+import com.codeconnect.user.infrastructure.config.UserProperties;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,17 +23,16 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
 
-    private static final URI NOT_FOUND_TYPE = URI.create("https://codeconnect.dev/errors/not-found");
-    private static final URI VALIDATION_ERROR_TYPE = URI.create("https://codeconnect.dev/errors/validation-error");
-    private static final URI INTERNAL_ERROR_TYPE = URI.create("https://codeconnect.dev/errors/internal-error");
+    private final UserProperties userProperties;
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ProblemDetail> handleResourceNotFound(ResourceNotFoundException ex) {
         log.warn("Handling ResourceNotFoundException: {}", ex.getMessage());
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
-        problem.setType(NOT_FOUND_TYPE);
+        problem.setType(buildErrorUri("not-found"));
         problem.setTitle("Resource Not Found");
         problem.setProperty("timestamp", Instant.now());
 
@@ -51,7 +52,7 @@ public class GlobalExceptionHandler {
 
         log.warn("Validation failure in user-service: {}", errors);
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Validation failed for request fields");
-        problem.setType(VALIDATION_ERROR_TYPE);
+        problem.setType(buildErrorUri("validation-error"));
         problem.setTitle("Validation Failed");
         problem.setProperty("errors", errors);
         problem.setProperty("timestamp", Instant.now());
@@ -68,12 +69,16 @@ public class GlobalExceptionHandler {
             HttpStatus.INTERNAL_SERVER_ERROR,
             "An unexpected internal error occurred"
         );
-        problem.setType(INTERNAL_ERROR_TYPE);
+        problem.setType(buildErrorUri("internal-error"));
         problem.setTitle("Internal Server Error");
         problem.setProperty("timestamp", Instant.now());
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .contentType(MediaType.APPLICATION_PROBLEM_JSON)
             .body(problem);
+    }
+
+    private URI buildErrorUri(String errorPath) {
+        return URI.create(userProperties.errorBaseUri() + "/" + errorPath);
     }
 }

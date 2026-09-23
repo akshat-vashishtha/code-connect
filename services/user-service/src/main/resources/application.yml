@@ -32,6 +32,7 @@ codeconnect:
   user:
     jwt-secret: ${JWT_SECRET:codeconnect-super-secure-default-secret-key-32bytes}
     session-timeout-seconds: ${SESSION_TIMEOUT_SECONDS:86400}
+    error-base-uri: ${ERROR_BASE_URI:https://codeconnect.dev/errors}
 
 management:
   endpoints:

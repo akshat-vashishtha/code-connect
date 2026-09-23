@@ -1,0 +1,54 @@
+package com.codeconnect.user.application.service;
+
+import com.codeconnect.user.domain.exception.ResourceNotFoundException;
+import com.codeconnect.user.domain.model.MentorApprovalRequest;
+import com.codeconnect.user.domain.repository.MentorApprovalRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+import java.time.Instant;
+import java.util.List;
+
+/**
+ * Collaborator responsible for querying and mutating MentorApprovalRequest lifecycle state.
+ */
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class MentorApprovalManager {
+
+    private static final String DEFAULT_REVIEWER = "admin@codeconnect.dev";
+    private final MentorApprovalRepository mentorApprovalRepository;
+
+    public List<MentorApprovalRequest> findPendingApplications() {
+        return mentorApprovalRepository.findByStatus("PENDING");
+    }
+
+    public MentorApprovalRequest findApplication(String applicationId) {
+        return mentorApprovalRepository.findById(applicationId)
+            .orElseThrow(() -> new ResourceNotFoundException("Mentor approval application not found for id: " + applicationId));
+    }
+
+    public MentorApprovalRequest markApproved(MentorApprovalRequest request, String reviewerAdminEmail) {
+        request.setStatus("APPROVED");
+        request.setReviewedAt(Instant.now());
+        request.setReviewedBy(resolveReviewer(reviewerAdminEmail));
+
+        log.debug("Marked application id={} as APPROVED by reviewer={}", request.getId(), request.getReviewedBy());
+        return mentorApprovalRepository.save(request);
+    }
+
+    public MentorApprovalRequest markRejected(MentorApprovalRequest request, String reviewerAdminEmail) {
+        request.setStatus("REJECTED");
+        request.setReviewedAt(Instant.now());
+        request.setReviewedBy(resolveReviewer(reviewerAdminEmail));
+
+        log.debug("Marked application id={} as REJECTED by reviewer={}", request.getId(), request.getReviewedBy());
+        return mentorApprovalRepository.save(request);
+    }
+
+    private String resolveReviewer(String reviewerAdminEmail) {
+        return reviewerAdminEmail != null && !reviewerAdminEmail.isBlank() ? reviewerAdminEmail : DEFAULT_REVIEWER;
+    }
+}
