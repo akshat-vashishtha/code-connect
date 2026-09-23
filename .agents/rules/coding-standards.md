@@ -137,6 +137,27 @@ com.codeconnect.<servicename>/
   - Zero business logic, zero entity instantiation, zero DB queries in controllers.
 * **Interface-First Service Layer**:
   - Every service must have an `interface` (e.g., `UserService`) and implementation (`impl/UserServiceImpl`).
+* **Service Classes Act as Orchestrators / Facades (No God Services)**:
+  - Service implementation classes (`*ServiceImpl`) must act purely as high-level facades orchestrating business workflows at a single level of abstraction (SLAP).
+  - **Never dump validation logic, entity-to-DTO mapping, session manipulation, or utility algorithms directly into the Service class** as monolithic code or an internal sprawl of private helper methods.
+  - Delegate single-responsibility tasks to dedicated collaborators:
+    - **Validators** (`application/validator/` or `domain/validator/`): Encapsulate domain and input validation rules (e.g., `MentorRegistrationValidator`).
+    - **Mappers** (`application/mapper/`): Handle bidirectional conversions between Request DTOs, Entities, and Response DTOs (e.g., `UserMapper`).
+    - **Infrastructure & Session Helpers** (`infrastructure/session/` or `infrastructure/helper/`): Encapsulate technical integrations such as Redis session attribute mutation and ID rotation (e.g., `SessionManager`).
+  - The Service method simply chains and coordinates these focused collaborators in clean, intention-revealing lines:
+    ```java
+    @Override
+    public Mono<UserResponse> signup(SignupRequest request, WebSession webSession) {
+        String normalizedEmail = userMapper.normalizeEmail(request.email());
+
+        return mentorValidator.validate(request)
+            .then(ensureEmailIsAvailable(normalizedEmail))
+            .then(saveNewUser(request, normalizedEmail))
+            .flatMap(savedUser -> recordMentorAuditIfApplicable(request, savedUser)
+                .then(sessionManager.establishSession(savedUser, webSession))
+                .thenReturn(userMapper.toResponse(savedUser)));
+    }
+    ```
 * **Anti-Corruption Layer (No Entity Leaks)**:
   - MongoDB `@Document` models must NEVER escape the Service layer. Controllers only see DTO records.
 * **Constructor Injection Only**:
@@ -363,6 +384,7 @@ Before any story implementation is submitted for review, verify all applicable g
 - [ ] **No Entity Leaks**: Are DTO records used exclusively at the Controller interface?
 - [ ] **Validation Present**: Are all incoming DTO records annotated with `@Valid` and constraints?
 - [ ] **Interface + Impl**: Does every service follow the interface separation pattern?
+- [ ] **Services as Facades**: Are services designed as clean facades delegating validation, mapping, and technical helpers to dedicated collaborator classes rather than accumulating private helper sprawl?
 - [ ] **Constructor Injection**: Are all injected fields `private final` with constructor injection?
 - [ ] **Zero Hardcoded Values**: Are URLs, topics, and constants mapped via `@ConfigurationProperties`?
 - [ ] **Pure `@ConfigurationProperties`**: Are `@ConfigurationProperties` classes pure data holders with zero defaulting/fallback logic, delegating all defaults to `${ENV:default}` in `application.yml`?

@@ -15,6 +15,7 @@ All development in this repository must strictly adhere to the standards codifie
    - **No Entity Leaks**: Never expose `@Document` MongoDB models over HTTP.
    - **Thin Controllers**: Controllers only validate (`@Valid`) and delegate to a Service Interface.
    - **Interface + Impl**: Always use interfaces for business services (`UserService` / `UserServiceImpl`).
+   - **Services as Facades/Orchestrators**: Service classes must act strictly as high-level facades orchestrating workflows at a single level of abstraction (SLAP). Never accumulate validation logic, entity-to-DTO mapping, session management, or utility algorithms as sprawling private helpers inside the service class; delegate to dedicated collaborator components (`validator/`, `mapper/`, `session/`).
    - **Constructor Injection**: Field injection (`@Autowired`) is forbidden; use `private final` fields.
    - **Design Patterns in Practice**:
      - *Strategy*: For swappable execution or AI prompt strategies.
