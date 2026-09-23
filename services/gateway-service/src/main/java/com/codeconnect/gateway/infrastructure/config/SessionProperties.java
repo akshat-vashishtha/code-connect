@@ -1,5 +1,6 @@
 package com.codeconnect.gateway.infrastructure.config;
 
+import java.time.Duration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -11,5 +12,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public record SessionProperties(
     String cookieName,
     boolean cookieSecure,
-    String cookieSameSite
+    String cookieSameSite,
+    Duration cookieMaxAge
 ) {}

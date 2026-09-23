@@ -29,6 +29,7 @@ public class SessionConfig {
             .httpOnly(true)
             .secure(sessionProperties.cookieSecure())
             .sameSite(sessionProperties.cookieSameSite())
+            .maxAge(sessionProperties.cookieMaxAge())
         );
         return resolver;
     }

@@ -10,6 +10,7 @@ spring:
       port: ${REDIS_PORT:6379}
   session:
     store-type: redis
+    timeout: ${SESSION_TIMEOUT:7d}
     redis:
       namespace: spring:session
   cloud:
@@ -54,6 +55,7 @@ codeconnect:
     cookie-name: ${SESSION_COOKIE_NAME:APP_SESSION}
     cookie-secure: ${SESSION_COOKIE_SECURE:false}
     cookie-same-site: ${SESSION_COOKIE_SAME_SITE:Strict}
+    cookie-max-age: ${SESSION_COOKIE_MAX_AGE:7d}
 
 management:
   endpoints:
