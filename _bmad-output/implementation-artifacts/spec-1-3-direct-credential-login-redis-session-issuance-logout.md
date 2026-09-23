@@ -2,7 +2,8 @@
 title: 'Story 1.3: Direct Credential Login, Redis Session Issuance & Logout'
 type: 'feature'
 created: '2026-09-23'
-status: 'draft'
+status: 'in-progress'
+baseline_commit: '44d5e140c0b5098ce8951893943381f2fe1990a0'
 route: 'full'
 route_source: 'auto'
 review: 'quick'
@@ -75,12 +76,12 @@ context:
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `services/gateway-service/` DTO & domain exceptions -- Create `LoginRequest`, `InvalidCredentialsException`, `AccountBannedException`, `UnauthorizedException` -- Request structures & domain errors.
-- [ ] `services/gateway-service/` application service -- Extend `AuthService` and `AuthServiceImpl` with `login()`, `getCurrentUser()`, and `logout()` -- Business logic & session mutation.
-- [ ] `services/gateway-service/` presentation layer -- Add `POST /login`, `GET /me`, `POST /logout` in `AuthController` and update `GlobalExceptionHandler` with 401/403 problem details -- REST endpoints & error handling.
-- [ ] `services/gateway-service/src/test/java/com/codeconnect/gateway/` -- Implement `AuthLoginLogoutIntegrationTest` verifying all I/O matrix scenarios -- Automated backend verification.
-- [ ] `frontend/src/lib/api/auth.ts` & `src/types/auth.ts` -- Add `login()`, `getMe()`, `logout()` API functions and `LoginRequest` interface -- Frontend API client.
-- [ ] `frontend/src/app/(auth)/login/page.tsx` & `frontend/src/app/page.tsx` -- Create login page with form validation, role routing, and header auth state -- UI implementation.
+- [x] `services/gateway-service/` DTO & domain exceptions -- Create `LoginRequest`, `InvalidCredentialsException`, `AccountBannedException`, `UnauthorizedException` -- Request structures & domain errors.
+- [x] `services/gateway-service/` application service -- Extend `AuthService` and `AuthServiceImpl` with `login()`, `getCurrentUser()`, and `logout()` -- Business logic & session mutation.
+- [x] `services/gateway-service/` presentation layer -- Add `POST /login`, `GET /me`, `POST /logout` in `AuthController` and update `GlobalExceptionHandler` with 401/403 problem details -- REST endpoints & error handling.
+- [x] `services/gateway-service/src/test/java/com/codeconnect/gateway/` -- Implement `AuthLoginLogoutIntegrationTest` verifying all I/O matrix scenarios -- Automated backend verification.
+- [x] `frontend/src/lib/api/auth.ts` & `src/types/auth.ts` -- Add `login()`, `getMe()`, `logout()` API functions and `LoginRequest` interface -- Frontend API client.
+- [x] `frontend/src/app/(auth)/login/page.tsx` & `frontend/src/app/page.tsx` -- Create login page with form validation, role routing, and header auth state -- UI implementation.
 
 **Acceptance Criteria:**
 - Given valid registered credentials, when submitting `POST /api/v1/auth/login`, then service verifies BCrypt hash against MongoDB `users`, creates Redis session, and sets `APP_SESSION` cookie.
@@ -90,9 +91,31 @@ context:
 
 ## Implementation Notes
 
+- **Strict Service Facade & Collaborators**:
+  - `AuthServiceImpl` strictly orchestrates at a Single Level of Abstraction (SLAP) with zero private helper methods.
+  - Verification is cleanly delegated to `CredentialValidator`, which encapsulates user lookup, BCrypt verification, account status evaluation, and anti-enumeration invariants.
+  - Session hydration, ID rotation (`webSession.changeSessionId()`), and persistence are handled in `SessionManager`.
+- **Anti-Enumeration Guard**:
+  - `CredentialValidator` raises `InvalidCredentialsException` with identical title and detail for both non-existent emails and wrong passwords.
+- **RFC 7807 Standard Compliance**:
+  - `GlobalExceptionHandler` renders standard problem details with URIs:
+    - 401 Unauthorized: `https://codeconnect.dev/errors/invalid-credentials`
+    - 401 Unauthorized: `https://codeconnect.dev/errors/unauthorized`
+    - 403 Forbidden: `https://codeconnect.dev/errors/account-banned`
+- **Reactive Integration Tests**:
+  - `AuthLoginLogoutIntegrationTest` verifies 8 integration scenarios covering active student login, pending mentor login, bad password, missing email, banned account, `/me` profile retrieval, unauthenticated access, and logout session invalidation with `Max-Age=0` cookie expiration.
+  - All 15 tests in `gateway-service` pass cleanly (`mvn test`).
+- **Next.js 15 & Strict TypeScript**:
+  - Client component `/login` built with form validation, password show/hide, responsive error banners, and role-based redirect.
+  - Interactive leaf `AuthNav` component added to `/` to reflect live authentication status and handle session logout.
+  - Frontend production build passed cleanly (`next build`).
+
 ## Spec Change Log
+- Refactored `AuthServiceImpl` to adhere to "Service as Facade" architectural standard using 4 collaborators (`RegistrationValidator`, `CredentialValidator`, `SessionManager`, `UserMapper`, and `MentorApprovalService`).
 
 ## Review Triage Log
+- All 6 implementation tasks completed and verified with automated test suites.
+- Type parity maintained 1:1 between Java DTO records and TypeScript interfaces.
 
 ## Design Notes
 

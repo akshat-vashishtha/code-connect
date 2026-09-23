@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Terminal, Database, Server, Cpu, CheckCircle2, ShieldCheck, Zap, UserPlus } from "lucide-react";
+import { Terminal, Database, Server, Cpu, CheckCircle2, ShieldCheck, Zap } from "lucide-react";
+import { AuthNav } from "@/components/auth/AuthNav";
 
 export default function Home() {
   const services = [
@@ -60,13 +61,7 @@ export default function Home() {
             <CheckCircle2 className="w-3.5 h-3.5" />
             Infrastructure Ready (&lt; 900MB RAM)
           </span>
-          <Link
-            href="/signup"
-            className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-sm transition-colors"
-          >
-            <UserPlus className="w-3.5 h-3.5" />
-            Sign Up
-          </Link>
+          <AuthNav />
         </div>
       </header>
 

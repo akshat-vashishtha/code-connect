@@ -1,6 +1,9 @@
 package com.codeconnect.gateway.presentation.exception;
 
+import com.codeconnect.gateway.domain.exception.AccountBannedException;
 import com.codeconnect.gateway.domain.exception.EmailAlreadyExistsException;
+import com.codeconnect.gateway.domain.exception.InvalidCredentialsException;
+import com.codeconnect.gateway.domain.exception.UnauthorizedException;
 import com.codeconnect.gateway.domain.exception.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,6 +29,9 @@ public class GlobalExceptionHandler {
 
     private static final URI CONFLICT_TYPE = URI.create("https://codeconnect.dev/errors/email-conflict");
     private static final URI VALIDATION_ERROR_TYPE = URI.create("https://codeconnect.dev/errors/validation-error");
+    private static final URI INVALID_CREDENTIALS_TYPE = URI.create("https://codeconnect.dev/errors/invalid-credentials");
+    private static final URI ACCOUNT_BANNED_TYPE = URI.create("https://codeconnect.dev/errors/account-banned");
+    private static final URI UNAUTHORIZED_TYPE = URI.create("https://codeconnect.dev/errors/unauthorized");
     private static final URI INTERNAL_ERROR_TYPE = URI.create("https://codeconnect.dev/errors/internal-error");
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
@@ -37,6 +43,45 @@ public class GlobalExceptionHandler {
         problem.setProperty("timestamp", Instant.now());
 
         return ResponseEntity.status(HttpStatus.CONFLICT)
+            .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+            .body(problem);
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ProblemDetail> handleInvalidCredentials(InvalidCredentialsException ex) {
+        log.warn("Handling InvalidCredentialsException: {}", ex.getMessage());
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
+        problem.setType(INVALID_CREDENTIALS_TYPE);
+        problem.setTitle("Invalid Credentials");
+        problem.setProperty("timestamp", Instant.now());
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+            .body(problem);
+    }
+
+    @ExceptionHandler(AccountBannedException.class)
+    public ResponseEntity<ProblemDetail> handleAccountBanned(AccountBannedException ex) {
+        log.warn("Handling AccountBannedException: {}", ex.getMessage());
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
+        problem.setType(ACCOUNT_BANNED_TYPE);
+        problem.setTitle("Account Banned");
+        problem.setProperty("timestamp", Instant.now());
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+            .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+            .body(problem);
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ProblemDetail> handleUnauthorized(UnauthorizedException ex) {
+        log.warn("Handling UnauthorizedException: {}", ex.getMessage());
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
+        problem.setType(UNAUTHORIZED_TYPE);
+        problem.setTitle("Unauthorized");
+        problem.setProperty("timestamp", Instant.now());
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
             .contentType(MediaType.APPLICATION_PROBLEM_JSON)
             .body(problem);
     }

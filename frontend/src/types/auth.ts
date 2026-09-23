@@ -13,6 +13,14 @@ export interface SignupRequest {
 }
 
 /**
+ * Direct credential login request payload matching com.codeconnect.gateway.application.dto.request.LoginRequest
+ */
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+/**
  * Sanitized user response payload matching com.codeconnect.gateway.application.dto.response.UserResponse
  */
 export interface UserResponse {

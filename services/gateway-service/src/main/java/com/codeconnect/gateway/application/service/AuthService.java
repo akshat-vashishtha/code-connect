@@ -19,4 +19,30 @@ public interface AuthService {
      * @return Mono emitting the sanitized UserResponse
      */
     Mono<UserResponse> signup(SignupRequest request, WebSession webSession);
+
+    /**
+     * Authenticates existing user credentials, initiates a new Redis session,
+     * and rotates the session ID to issue the APP_SESSION cookie.
+     *
+     * @param request validated login credentials
+     * @param webSession the active reactive WebSession
+     * @return Mono emitting the authenticated UserResponse
+     */
+    Mono<UserResponse> login(com.codeconnect.gateway.application.dto.request.LoginRequest request, WebSession webSession);
+
+    /**
+     * Resolves the currently authenticated user profile from the active WebSession.
+     *
+     * @param webSession the active reactive WebSession
+     * @return Mono emitting the current UserResponse
+     */
+    Mono<UserResponse> getCurrentUser(WebSession webSession);
+
+    /**
+     * Terminates the active session in Redis and clears browser session cookies.
+     *
+     * @param webSession the active reactive WebSession
+     * @return Mono completing when session is invalidated
+     */
+    Mono<Void> logout(WebSession webSession);
 }
