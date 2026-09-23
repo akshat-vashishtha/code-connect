@@ -39,7 +39,7 @@ development_status:
   1-1-project-monorepo-skeleton-local-infrastructure-bootstrapping: done
   1-2-student-mentor-registration-with-role-routing: review
   1-3-direct-credential-login-redis-session-issuance-logout: review
-  1-4-dual-layer-rbac-gatekeeping-admin-mentor-verification: backlog
+  1-4-dual-layer-rbac-gatekeeping-admin-mentor-verification: review
   epic-1-retrospective: optional
 
   epic-2: backlog

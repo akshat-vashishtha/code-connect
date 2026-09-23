@@ -2,6 +2,7 @@ package com.codeconnect.gateway.presentation.exception;
 
 import com.codeconnect.gateway.domain.exception.AccountBannedException;
 import com.codeconnect.gateway.domain.exception.EmailAlreadyExistsException;
+import com.codeconnect.gateway.domain.exception.ForbiddenException;
 import com.codeconnect.gateway.domain.exception.InvalidCredentialsException;
 import com.codeconnect.gateway.domain.exception.UnauthorizedException;
 import com.codeconnect.gateway.domain.exception.ValidationException;
@@ -32,6 +33,7 @@ public class GlobalExceptionHandler {
     private static final URI INVALID_CREDENTIALS_TYPE = URI.create("https://codeconnect.dev/errors/invalid-credentials");
     private static final URI ACCOUNT_BANNED_TYPE = URI.create("https://codeconnect.dev/errors/account-banned");
     private static final URI UNAUTHORIZED_TYPE = URI.create("https://codeconnect.dev/errors/unauthorized");
+    private static final URI FORBIDDEN_TYPE = URI.create("https://codeconnect.dev/errors/forbidden");
     private static final URI INTERNAL_ERROR_TYPE = URI.create("https://codeconnect.dev/errors/internal-error");
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
@@ -82,6 +84,19 @@ public class GlobalExceptionHandler {
         problem.setProperty("timestamp", Instant.now());
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+            .body(problem);
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ProblemDetail> handleForbiddenException(ForbiddenException ex) {
+        log.warn("Handling ForbiddenException: {}", ex.getMessage());
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
+        problem.setType(FORBIDDEN_TYPE);
+        problem.setTitle("Access Denied");
+        problem.setProperty("timestamp", Instant.now());
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
             .contentType(MediaType.APPLICATION_PROBLEM_JSON)
             .body(problem);
     }
