@@ -12,15 +12,22 @@ import java.time.Instant;
 
 /**
  * Data mapper translating between presentation DTO records and User domain entities.
+ * Injects PasswordEncoder directly so callers do not pass security concerns through the service layer.
  */
 @Component
 public class UserMapper {
+
+    private final PasswordEncoder passwordEncoder;
+
+    public UserMapper(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public String normalizeEmail(String email) {
         return (email == null) ? "" : email.trim().toLowerCase();
     }
 
-    public User toEntity(SignupRequest request, String normalizedEmail, PasswordEncoder passwordEncoder) {
+    public User toEntity(SignupRequest request, String normalizedEmail) {
         UserStatus initialStatus = (request.role() == UserRole.ROLE_MENTOR)
             ? UserStatus.PENDING_APPROVAL
             : UserStatus.ACTIVE;
