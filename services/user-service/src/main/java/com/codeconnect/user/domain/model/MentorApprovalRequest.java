@@ -1,5 +1,6 @@
 package com.codeconnect.user.domain.model;
 
+import com.codeconnect.user.domain.enums.MentorApprovalStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

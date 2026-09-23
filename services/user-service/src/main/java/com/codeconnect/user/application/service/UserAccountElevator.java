@@ -2,8 +2,8 @@ package com.codeconnect.user.application.service;
 
 import com.codeconnect.user.domain.exception.ResourceNotFoundException;
 import com.codeconnect.user.domain.model.User;
-import com.codeconnect.user.domain.model.UserRole;
-import com.codeconnect.user.domain.model.UserStatus;
+import com.codeconnect.user.domain.enums.UserRole;
+import com.codeconnect.user.domain.enums.UserStatus;
 import com.codeconnect.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

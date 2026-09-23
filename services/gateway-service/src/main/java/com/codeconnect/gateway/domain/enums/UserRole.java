@@ -1,4 +1,4 @@
-package com.codeconnect.gateway.domain.model;
+package com.codeconnect.gateway.domain.enums;
 
 /**
  * Platform user role hierarchy defined in ubiquitous domain language.

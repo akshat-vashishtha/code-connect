@@ -49,6 +49,9 @@ codeconnect:
     submission-service-uri: ${SUBMISSION_SERVICE_URI:http://localhost:8083}
     collab-service-uri: ${COLLAB_SERVICE_URI:http://localhost:8084}
     error-base-uri: ${ERROR_BASE_URI:https://codeconnect.dev/errors}
+    admin-path-pattern: ${ADMIN_PATH_PATTERN:/api/v1/admin/**}
+    mentor-path-pattern: ${MENTOR_PATH_PATTERN:/api/v1/mentor/**}
+    forbidden-error-uri: ${FORBIDDEN_ERROR_URI:${codeconnect.gateway.error-base-uri}/forbidden}
   session:
     cookie-name: ${SESSION_COOKIE_NAME:APP_SESSION}
     cookie-secure: ${SESSION_COOKIE_SECURE:false}

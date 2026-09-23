@@ -1,7 +1,7 @@
 package com.codeconnect.gateway.application.dto.response;
 
-import com.codeconnect.gateway.domain.model.UserRole;
-import com.codeconnect.gateway.domain.model.UserStatus;
+import com.codeconnect.gateway.domain.enums.UserRole;
+import com.codeconnect.gateway.domain.enums.UserStatus;
 
 import java.time.Instant;
 

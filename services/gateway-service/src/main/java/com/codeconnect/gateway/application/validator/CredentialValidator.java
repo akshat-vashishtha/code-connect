@@ -4,7 +4,7 @@ import com.codeconnect.gateway.application.dto.request.LoginRequest;
 import com.codeconnect.gateway.domain.exception.AccountBannedException;
 import com.codeconnect.gateway.domain.exception.InvalidCredentialsException;
 import com.codeconnect.gateway.domain.model.User;
-import com.codeconnect.gateway.domain.model.UserStatus;
+import com.codeconnect.gateway.domain.enums.UserStatus;
 import com.codeconnect.gateway.domain.repository.ReactiveUserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;

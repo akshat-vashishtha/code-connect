@@ -3,7 +3,7 @@ package com.codeconnect.gateway.application.validator;
 import com.codeconnect.gateway.application.dto.request.SignupRequest;
 import com.codeconnect.gateway.domain.exception.EmailAlreadyExistsException;
 import com.codeconnect.gateway.domain.exception.ValidationException;
-import com.codeconnect.gateway.domain.model.UserRole;
+import com.codeconnect.gateway.domain.enums.UserRole;
 import com.codeconnect.gateway.domain.repository.ReactiveUserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

@@ -10,5 +10,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public record UserProperties(
     String jwtSecret,
     long sessionTimeoutSeconds,
-    String errorBaseUri
+    String errorBaseUri,
+    String defaultReviewer
 ) {}

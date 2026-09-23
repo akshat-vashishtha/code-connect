@@ -1,6 +1,6 @@
 package com.codeconnect.user.application.dto;
 
-import com.codeconnect.user.domain.model.MentorApprovalStatus;
+import com.codeconnect.user.domain.enums.MentorApprovalStatus;
 
 import java.time.Instant;
 

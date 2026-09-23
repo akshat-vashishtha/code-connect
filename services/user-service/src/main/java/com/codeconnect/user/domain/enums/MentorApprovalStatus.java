@@ -1,4 +1,4 @@
-package com.codeconnect.user.domain.model;
+package com.codeconnect.user.domain.enums;
 
 /**
  * Discrete lifecycle verification states for mentor approval applications.

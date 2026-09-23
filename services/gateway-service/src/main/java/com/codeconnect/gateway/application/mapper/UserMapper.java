@@ -3,8 +3,8 @@ package com.codeconnect.gateway.application.mapper;
 import com.codeconnect.gateway.application.dto.request.SignupRequest;
 import com.codeconnect.gateway.application.dto.response.UserResponse;
 import com.codeconnect.gateway.domain.model.User;
-import com.codeconnect.gateway.domain.model.UserRole;
-import com.codeconnect.gateway.domain.model.UserStatus;
+import com.codeconnect.gateway.domain.enums.UserRole;
+import com.codeconnect.gateway.domain.enums.UserStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 

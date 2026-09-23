@@ -2,8 +2,9 @@ package com.codeconnect.user.application.service;
 
 import com.codeconnect.user.domain.exception.ResourceNotFoundException;
 import com.codeconnect.user.domain.model.MentorApprovalRequest;
-import com.codeconnect.user.domain.model.MentorApprovalStatus;
+import com.codeconnect.user.domain.enums.MentorApprovalStatus;
 import com.codeconnect.user.domain.repository.MentorApprovalRepository;
+import com.codeconnect.user.infrastructure.config.UserProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -19,8 +20,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MentorApprovalManager {
 
-    private static final String DEFAULT_REVIEWER = "admin@codeconnect.dev";
     private final MentorApprovalRepository mentorApprovalRepository;
+    private final UserProperties userProperties;
 
     public List<MentorApprovalRequest> findPendingApplications() {
         return mentorApprovalRepository.findByStatus(MentorApprovalStatus.PENDING);
@@ -50,6 +51,8 @@ public class MentorApprovalManager {
     }
 
     private String resolveReviewer(String reviewerAdminEmail) {
-        return reviewerAdminEmail != null && !reviewerAdminEmail.isBlank() ? reviewerAdminEmail : DEFAULT_REVIEWER;
+        return reviewerAdminEmail != null && !reviewerAdminEmail.isBlank()
+            ? reviewerAdminEmail
+            : userProperties.defaultReviewer();
     }
 }

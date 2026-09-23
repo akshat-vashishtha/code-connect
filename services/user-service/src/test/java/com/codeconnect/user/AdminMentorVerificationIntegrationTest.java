@@ -1,12 +1,12 @@
 package com.codeconnect.user;
 
 import com.codeconnect.user.application.dto.LanguageDetectionRequest;
-import com.codeconnect.user.domain.model.LanguagePreference;
+import com.codeconnect.user.domain.enums.LanguagePreference;
 import com.codeconnect.user.domain.model.MentorApprovalRequest;
-import com.codeconnect.user.domain.model.MentorApprovalStatus;
+import com.codeconnect.user.domain.enums.MentorApprovalStatus;
 import com.codeconnect.user.domain.model.User;
-import com.codeconnect.user.domain.model.UserRole;
-import com.codeconnect.user.domain.model.UserStatus;
+import com.codeconnect.user.domain.enums.UserRole;
+import com.codeconnect.user.domain.enums.UserStatus;
 import com.codeconnect.user.domain.repository.MentorApprovalRepository;
 import com.codeconnect.user.domain.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;

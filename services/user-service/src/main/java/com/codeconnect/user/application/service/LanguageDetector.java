@@ -1,6 +1,6 @@
 package com.codeconnect.user.application.service;
 
-import com.codeconnect.user.domain.model.LanguagePreference;
+import com.codeconnect.user.domain.enums.LanguagePreference;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

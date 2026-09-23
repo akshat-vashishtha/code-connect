@@ -1,7 +1,7 @@
 package com.codeconnect.user.domain.repository;
 
 import com.codeconnect.user.domain.model.MentorApprovalRequest;
-import com.codeconnect.user.domain.model.MentorApprovalStatus;
+import com.codeconnect.user.domain.enums.MentorApprovalStatus;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

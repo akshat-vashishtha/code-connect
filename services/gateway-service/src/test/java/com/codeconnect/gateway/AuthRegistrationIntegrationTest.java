@@ -1,8 +1,8 @@
 package com.codeconnect.gateway;
 
 import com.codeconnect.gateway.application.dto.request.SignupRequest;
-import com.codeconnect.gateway.domain.model.MentorApprovalStatus;
-import com.codeconnect.gateway.domain.model.UserRole;
+import com.codeconnect.gateway.domain.enums.MentorApprovalStatus;
+import com.codeconnect.gateway.domain.enums.UserRole;
 import com.codeconnect.gateway.domain.repository.ReactiveMentorApprovalRepository;
 import com.codeconnect.gateway.domain.repository.ReactiveUserRepository;
 import org.junit.jupiter.api.BeforeEach;

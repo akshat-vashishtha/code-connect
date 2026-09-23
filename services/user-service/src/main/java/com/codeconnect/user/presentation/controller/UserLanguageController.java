@@ -4,7 +4,7 @@ import com.codeconnect.user.application.dto.ApiResponse;
 import com.codeconnect.user.application.dto.LanguageDetectionRequest;
 import com.codeconnect.user.application.dto.LanguageDetectionResponse;
 import com.codeconnect.user.application.service.LanguageDetector;
-import com.codeconnect.user.domain.model.LanguagePreference;
+import com.codeconnect.user.domain.enums.LanguagePreference;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;

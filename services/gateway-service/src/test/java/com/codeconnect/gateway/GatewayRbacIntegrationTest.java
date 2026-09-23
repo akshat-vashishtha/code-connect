@@ -2,8 +2,8 @@ package com.codeconnect.gateway;
 
 import com.codeconnect.gateway.application.dto.request.LoginRequest;
 import com.codeconnect.gateway.domain.model.User;
-import com.codeconnect.gateway.domain.model.UserRole;
-import com.codeconnect.gateway.domain.model.UserStatus;
+import com.codeconnect.gateway.domain.enums.UserRole;
+import com.codeconnect.gateway.domain.enums.UserStatus;
 import com.codeconnect.gateway.domain.repository.ReactiveUserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

@@ -12,5 +12,8 @@ public record GatewayProperties(
     String curriculumServiceUri,
     String submissionServiceUri,
     String collabServiceUri,
-    String errorBaseUri
+    String errorBaseUri,
+    String adminPathPattern,
+    String mentorPathPattern,
+    String forbiddenErrorUri
 ) {}

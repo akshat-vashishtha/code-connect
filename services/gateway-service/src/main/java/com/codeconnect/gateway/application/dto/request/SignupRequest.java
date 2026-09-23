@@ -1,6 +1,6 @@
 package com.codeconnect.gateway.application.dto.request;
 
-import com.codeconnect.gateway.domain.model.UserRole;
+import com.codeconnect.gateway.domain.enums.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

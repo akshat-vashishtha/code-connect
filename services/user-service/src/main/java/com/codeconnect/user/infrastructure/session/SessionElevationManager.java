@@ -1,7 +1,7 @@
 package com.codeconnect.user.infrastructure.session;
 
-import com.codeconnect.user.domain.model.UserRole;
-import com.codeconnect.user.domain.model.UserStatus;
+import com.codeconnect.user.domain.enums.UserRole;
+import com.codeconnect.user.domain.enums.UserStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;

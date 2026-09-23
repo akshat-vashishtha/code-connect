@@ -108,27 +108,22 @@ Each service in `services/<service-name>/src/main/java/com/codeconnect/<servicen
 
 ```
 com.codeconnect.<servicename>/
-├── config/                  # @Configuration, Security, WebMvc, Kafka beans
-│   └── <Service>Properties.java  # @ConfigurationProperties
-├── controller/              # @RestController (Strictly HTTP/REST & validation)
-├── dto/
-│   ├── request/             # Java 21 records: e.g., RegisterUserRequest.java
-│   └── response/            # Java 21 records: e.g., UserProfileResponse.java
-├── service/                 # Domain business interfaces
-│   ├── <Service>Service.java
-│   └── impl/
-│       └── <Service>ServiceImpl.java
-├── repository/              # Spring Data Mongo interfaces
-├── model/                   # Domain Entities (@Document)
-├── exception/               # Custom Domain Exceptions & @RestControllerAdvice
-│   ├── GlobalExceptionHandler.java
-│   ├── ResourceNotFoundException.java
-│   └── ErrorResponse.java
-├── events/                  # Kafka Event Backbone
-│   ├── payload/             # Event DTO records
-│   ├── publisher/           # KafkaTemplate publishers
-│   └── consumer/            # @KafkaListener handlers
-└── util/                    # Stateless helper utilities (pure functions)
+├── application/
+│   ├── dto/                 # Java 21 records: request/, response/
+│   ├── mapper/              # Bidirectional entity <-> DTO mappers
+│   ├── service/             # Domain business interfaces & impl/
+│   └── validator/           # Input and business validation components
+├── domain/
+│   ├── enums/               # Domain Enums (UserRole, UserStatus, MentorApprovalStatus, etc. - NEVER in model/)
+│   ├── exception/           # Custom Domain Exceptions
+│   ├── model/               # Domain Entities / Documents (@Document)
+│   └── repository/          # Spring Data repository interfaces
+├── infrastructure/
+│   ├── config/              # @Configuration, Security, Pure @ConfigurationProperties
+│   └── session/             # Session managers, distributed caches (Redis)
+└── presentation/
+    ├── controller/          # @RestController (Strictly HTTP/REST & validation)
+    └── exception/           # Centralized @RestControllerAdvice GlobalExceptionHandler
 ```
 
 ### 3.3 Strict Layering Rules
@@ -162,17 +157,29 @@ com.codeconnect.<servicename>/
   - MongoDB `@Document` models must NEVER escape the Service layer. Controllers only see DTO records.
 * **Constructor Injection Only**:
   - Field injection (`@Autowired private ...`) is strictly forbidden. All dependencies must be `private final` injected via constructors (or `@RequiredArgsConstructor`).
-* **Zero Hardcoded Values & Pure `@ConfigurationProperties`**:
-  - All timeouts, URLs, Kafka topic names, and thresholds must be externalized into `@ConfigurationProperties` classes.
+* **Zero Hardcoded Route Patterns, URLs/URIs, and Domain Assumptions (Pure `@ConfigurationProperties`)**:
+  - All route path patterns (e.g., `/api/v1/admin/**`, `/api/v1/mentor/**`), URLs, URIs (such as error documentation base URIs, microservice endpoints, RFC 7807 error type URIs), domain strings, Kafka topic names, timeouts, thresholds, and administrative/fallback credentials MUST NEVER be hardcoded as constants or literals in Java code.
+  - Path patterns, URLs, and URIs inevitably vary across environments (local, staging, production, edge proxies, ingress controllers, tenant prefixes). Hardcoding them in Java classes prevents environment-specific tuning, path rewrites, and zero-downtime reconfiguration.
+  - Every configurable route pattern, URL, URI, endpoint, or system identifier must be externalized into `application.yml` using standard Spring property placeholders: `${ENVIRONMENT_VARIABLE:defaultValue}` (e.g., `admin-path-pattern: ${ADMIN_PATH_PATTERN:/api/v1/admin/**}`, `forbidden-error-uri: ${FORBIDDEN_ERROR_URI:${codeconnect.gateway.error-base-uri}/forbidden}`, `${DEFAULT_REVIEWER:SYSTEM}`, `${USER_SERVICE_URI:http://localhost:8081}`).
+  - Security filters and routing components must evaluate route patterns dynamically through injected `@ConfigurationProperties` and Spring path matchers (e.g., `AntPathMatcher` or `PathPatternParser`).
+  - **Filter Single Responsibility Principle (SRP) & Facade Pattern**:
+    - Web filters (such as `RbacGatewayFilter`) must act strictly as thin orchestrators / facades at a Single Level of Abstraction (SLAP), delegating to focused collaborator components:
+      1. **Route Access Decision Manager**: Route pattern matching and role authorization evaluation.
+      2. **Downstream Header Enricher**: Request mutation and identity header decoration.
+      3. **Problem Details Response Writer**: RFC 7807 ProblemDetail serialization, status setting, and reactive response stream writing.
+    - Filters must NEVER mix route matching, session attribute inspection, header mutation, and low-level byte buffer response writing into a single monolithic class.
   - **CRITICAL MANDATE — Pure Data Holders Only**: NEVER EVER write any logic in classes or records annotated with `@ConfigurationProperties`.
     - No compact constructors with fallback logic.
     - No defaulting code, ternary expressions, or null checks in Java classes.
     - All defaults MUST live exclusively in `application.yml` using the `${ENVIRONMENT_VARIABLE:defaultValue}` syntax.
     - The `@ConfigurationProperties` class/record must remain a completely pure, dumb data container.
 * **Centralized Global Exception Handling**:
-  - Throw domain-specific exceptions. Centralized `@RestControllerAdvice` catches them and produces standardized `ApiResponse<T>` with HTTP error codes.
-* **Mandatory Enums for Discrete States, Roles & Statuses (Zero Magic Strings)**:
-  - Whenever domain values, lifecycle statuses, account states, roles, or discrete categories are known (e.g., `PENDING`, `APPROVED`, `REJECTED`, `ACTIVE`, `BANNED`, `ROLE_STUDENT`, `ROLE_MENTOR`, `ROLE_ADMIN`), they **MUST** be modeled as type-safe Java `enum`s.
+  - Throw domain-specific exceptions. Centralized `@RestControllerAdvice` catches them and produces standardized RFC 7807 `ProblemDetail` or `ApiResponse<T>` with HTTP error codes, constructing error type URIs dynamically from injected `@ConfigurationProperties`.
+* **Mandatory Enums in Dedicated `domain/enums/` Package (Zero Magic Strings & Segregation from Models)**:
+  - Whenever domain values, lifecycle statuses, account states, roles, or discrete categories are known (e.g., `PENDING`, `APPROVED`, `REJECTED`, `ACTIVE`, `BANNED`, `ROLE_STUDENT`, `ROLE_MENTOR`, `ROLE_ADMIN`, `HINGLISH`, `ENGLISH`), they **MUST** be modeled as type-safe Java `enum`s.
+  - **Dedicated Package Location**: All enums MUST reside in the dedicated `com.codeconnect.<service>.domain.enums` package. They must NEVER be placed in `domain.model`.
+    - Models (`domain.model`) represent data schemas and MongoDB `@Document` entities.
+    - Enums (`domain.enums`) represent finite domain value sets and lifecycle vocabularies.
   - **Zero Hardcoded Strings**: Never use magic string literals in entities, repositories, services, or DTO records (e.g., forbidding `setStatus("APPROVED")`, `findByStatus("PENDING")`, `status.equals("REJECTED")`).
   - Enums provide compile-time type safety, IDE refactoring support, exhaustive `switch` pattern matching, and self-documenting domain models.
   - DTO records, MongoDB `@Document` models, and repository query methods must declare the `enum` type directly (e.g., `List<MentorApprovalRequest> findByStatus(MentorApprovalStatus status)`), allowing Jackson and Spring Data to handle serialization and persistence reliably.

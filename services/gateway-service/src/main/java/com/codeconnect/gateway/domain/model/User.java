@@ -1,5 +1,7 @@
 package com.codeconnect.gateway.domain.model;
 
+import com.codeconnect.gateway.domain.enums.UserRole;
+import com.codeconnect.gateway.domain.enums.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
