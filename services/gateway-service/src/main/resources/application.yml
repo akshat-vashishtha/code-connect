@@ -32,6 +32,13 @@ spring:
           predicates:
             - Path=/api/v1/collab/**, /ws-connect/**
 
+codeconnect:
+  gateway:
+    user-service-uri: ${USER_SERVICE_URI:http://localhost:8081}
+    curriculum-service-uri: ${CURRICULUM_SERVICE_URI:http://localhost:8082}
+    submission-service-uri: ${SUBMISSION_SERVICE_URI:http://localhost:8083}
+    collab-service-uri: ${COLLAB_SERVICE_URI:http://localhost:8084}
+
 management:
   endpoints:
     web:

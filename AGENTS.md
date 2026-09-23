@@ -25,7 +25,7 @@ All development in this repository must strictly adhere to the standards codifie
      - *Builder*: For assembling complex entities and aggregate roots.
      - *Observer*: For event-driven Kafka messaging and Spring events.
    - **Modern Java 21**: Pattern matching (`switch`/`instanceof`), sealed interfaces, text blocks, safe `Optional` usage.
-   - **Type-Safe Configuration**: Zero hardcoded URLs, ports, or topics; use `@ConfigurationProperties`.
+   - **Type-Safe Configuration**: Zero hardcoded URLs, ports, or topics; use `@ConfigurationProperties` as pure data holders (NEVER write defaulting/fallback logic in Java config classes; define all defaults in `application.yml` via `${ENV:default}`).
    - **Global Exception Handling**: Centralized `@RestControllerAdvice` returning structured `ApiResponse<T>`.
 
 2. **Next.js 14 & TypeScript**:

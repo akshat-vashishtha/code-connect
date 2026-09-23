@@ -141,8 +141,13 @@ com.codeconnect.<servicename>/
   - MongoDB `@Document` models must NEVER escape the Service layer. Controllers only see DTO records.
 * **Constructor Injection Only**:
   - Field injection (`@Autowired private ...`) is strictly forbidden. All dependencies must be `private final` injected via constructors (or `@RequiredArgsConstructor`).
-* **Zero Hardcoded Values**:
+* **Zero Hardcoded Values & Pure `@ConfigurationProperties`**:
   - All timeouts, URLs, Kafka topic names, and thresholds must be externalized into `@ConfigurationProperties` classes.
+  - **CRITICAL MANDATE — Pure Data Holders Only**: NEVER EVER write any logic in classes or records annotated with `@ConfigurationProperties`.
+    - No compact constructors with fallback logic.
+    - No defaulting code, ternary expressions, or null checks in Java classes.
+    - All defaults MUST live exclusively in `application.yml` using the `${ENVIRONMENT_VARIABLE:defaultValue}` syntax.
+    - The `@ConfigurationProperties` class/record must remain a completely pure, dumb data container.
 * **Centralized Global Exception Handling**:
   - Throw domain-specific exceptions. Centralized `@RestControllerAdvice` catches them and produces standardized `ApiResponse<T>` with HTTP error codes.
 
@@ -360,6 +365,7 @@ Before any story implementation is submitted for review, verify all applicable g
 - [ ] **Interface + Impl**: Does every service follow the interface separation pattern?
 - [ ] **Constructor Injection**: Are all injected fields `private final` with constructor injection?
 - [ ] **Zero Hardcoded Values**: Are URLs, topics, and constants mapped via `@ConfigurationProperties`?
+- [ ] **Pure `@ConfigurationProperties`**: Are `@ConfigurationProperties` classes pure data holders with zero defaulting/fallback logic, delegating all defaults to `${ENV:default}` in `application.yml`?
 - [ ] **Centralized Exceptions**: Are errors handled via `@RestControllerAdvice` returning structured responses?
 
 ### Domain-Driven Design
