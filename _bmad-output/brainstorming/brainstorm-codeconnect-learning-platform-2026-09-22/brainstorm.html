@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeConnect — Mountain-Climb Brainstorming Keepsake</title>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(22, 27, 46, 0.7);
+      --card-border: rgba(56, 189, 248, 0.2);
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent-cyan: #38bdf8;
+      --accent-amber: #f59e0b;
+      --accent-emerald: #10b981;
+      --accent-indigo: #6366f1;
+      --accent-rose: #f43f5e;
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 75%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+        linear-gradient(to bottom, #090d16 0%, #0d1322 100%);
+      padding: 2.5rem 1.5rem;
+    }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 3.5rem;
+      position: relative;
+    }
+
+    .tagline {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 0.35rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1.25rem;
+    }
+
+    h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      background: linear-gradient(135deg, #ffffff 40%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+    }
+
+    .subtitle {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.75rem;
+      margin-bottom: 2.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+      h1 { font-size: 2.25rem; }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 2rem;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+
+    .card-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+    }
+
+    .badge-cyan { background: rgba(56, 189, 248, 0.15); color: var(--accent-cyan); }
+    .badge-amber { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); }
+    .badge-emerald { background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); }
+    .badge-indigo { background: rgba(99, 102, 241, 0.15); color: var(--accent-indigo); }
+
+    .card-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: #fff;
+    }
+
+    .card-p {
+      color: var(--text-muted);
+      font-size: 0.98rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Mountain Altitude Visualization */
+    .mountain-viz {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 20px;
+      padding: 2.5rem;
+      margin-bottom: 2.5rem;
+      position: relative;
+    }
+
+    .altitude-track {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      position: relative;
+      margin-top: 1.5rem;
+    }
+
+    .altitude-node {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      transition: all 0.25s ease;
+    }
+
+    .altitude-node:hover {
+      background: rgba(30, 41, 59, 0.9);
+      border-color: var(--accent-cyan);
+      transform: translateX(6px);
+    }
+
+    .node-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+
+    .icon-summit { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .icon-ridge { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+    .icon-check { background: linear-gradient(135deg, #10b981, #059669); }
+    .icon-base { background: linear-gradient(135deg, #38bdf8, #0284c7); }
+
+    .node-info h4 {
+      font-size: 1.05rem;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .node-info p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    /* Interactive Comparison */
+    .compare-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .compare-box { grid-template-columns: 1fr; }
+    }
+
+    .pane {
+      background: rgba(10, 15, 26, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+
+    .pane.old { border-left: 4px solid var(--accent-rose); }
+    .pane.new { border-left: 4px solid var(--accent-emerald); }
+
+    .pane-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .pane.old .pane-title { color: var(--accent-rose); }
+    .pane.new .pane-title { color: var(--accent-emerald); }
+
+    .code-block {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 8px;
+      padding: 0.85rem;
+      color: #e2e8f0;
+      line-height: 1.5;
+    }
+
+    /* 3-Tier Help Flow */
+    .tiers-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 1.25rem;
+    }
+
+    @media (max-width: 768px) {
+      .tiers-container { grid-template-columns: 1fr; }
+    }
+
+    .tier-step {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 1.25rem;
+      text-align: center;
+    }
+
+    .tier-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .tier-step h5 {
+      font-size: 0.95rem;
+      color: #fff;
+      margin-bottom: 0.4rem;
+    }
+
+    .tier-step p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="tagline">🧗 Nature's Solution: The Solo Mountain Climb</div>
+      <h1>CodeConnect</h1>
+      <p class="subtitle">A structured, fear-free learning platform for Java & DSA where concepts are progressive footholds, and code logic connects like school friends helping each other.</p>
+    </header>
+
+    <!-- Mountain Climb Altitude Path -->
+    <section class="mountain-viz">
+      <div class="card-badge badge-cyan">Core Learning Architecture</div>
+      <h2 style="font-size: 1.75rem; color: #fff; margin-bottom: 0.5rem;">The Progressive Foothold Ascent</h2>
+      <p class="card-p">No vertical walls or overwhelming textbooks. Each concept is a solid foothold tested before the next leap.</p>
+
+      <div class="altitude-track">
+        <div class="altitude-node">
+          <div class="node-icon icon-base">🏕️</div>
+          <div class="node-info">
+            <h4>Base Camp: Real-World Story First</h4>
+            <p>Every concept launches with a relatable, visual mental model. No dry syntax or intimidating terminology. Keep It Simple, Stupid (KISS).</p>
+          </div>
+        </div>
+
+        <div class="altitude-node">
+          <div class="node-icon icon-ridge">🧩</div>
+          <div class="node-info">
+            <h4>The Foothold: Problem & Natural Code Resolution</h4>
+            <p>The student applies code syntax solely as the natural tool that resolves the tension introduced in the story puzzle.</p>
+          </div>
+        </div>
+
+        <div class="altitude-node">
+          <div class="node-icon icon-check">⚓</div>
+          <div class="node-info">
+            <h4>Acclimatization Check: Load-Bearing Testing</h4>
+            <p>Before advancing to higher peaks, CodeConnect quietly checks only the foundational concepts the next move strictly depends on.</p>
+          </div>
+        </div>
+
+        <div class="altitude-node">
+          <div class="node-icon icon-summit">🏔️</div>
+          <div class="node-info">
+            <h4>The Summit: Earned Breakthroughs</h4>
+            <p>By preserving deliberate friction and minimal hints, every solved test case delivers the genuine rush of reaching the peak.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 Column Breakdown -->
+    <div class="grid-2">
+      <!-- Story-First Debugging -->
+      <div class="card">
+        <div class="card-badge badge-amber">Pedagogical Engine</div>
+        <h3 class="card-title">Narrative-Anchored AI</h3>
+        <p class="card-p">When tests fail, the AI Assistant doesn't dump cryptic compiler traces. It diagnoses the logic error directly inside the concept's story analogy.</p>
+
+        <div class="compare-box">
+          <div class="pane old">
+            <div class="pane-title">⚠️ Traditional Platforms</div>
+            <div class="code-block">
+              java.lang.ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 5<br>
+              at Solution.main(Line 12)
+            </div>
+          </div>
+          <div class="pane new">
+            <div class="pane-title">✨ CodeConnect AI Guide</div>
+            <div class="code-block">
+              "Remember our 5-shelf bookshelf story? Your loop is reaching for shelf #6, but the wall ends at shelf #5. Where should your counter stop?"
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3-Tier Support Hierarchy -->
+      <div class="card">
+        <div class="card-badge badge-indigo">Camaraderie Over Points</div>
+        <h3 class="card-title">Three-Tier Help Hierarchy</h3>
+        <p class="card-p">No forced points, leaderboards, or gamified tokens. Pure school-friend collaboration when a climber gets stuck on the rock.</p>
+
+        <div class="tiers-container">
+          <div class="tier-step">
+            <div class="tier-number" style="background: rgba(56, 189, 248, 0.2); color: var(--accent-cyan);">1</div>
+            <h5>AI Socratic Guide</h5>
+            <p>Multilingual, instant hints that give just enough to earn the "aha" moment.</p>
+          </div>
+          <div class="tier-step">
+            <div class="tier-number" style="background: rgba(16, 185, 129, 0.2); color: var(--accent-emerald);">2</div>
+            <h5>Peer Solver Friend</h5>
+            <p>Lightweight 1-on-1 chat with a student who just conquered this exact problem.</p>
+          </div>
+          <div class="tier-step">
+            <div class="tier-number" style="background: rgba(245, 158, 11, 0.2); color: var(--accent-amber);">3</div>
+            <h5>Human Mentor</h5>
+            <p>Escalation for deep conceptual hurdles; authoring tailored tracks.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Final Decisions & Vision -->
+    <div class="card" style="border-color: rgba(99, 102, 241, 0.3);">
+      <div class="card-badge badge-emerald">Brainstorming Synthesis</div>
+      <h3 class="card-title">The CodeConnect Promise</h3>
+      <p class="card-p" style="font-size: 1.05rem; color: #cbd5e1; line-height: 1.8;">
+        "A mountain looks intimidating from the base — but broken into a guided path of connected steps, each concept becomes just the next foothold. A climber doesn't re-check every foothold below them, but they instinctively test the ones the next move depends on. In general, when we were in school, we helped other students like friends. CodeConnect brings back that natural human connection around code."
+      </p>
+    </div>
+
+    <footer>
+      Generated during BMad Brainstorming Session · Artifact preserved in <code style="font-family: var(--font-mono); color: var(--accent-cyan);">_bmad-output/brainstorming/</code>
+    </footer>
+  </div>
+</body>
+</html>

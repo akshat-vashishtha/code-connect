@@ -1,0 +1,1790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeConnect — System Architecture & Topology</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #F8FAFC;
+      --bg-surface: #FFFFFF;
+      --bg-subtle: #F1F5F9;
+      --bg-hover: #E2E8F0;
+      
+      --text-primary: #0F172A;
+      --text-secondary: #475569;
+      --text-muted: #94A3B8;
+      
+      --border-subtle: #E2E8F0;
+      --border-focus: #3B82F6;
+      
+      --brand-primary: #2563EB;
+      --brand-surface: #EFF6FF;
+      --brand-border: #BFDBFE;
+      
+      --accent-emerald: #059669;
+      --accent-emerald-bg: #ECFDF5;
+      --accent-emerald-border: #A7F3D0;
+      
+      --accent-amber: #D97706;
+      --accent-amber-bg: #FFFBEB;
+      --accent-amber-border: #FDE68A;
+      
+      --accent-purple: #7C3AED;
+      --accent-purple-bg: #F5F3FF;
+      --accent-purple-border: #DDD6FE;
+      
+      --accent-rose: #E11D48;
+      --accent-rose-bg: #FFF1F2;
+      --accent-rose-border: #FECDD3;
+
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.06);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.04);
+      --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.05);
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-xl: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Top Navigation Header */
+    header {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+    }
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #2563EB, #1D4ED8);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      font-weight: 800;
+      font-size: 1.25rem;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+    }
+
+    .brand-titles h1 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .brand-titles p {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .badge-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-subtle);
+      color: var(--text-secondary);
+    }
+
+    .badge.blue {
+      background: var(--brand-surface);
+      border-color: var(--brand-border);
+      color: var(--brand-primary);
+    }
+
+    .badge.emerald {
+      background: var(--accent-emerald-bg);
+      border-color: var(--accent-emerald-border);
+      color: var(--accent-emerald);
+    }
+
+    .badge.purple {
+      background: var(--accent-purple-bg);
+      border-color: var(--accent-purple-border);
+      color: var(--accent-purple);
+    }
+
+    /* Tab Controls */
+    .tab-nav {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .tab-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      padding: 0.875rem 1.15rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-primary);
+      border-bottom-color: var(--border-focus);
+    }
+
+    .tab-btn.active {
+      color: var(--brand-primary);
+      border-bottom-color: var(--brand-primary);
+    }
+
+    /* Main Content Area */
+    main {
+      flex: 1;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* System Topology Grid */
+    .topology-container {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    @media (max-width: 1024px) {
+      .topology-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .canvas-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      margin-bottom: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .panel-header h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .panel-header p {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    /* Architectural Diagram Box System */
+    .arch-diagram {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      position: relative;
+    }
+
+    .arch-tier {
+      border: 1.5px dashed var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      background: #FAFCFF;
+      position: relative;
+    }
+
+    .arch-tier-title {
+      position: absolute;
+      top: -11px;
+      left: 1.25rem;
+      background: var(--bg-surface);
+      padding: 0 0.5rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--brand-primary);
+      border: 1px solid var(--brand-border);
+      border-radius: 9999px;
+    }
+
+    .nodes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+
+    /* Node Cards */
+    .node-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      position: relative;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .node-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--brand-primary);
+    }
+
+    .node-card.selected {
+      border-color: var(--brand-primary);
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2), var(--shadow-md);
+      background: #F8FAFF;
+    }
+
+    .node-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+
+    .node-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .node-port {
+      font-size: 0.7rem;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 0.15rem 0.4rem;
+      border-radius: var(--radius-sm);
+      background: var(--bg-subtle);
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .node-desc {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+      line-height: 1.4;
+    }
+
+    .node-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+
+    .node-tag {
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+      background: var(--bg-subtle);
+      color: var(--text-secondary);
+    }
+
+    /* Color Variances */
+    .node-card.highlight-gateway {
+      border-left: 4px solid var(--brand-primary);
+    }
+    .node-card.highlight-redis {
+      border-left: 4px solid var(--accent-rose);
+      background: #FFFBFB;
+    }
+    .node-card.highlight-kafka {
+      border-left: 4px solid var(--accent-amber);
+    }
+    .node-card.highlight-mongo {
+      border-left: 4px solid var(--accent-emerald);
+    }
+    .node-card.highlight-worker {
+      border-left: 4px solid var(--accent-purple);
+    }
+
+    /* Inspector Drawer */
+    .inspector-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 5rem;
+    }
+
+    .inspector-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .inspector-sub {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .inspector-section {
+      margin-bottom: 1.25rem;
+    }
+
+    .inspector-section-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .inspector-details-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .inspector-details-list li {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .inspector-details-list li svg {
+      flex-shrink: 0;
+      margin-top: 0.2rem;
+      color: var(--brand-primary);
+    }
+
+    .code-pill {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
+      padding: 0.75rem;
+      border-radius: var(--radius-md);
+      font-size: 0.78rem;
+      color: var(--text-primary);
+      overflow-x: auto;
+      line-height: 1.5;
+    }
+
+    /* Sequence Flow Visualizer */
+    .flow-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .step-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      display: grid;
+      grid-template-columns: 56px 1fr auto;
+      gap: 1.25rem;
+      align-items: center;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .step-card:hover {
+      border-color: var(--brand-primary);
+      box-shadow: var(--shadow-md);
+    }
+
+    .step-num {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--brand-surface);
+      color: var(--brand-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+      border: 2px solid var(--brand-border);
+    }
+
+    .step-content h3 {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .step-content p {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+
+    .step-actors {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .actor-badge {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
+      padding: 0.25rem 0.5rem;
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* K8s Table & Resource Budget */
+    .resource-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .resource-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .resource-card-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .resource-val {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: var(--bg-subtle);
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--brand-primary);
+      border-radius: 9999px;
+    }
+
+    .progress-bar-fill.emerald {
+      background: var(--accent-emerald);
+    }
+
+    .table-container {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow-x: auto;
+      box-shadow: var(--shadow-sm);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.85rem;
+    }
+
+    th {
+      background: var(--bg-subtle);
+      padding: 0.85rem 1.25rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    td {
+      padding: 0.85rem 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: #FBFDFF;
+    }
+
+    /* Comparison Box */
+    .compare-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 860px) {
+      .compare-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .compare-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .compare-card.highlight {
+      border-color: var(--brand-border);
+      background: #FAFCFF;
+    }
+
+    .compare-header {
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .compare-header h3 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .compare-header p {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    /* Alert / Callout */
+    .alert-box {
+      background: var(--brand-surface);
+      border: 1px solid var(--brand-border);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .alert-box svg {
+      color: var(--brand-primary);
+      flex-shrink: 0;
+      margin-top: 0.15rem;
+    }
+
+    .alert-box p {
+      font-size: 0.85rem;
+      color: #1E3A8A;
+      line-height: 1.5;
+    }
+
+    .alert-box strong {
+      font-weight: 700;
+      color: #172554;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-container">
+      <div class="brand-group">
+        <div class="brand-logo">CC</div>
+        <div class="brand-titles">
+          <h1>CodeConnect System Architecture</h1>
+          <p>Modular Monorepo • Dedicated Gateway Auth • Shared Spring Session Redis • Kafka Worker</p>
+        </div>
+      </div>
+      <div class="badge-bar">
+        <span class="badge blue">Java 21 LTS</span>
+        <span class="badge blue">Spring Boot 3.3.x</span>
+        <span class="badge blue">Spring AI 2.x.x</span>
+        <span class="badge purple">Standalone Maven POMs</span>
+        <span class="badge purple">Next.js 15 App Router</span>
+        <span class="badge emerald">Pure MongoDB 7.0</span>
+        <span class="badge emerald">Docker Compose Infra</span>
+        <span class="badge">k3d / Helm Local</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="tab-nav">
+    <div class="tab-container">
+      <button class="tab-btn active" onclick="switchTab('tab-topology')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+        System Topology
+      </button>
+      <button class="tab-btn" onclick="switchTab('tab-auth')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        Shared Redis Session Handshake
+      </button>
+      <button class="tab-btn" onclick="switchTab('tab-sandbox')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+        Kafka Async Sandbox Pipeline
+      </button>
+      <button class="tab-btn" onclick="switchTab('tab-infra')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+        Docker Compose Infra (Kafka/Mongo/Redis)
+      </button>
+      <button class="tab-btn" onclick="switchTab('tab-k8s')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+        Local Kubernetes (k3d) & RAM Budget
+      </button>
+      <button class="tab-btn" onclick="switchTab('tab-rbac')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        User Management & RBAC
+      </button>
+      <button class="tab-btn" onclick="switchTab('tab-production')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+        Production Gateway Evolution
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main>
+
+    <!-- TAB 1: SYSTEM TOPOLOGY -->
+    <section id="tab-topology" class="tab-panel active">
+      <div class="alert-box">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        <div>
+          <p><strong>Interactive System Architecture:</strong> Click on any microservice, shared cache, or worker node to inspect its internal port, dependencies, memory budget, and security invariants in the inspector panel.</p>
+        </div>
+      </div>
+
+      <div class="topology-container">
+        <!-- Interactive Diagram Surface -->
+        <div class="canvas-card">
+          <div class="panel-header">
+            <div>
+              <h2>Logical Microservices Topology</h2>
+              <p>Edge Gateway, Distributed Spring Session, Domain Microservices & Event Stream</p>
+            </div>
+            <span class="badge blue">Modular Monorepo</span>
+          </div>
+
+          <div class="arch-diagram">
+
+            <!-- TIER 1: CLIENT LAYER -->
+            <div class="arch-tier">
+              <span class="arch-tier-title">Client Tier (Browser)</span>
+              <div class="nodes-grid">
+                <div class="node-card" id="node-frontend" onclick="selectNode('frontend')">
+                  <div class="node-header">
+                    <span class="node-title">💻 Next.js Client</span>
+                    <span class="node-port">:3000</span>
+                  </div>
+                  <div class="node-desc">Monaco Editor, STOMP client over SockJS, 50/50 Cockpit, HttpOnly Cookie.</div>
+                  <div class="node-tags">
+                    <span class="node-tag">App Router</span>
+                    <span class="node-tag">No Local JWT</span>
+                    <span class="node-tag">React 19</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TIER 2: EDGE GATEWAY & DISTRIBUTED SESSION -->
+            <div class="arch-tier" style="background: #F5F9FF; border-color: var(--brand-border);">
+              <span class="arch-tier-title" style="background: var(--brand-surface); color: var(--brand-primary); border-color: var(--brand-border);">Edge Security & Ingress</span>
+              <div class="nodes-grid">
+                <div class="node-card highlight-gateway selected" id="node-gateway" onclick="selectNode('gateway')">
+                  <div class="node-header">
+                    <span class="node-title">🛡️ gateway-service</span>
+                    <span class="node-port">:8080</span>
+                  </div>
+                  <div class="node-desc">Dedicated Auth Handler (Login, Signup, Logout), Edge Gatekeeper, Reverse Proxy.</div>
+                  <div class="node-tags">
+                    <span class="node-tag">Spring Cloud Gateway</span>
+                    <span class="node-tag">Reactive WebFlux</span>
+                    <span class="node-tag">Auth Handler</span>
+                  </div>
+                </div>
+
+                <div class="node-card highlight-redis" id="node-redis" onclick="selectNode('redis')">
+                  <div class="node-header">
+                    <span class="node-title">⚡ Shared Redis Session Cache</span>
+                    <span class="node-port">:6379</span>
+                  </div>
+                  <div class="node-desc">Shared spring-session-data-redis cluster. Accessible by Gateway and ALL services!</div>
+                  <div class="node-tags">
+                    <span class="node-tag">spring:session</span>
+                    <span class="node-tag">APP_SESSION</span>
+                    <span class="node-tag">Presence 60s TTL</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TIER 3: INTERNAL DOMAIN SERVICES -->
+            <div class="arch-tier">
+              <span class="arch-tier-title">Internal Domain Microservices (Shared Redis Sessions)</span>
+              <div class="nodes-grid">
+                <div class="node-card" id="node-user" onclick="selectNode('user')">
+                  <div class="node-header">
+                    <span class="node-title">👤 user-service</span>
+                    <span class="node-port">:8081</span>
+                  </div>
+                  <div class="node-desc">User profiles, Student onboarding, Mentor verification & approval queue.</div>
+                  <div class="node-tags">
+                    <span class="node-tag">Spring Boot 3.3</span>
+                    <span class="node-tag">Shared Redis</span>
+                  </div>
+                </div>
+
+                <div class="node-card" id="node-curriculum" onclick="selectNode('curriculum')">
+                  <div class="node-header">
+                    <span class="node-title">📚 curriculum-service</span>
+                    <span class="node-port">:8082</span>
+                  </div>
+                  <div class="node-desc">Footholds, real-world text stories, load-bearing prerequisite lock engine.</div>
+                  <div class="node-tags">
+                    <span class="node-tag">Spring Boot 3.3</span>
+                    <span class="node-tag">Shared Redis</span>
+                  </div>
+                </div>
+
+                <div class="node-card" id="node-submission" onclick="selectNode('submission')">
+                  <div class="node-header">
+                    <span class="node-title">📤 submission-service</span>
+                    <span class="node-port">:8083</span>
+                  </div>
+                  <div class="node-desc">Instant 202 Accepted ingestion, dispatches code payload to Kafka topic.</div>
+                  <div class="node-tags">
+                    <span class="node-tag">Spring Boot 3.3</span>
+                    <span class="node-tag">Kafka Producer</span>
+                  </div>
+                </div>
+
+                <div class="node-card" id="node-collab" onclick="selectNode('collab')">
+                  <div class="node-header">
+                    <span class="node-title">💬 collab-service</span>
+                    <span class="node-port">:8084</span>
+                  </div>
+                  <div class="node-desc">STOMP WebSockets, Socratic Spring AI 2 engine, 1-on-1 peer solver chat.</div>
+                  <div class="node-tags">
+                    <span class="node-tag">Spring AI 2</span>
+                    <span class="node-tag">STOMP / SockJS</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TIER 4: EVENT BACKBONE & WORKERS -->
+            <div class="arch-tier" style="background: #FFFDF9; border-color: var(--accent-amber-border);">
+              <span class="arch-tier-title" style="background: var(--accent-amber-bg); color: var(--accent-amber); border-color: var(--accent-amber-border);">Asynchronous Event Stream & Execution Worker</span>
+              <div class="nodes-grid">
+                <div class="node-card highlight-kafka" id="node-kafka" onclick="selectNode('kafka')">
+                  <div class="node-header">
+                    <span class="node-title">📨 Apache Kafka</span>
+                    <span class="node-port">:9092</span>
+                  </div>
+                  <div class="node-desc">Event backbone running in KRaft mode (zero Zookeeper). Topics: submissions, results.</div>
+                  <div class="node-tags">
+                    <span class="node-tag">KRaft Mode</span>
+                    <span class="node-tag">code.submissions</span>
+                    <span class="node-tag">code.results</span>
+                  </div>
+                </div>
+
+                <div class="node-card highlight-worker" id="node-worker" onclick="selectNode('worker')">
+                  <div class="node-header">
+                    <span class="node-title">⚙️ sandbox-runner-service</span>
+                    <span class="node-port">Worker Pod</span>
+                  </div>
+                  <div class="node-desc">Kafka consumer spawning isolated, ephemeral Docker sandbox containers.</div>
+                  <div class="node-tags">
+                    <span class="node-tag">Docker in K8s</span>
+                    <span class="node-tag">--network none</span>
+                    <span class="node-tag">128MB RAM</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TIER 5: PERSISTENCE LAYER -->
+            <div class="arch-tier" style="background: #F7FEFA; border-color: var(--accent-emerald-border);">
+              <span class="arch-tier-title" style="background: var(--accent-emerald-bg); color: var(--accent-emerald); border-color: var(--accent-emerald-border);">Unified Document Persistence</span>
+              <div class="nodes-grid">
+                <div class="node-card highlight-mongo" id="node-mongo" onclick="selectNode('mongo')">
+                  <div class="node-header">
+                    <span class="node-title">🍃 MongoDB Community</span>
+                    <span class="node-port">:27017</span>
+                  </div>
+                  <div class="node-desc">Single source of truth for users, tracks, footholds, progress, tickets & chat messages.</div>
+                  <div class="node-tags">
+                    <span class="node-tag">codeconnect_db</span>
+                    <span class="node-tag">Indexed Collections</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Node Inspector Details Drawer -->
+        <aside class="inspector-card" id="inspector-drawer">
+          <div class="inspector-title" id="insp-title">🛡️ gateway-service</div>
+          <div class="inspector-sub">
+            <span class="badge blue" id="insp-type">Dedicated Ingress & Auth Handler</span>
+            <span class="badge" id="insp-port">Port 8080</span>
+          </div>
+
+          <div class="inspector-section">
+            <div class="inspector-section-label">Primary Responsibilities</div>
+            <ul class="inspector-details-list" id="insp-responsibilities">
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span><strong>Dedicated Authentication:</strong> Handles <code>/api/v1/auth/login</code>, <code>signup</code>, <code>logout</code>.</span>
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span><strong>Session Manager:</strong> Issues and invalidates opaque <code>APP_SESSION</code> cookie backed by Redis.</span>
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span><strong>Reverse Proxy:</strong> Routes traffic to downstream microservices and upgrades WebSockets.</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="inspector-section">
+            <div class="inspector-section-label">Spring Session & Redis Invariant</div>
+            <div class="code-pill" id="insp-code">
+@Bean
+public WebSessionIdResolver webSessionIdResolver() {
+    CookieWebSessionIdResolver resolver = new CookieWebSessionIdResolver();
+    resolver.setCookieName("APP_SESSION");
+    resolver.addCookieInitializer(b -> b
+        .httpOnly(true)
+        .secure(true)
+        .sameSite("Strict")
+        .path("/"));
+    return resolver;
+}
+            </div>
+          </div>
+
+          <div class="inspector-section">
+            <div class="inspector-section-label">Local Resource Envelope (k3d)</div>
+            <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.25rem;">
+              JVM Heap Cap: <code>-Xmx256m</code> | Container Limit: <code>384Mi</code>
+            </p>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- TAB 2: SHARED REDIS SESSION HANDSHAKE -->
+    <section id="tab-auth" class="tab-panel">
+      <div class="panel-header" style="max-width: 900px; margin: 0 auto 1.5rem auto;">
+        <div>
+          <h2>Distributed Spring Session Redis Flow</h2>
+          <p>How the Dedicated Gateway and Microservices Share Session State Without Exposing JWTs</p>
+        </div>
+        <span class="badge emerald">Zero Client-Side JWTs</span>
+      </div>
+
+      <div class="flow-steps">
+
+        <!-- Step 1 -->
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h3>Login Request Ingestion (No Cookie)</h3>
+            <p>Student enters email and password on Next.js. The browser issues <code>POST /api/v1/auth/login</code> directly to <code>gateway-service</code> without any auth header.</p>
+          </div>
+          <div class="step-actors">
+            <span class="actor-badge">Browser</span>
+            <span>&rarr;</span>
+            <span class="actor-badge">gateway-service</span>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h3>Credential Verification & Session Creation in Redis</h3>
+            <p><code>gateway-service</code> verifies hashed BCrypt password against MongoDB. Upon match, Spring Session creates a new session in the shared Redis cache with key <code>spring:session:sessions:&lt;uuid&gt;</code> storing <code>user_id</code>, <code>role</code>, and expiry (7 days).</p>
+          </div>
+          <div class="step-actors">
+            <span class="actor-badge">gateway-service</span>
+            <span>&rarr;</span>
+            <span class="actor-badge">Shared Redis</span>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h3>Opaque Cookie Issued to Browser</h3>
+            <p>Gateway returns <code>HTTP 200 OK</code> with header: <code>Set-Cookie: APP_SESSION=abc123...; HttpOnly; Secure; SameSite=Strict; Path=/</code>. JavaScript has zero access to this cookie, eliminating XSS token theft.</p>
+          </div>
+          <div class="step-actors">
+            <span class="actor-badge">gateway-service</span>
+            <span>&rarr;</span>
+            <span class="actor-badge">Browser</span>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="step-card">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <h3>Subsequent API Call Routed via Gateway</h3>
+            <p>User opens a Foothold. Next.js triggers <code>GET /api/v1/curriculum/footholds/101</code>. The browser automatically attaches <code>Cookie: APP_SESSION=abc123...</code>. Gateway verifies that the session is active in Redis, then proxies the request downstream.</p>
+          </div>
+          <div class="step-actors">
+            <span class="actor-badge">Browser</span>
+            <span>&rarr;</span>
+            <span class="actor-badge">gateway-service</span>
+          </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="step-card" style="border-left: 4px solid var(--accent-rose); background: #FFFBFB;">
+          <div class="step-num" style="background: var(--accent-rose-bg); color: var(--accent-rose); border-color: var(--accent-rose-border);">5</div>
+          <div class="step-content">
+            <h3>Downstream Microservice Reads Shared Session from Redis</h3>
+            <p>Because Gateway forwards the <code>Cookie</code>, <code>curriculum-service</code> (and any other domain service) uses its own embedded <code>spring-session-data-redis</code> filter to read session attributes directly: <code>session.getAttribute("user_id")</code>. No token decoding or secret sharing required!</p>
+          </div>
+          <div class="step-actors">
+            <span class="actor-badge">curriculum-service</span>
+            <span>&harr;</span>
+            <span class="actor-badge">Shared Redis</span>
+          </div>
+        </div>
+
+        <!-- Step 6 -->
+        <div class="step-card">
+          <div class="step-num">6</div>
+          <div class="step-content">
+            <h3>Instant Global Invalidation on Logout</h3>
+            <p>When user clicks Logout (<code>POST /api/v1/auth/logout</code>), Gateway invokes <code>session.invalidate()</code>. Redis deletes the session key. Immediately, ANY subsequent request across ALL microservices fails with 401 Unauthorized in O(1) time without token delay.</p>
+          </div>
+          <div class="step-actors">
+            <span class="actor-badge">gateway-service</span>
+            <span>&rarr;</span>
+            <span class="actor-badge">DEL Redis Key</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 3: KAFKA SANDBOX PIPELINE -->
+    <section id="tab-sandbox" class="tab-panel">
+      <div class="panel-header" style="max-width: 900px; margin: 0 auto 1.5rem auto;">
+        <div>
+          <h2>Asynchronous Kafka Sandbox Execution Pipeline</h2>
+          <p>Zero HTTP Block, Ephemeral Docker Isolation, and Real-Time WebSocket Push</p>
+        </div>
+        <span class="badge purple">STOMP over WebSocket</span>
+      </div>
+
+      <div class="flow-steps">
+        <div class="step-card">
+          <div class="step-num">A</div>
+          <div class="step-content">
+            <h3>1. Submission Ingest & Immediate 202 Accepted</h3>
+            <p>Student presses "Run Foothold" in the Monaco Cockpit. <code>submission-service</code> receives the payload, generates a unique <code>submissionId</code>, publishes a JSON event to Kafka topic <code>code.submissions</code>, and immediately returns <code>HTTP 202 Accepted { submissionId }</code> in under 20ms.</p>
+          </div>
+          <div class="step-actors">
+            <span class="actor-badge">submission-service</span>
+            <span>&rarr;</span>
+            <span class="actor-badge">code.submissions</span>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">B</div>
+          <div class="step-content">
+            <h3>2. Worker Ingestion & Ephemeral Docker Sandbox</h3>
+            <p><code>sandbox-runner-service</code> pulls the event from Kafka. It invokes the Docker daemon via local socket to spin up an isolated container: <code>docker run --rm --network none --memory 128m --cpus 1.0 codeconnect-runner:java21</code>.</p>
+          </div>
+          <div class="step-actors">
+            <span class="actor-badge">sandbox-runner</span>
+            <span>&rarr;</span>
+            <span class="actor-badge">Docker Daemon</span>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">C</div>
+          <div class="step-content">
+            <h3>3. Compilation, Test Execution & Hard 3000ms Timeout</h3>
+            <p>Student code is compiled with <code>javac -J-Xmx64m Solution.java</code> and evaluated against test cases with <code>java -Xmx128m TestRunner</code>. If execution exceeds 3000ms, the container process is forcefully killed. Exit code and stdout/stderr are captured.</p>
+          </div>
+          <div class="step-actors">
+            <span class="actor-badge">Ephemeral Box</span>
+            <span>&rarr;</span>
+            <span class="actor-badge">stdout / stderr</span>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">D</div>
+          <div class="step-content">
+            <h3>4. Kafka Results Topic & Real-Time Client Push</h3>
+            <p>Worker publishes the evaluation outcome to Kafka topic <code>code.results</code>. <code>collab-service</code> consumes this result and pushes it directly into the student's active WebSocket connection at <code>/topic/submissions.{submissionId}</code>.</p>
+          </div>
+          <div class="step-actors">
+            <span class="actor-badge">collab-service</span>
+            <span>&rarr;</span>
+            <span class="actor-badge">STOMP Push</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: STANDALONE DOCKER INFRASTRUCTURE -->
+    <section id="tab-infra" class="tab-panel">
+      <div class="panel-header" style="max-width: 1000px; margin: 0 auto 1.5rem auto;">
+        <div>
+          <h2>Standalone Infrastructure Stack (Docker Compose)</h2>
+          <p>Zero-friction stateful infrastructure: MongoDB 7.0, Redis 7.2, and Kafka (KRaft) in under 900 MB RAM</p>
+        </div>
+        <span class="badge emerald">Ultra Portable: Mac, Linux, CI</span>
+      </div>
+
+      <div style="max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem;">
+        
+        <div class="alert-box">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          <div>
+            <p><strong>Fast-Dev Mode vs Full Cluster:</strong> Run stateful dependencies (Mongo, Redis, Kafka) in Docker, and run your Spring Boot apps directly via Maven (<code>./mvnw spring-boot:run</code>) for instant hot-reload and breakpoint debugging!</p>
+          </div>
+        </div>
+
+        <div class="canvas-card">
+          <div class="panel-header">
+            <div>
+              <h3>1. Spin Up Backing Infrastructure</h3>
+              <p>Run from the repository root on any machine with Docker installed</p>
+            </div>
+            <span class="badge blue">One Command</span>
+          </div>
+          <div class="code-pill">
+# Start MongoDB (27017), Redis (6379), and Kafka KRaft (9092) in background
+docker compose -f infra/docker-compose.infra.yml up -d
+
+# Check health of all infrastructure containers
+docker compose -f infra/docker-compose.infra.yml ps
+          </div>
+        </div>
+
+        <div class="canvas-card">
+          <div class="panel-header">
+            <div>
+              <h3>2. Run Independent Services with Apache Maven</h3>
+              <p>Spring Boot 3.3 microservices on Java 21 LTS with standalone POMs</p>
+            </div>
+            <span class="badge purple">Standalone POMs</span>
+          </div>
+          <div class="code-pill">
+# Terminal 1: Edge Gateway &amp; Dedicated Auth (Port 8080)
+cd services/gateway-service &amp;&amp; ./mvnw spring-boot:run
+
+# Terminal 2: Curriculum &amp; Footholds (Port 8082)
+cd services/curriculum-service &amp;&amp; ./mvnw spring-boot:run
+
+# Terminal 3: Submission &amp; Kafka Dispatch (Port 8083)
+cd services/submission-service &amp;&amp; ./mvnw spring-boot:run
+
+# Terminal 4: Collab &amp; WebSockets (Port 8084)
+cd services/collab-service &amp;&amp; ./mvnw spring-boot:run
+
+# Terminal 5: Next.js Frontend Cockpit (Port 3000)
+cd frontend &amp;&amp; npm run dev
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 4: LOCAL K8S & RAM BUDGET -->
+    <section id="tab-k8s" class="tab-panel">
+      <div class="panel-header">
+        <div>
+          <h2>Local Kubernetes (k3d) & RAM Resource Budget</h2>
+          <p>Running 6 Microservices, Kafka, Redis, MongoDB, and Next.js smoothly on a 16 GB Apple Silicon Mac</p>
+        </div>
+        <span class="badge emerald">Total Cluster RAM: ~2.8 GB</span>
+      </div>
+
+      <div class="resource-grid">
+        <div class="resource-card">
+          <div class="resource-card-title">
+            <span>TOTAL CLUSTER FOOTPRINT</span>
+            <span>17.5% of 16 GB</span>
+          </div>
+          <div class="resource-val">2.82 GB</div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill emerald" style="width: 17.5%;"></div>
+          </div>
+          <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.5rem;">
+            Leaves <strong>13.18 GB</strong> free for macOS, VS Code, and browser.
+          </p>
+        </div>
+
+        <div class="resource-card">
+          <div class="resource-card-title">
+            <span>SPRING BOOT JVM TUNING</span>
+            <span>6 Pods</span>
+          </div>
+          <div class="resource-val">-Xmx256m</div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: 65%;"></div>
+          </div>
+          <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.5rem;">
+            Configured with <code>XX:+UseG1GC</code> and <code>XX:MaxRAMPercentage=75</code>.
+          </p>
+        </div>
+
+        <div class="resource-card">
+          <div class="resource-card-title">
+            <span>KAFKA KRAFT MODE</span>
+            <span>No Zookeeper</span>
+          </div>
+          <div class="resource-val">384 MB</div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: 25%;"></div>
+          </div>
+          <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.5rem;">
+            Saves 500 MB+ RAM by eliminating Zookeeper JVM daemon.
+          </p>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Service / Pod</th>
+              <th>Technology</th>
+              <th>Replicas</th>
+              <th>Memory Limit</th>
+              <th>CPU Limit</th>
+              <th>Internal Port</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>gateway-service</strong></td>
+              <td>Spring Cloud Gateway (WebFlux)</td>
+              <td>1</td>
+              <td><code>384 MiB</code> (-Xmx256m)</td>
+              <td><code>500m</code></td>
+              <td>8080 (Ingress exposed)</td>
+            </tr>
+            <tr>
+              <td><strong>user-service</strong></td>
+              <td>Spring Boot 3.3</td>
+              <td>1</td>
+              <td><code>384 MiB</code> (-Xmx256m)</td>
+              <td><code>300m</code></td>
+              <td>8081</td>
+            </tr>
+            <tr>
+              <td><strong>curriculum-service</strong></td>
+              <td>Spring Boot 3.3</td>
+              <td>1</td>
+              <td><code>384 MiB</code> (-Xmx256m)</td>
+              <td><code>300m</code></td>
+              <td>8082</td>
+            </tr>
+            <tr>
+              <td><strong>submission-service</strong></td>
+              <td>Spring Boot 3.3</td>
+              <td>1</td>
+              <td><code>384 MiB</code> (-Xmx256m)</td>
+              <td><code>300m</code></td>
+              <td>8083</td>
+            </tr>
+            <tr>
+              <td><strong>collab-service</strong></td>
+              <td>Spring Boot 3.3 + Spring AI</td>
+              <td>1</td>
+              <td><code>384 MiB</code> (-Xmx256m)</td>
+              <td><code>500m</code></td>
+              <td>8084</td>
+            </tr>
+            <tr>
+              <td><strong>sandbox-runner</strong></td>
+              <td>Java Worker + Docker Engine</td>
+              <td>1</td>
+              <td><code>256 MiB</code></td>
+              <td><code>1000m</code></td>
+              <td>Worker (No HTTP port)</td>
+            </tr>
+            <tr>
+              <td><strong>frontend (Next.js)</strong></td>
+              <td>Node.js 20 Alpine</td>
+              <td>1</td>
+              <td><code>256 MiB</code></td>
+              <td><code>300m</code></td>
+              <td>3000</td>
+            </tr>
+            <tr>
+              <td><strong>kafka (KRaft)</strong></td>
+              <td>Apache Kafka 3.7</td>
+              <td>1</td>
+              <td><code>384 MiB</code></td>
+              <td><code>500m</code></td>
+              <td>9092</td>
+            </tr>
+            <tr>
+              <td><strong>mongodb</strong></td>
+              <td>MongoDB Community 7.0</td>
+              <td>1</td>
+              <td><code>384 MiB</code></td>
+              <td><code>300m</code></td>
+              <td>27017</td>
+            </tr>
+            <tr>
+              <td><strong>redis</strong></td>
+              <td>Redis 7.2 Alpine</td>
+              <td>1</td>
+              <td><code>128 MiB</code></td>
+              <td><code>200m</code></td>
+              <td>6379</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB: USER MANAGEMENT & RBAC -->
+    <section id="tab-rbac" class="tab-panel">
+      <div class="panel-header" style="max-width: 1000px; margin: 0 auto 1.5rem auto;">
+        <div>
+          <h2>User Management & Role-Based Access Control (RBAC)</h2>
+          <p>Tri-Role Model, Mentor Admin-Approval Lifecycle & Dual-Layer Distributed Security</p>
+        </div>
+        <span class="badge blue">Dual-Layer RBAC</span>
+      </div>
+
+      <div style="max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem;">
+        
+        <!-- Role Cards -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+          <div class="resource-card" style="border-left: 4px solid var(--brand-primary);">
+            <div class="resource-card-title">
+              <span>ROLE_STUDENT</span>
+              <span class="badge emerald">Instant Active</span>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+              Self-service registration. Immediate access to Footholds, Monaco Editor, Socratic AI hints, Peer 1-on-1 chat, and Tier 3 Mentor escalation.
+            </p>
+            <div class="node-tags">
+              <span class="node-tag">Foothold Ingest</span>
+              <span class="node-tag">AI Tutor</span>
+              <span class="node-tag">Peer Chat</span>
+            </div>
+          </div>
+
+          <div class="resource-card" style="border-left: 4px solid var(--accent-amber);">
+            <div class="resource-card-title">
+              <span>ROLE_MENTOR</span>
+              <span class="badge" style="background: var(--accent-amber-bg); color: var(--accent-amber); border-color: var(--accent-amber-border);">Pending Approval</span>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+              Signs up with credentials + LinkedIn URL. Placed in <code>PENDING_APPROVAL</code>. Cannot view student tickets until Admin approves. Once approved: claims and resolves Tier 3 tickets.
+            </p>
+            <div class="node-tags">
+              <span class="node-tag">Claim Tickets</span>
+              <span class="node-tag">View Code Diffs</span>
+              <span class="node-tag">Close Escalations</span>
+            </div>
+          </div>
+
+          <div class="resource-card" style="border-left: 4px solid var(--accent-purple);">
+            <div class="resource-card-title">
+              <span>ROLE_ADMIN</span>
+              <span class="badge purple">System Authority</span>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+              Full platform governance. Accesses <code>/admin/dashboard</code>, reviews pending mentor queue, approves/rejects mentors, manages tracks, and bans malicious users.
+            </p>
+            <div class="node-tags">
+              <span class="node-tag">Approve Mentors</span>
+              <span class="node-tag">Ban Users</span>
+              <span class="node-tag">Track Governance</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RBAC Permission Matrix Table -->
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Resource / Action</th>
+                <th>Endpoint Pattern</th>
+                <th style="text-align: center;">Student</th>
+                <th style="text-align: center;">Mentor (Approved)</th>
+                <th style="text-align: center;">Admin</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Foothold &amp; Story Access</strong></td>
+                <td><code>GET /api/v1/curriculum/footholds/{id}</code></td>
+                <td style="text-align: center;">✅</td>
+                <td style="text-align: center;">✅</td>
+                <td style="text-align: center;">✅</td>
+              </tr>
+              <tr>
+                <td><strong>Code Submission &amp; Eval</strong></td>
+                <td><code>POST /api/v1/submissions</code></td>
+                <td style="text-align: center;">✅</td>
+                <td style="text-align: center;">✅</td>
+                <td style="text-align: center;">✅</td>
+              </tr>
+              <tr>
+                <td><strong>Socratic AI Hints (Tier 1)</strong></td>
+                <td><code>POST /api/v1/collab/ai/hints</code></td>
+                <td style="text-align: center;">✅</td>
+                <td style="text-align: center;">✅</td>
+                <td style="text-align: center;">✅</td>
+              </tr>
+              <tr>
+                <td><strong>Peer 1-on-1 Chat (Tier 2)</strong></td>
+                <td><code>STOMP /topic/chat.{threadId}</code></td>
+                <td style="text-align: center;">✅</td>
+                <td style="text-align: center;">✅</td>
+                <td style="text-align: center;">✅</td>
+              </tr>
+              <tr>
+                <td><strong>Escalate Ticket (Tier 3)</strong></td>
+                <td><code>POST /api/v1/collab/tickets</code></td>
+                <td style="text-align: center;">✅</td>
+                <td style="text-align: center;">❌</td>
+                <td style="text-align: center;">❌</td>
+              </tr>
+              <tr>
+                <td><strong>Claim &amp; Resolve Ticket</strong></td>
+                <td><code>POST /api/v1/collab/tickets/{id}/claim</code></td>
+                <td style="text-align: center;">❌</td>
+                <td style="text-align: center;">✅</td>
+                <td style="text-align: center;">✅</td>
+              </tr>
+              <tr>
+                <td><strong>View Student Code Diff</strong></td>
+                <td><code>GET /api/v1/collab/tickets/{id}/code</code></td>
+                <td style="text-align: center;">❌</td>
+                <td style="text-align: center;">✅</td>
+                <td style="text-align: center;">✅</td>
+              </tr>
+              <tr>
+                <td><strong>Pending Mentor Queue</strong></td>
+                <td><code>GET /api/v1/admin/mentors/pending</code></td>
+                <td style="text-align: center;">❌</td>
+                <td style="text-align: center;">❌</td>
+                <td style="text-align: center;">✅</td>
+              </tr>
+              <tr>
+                <td><strong>Approve / Reject Mentor</strong></td>
+                <td><code>POST /api/v1/admin/mentors/{id}/approve</code></td>
+                <td style="text-align: center;">❌</td>
+                <td style="text-align: center;">❌</td>
+                <td style="text-align: center;">✅</td>
+              </tr>
+              <tr>
+                <td><strong>User Ban &amp; Session Evict</strong></td>
+                <td><code>POST /api/v1/admin/users/{id}/ban</code></td>
+                <td style="text-align: center;">❌</td>
+                <td style="text-align: center;">❌</td>
+                <td style="text-align: center;">✅</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Dual-Layer RBAC Architecture Code -->
+        <div class="canvas-card">
+          <div class="panel-header">
+            <div>
+              <h3>Dual-Layer Security &amp; Instant Redis Session Elevation</h3>
+              <p>Edge Gateway Path Filter + Service-Level @PreAuthorize Method Security</p>
+            </div>
+            <span class="badge blue">Spring Security + Redis</span>
+          </div>
+          <div class="code-pill">
+// 1. Edge Gateway Route Protection (gateway-service)
+@Bean
+public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+    return http
+        .authorizeExchange(ex -> ex
+            .pathMatchers("/api/v1/auth/**").permitAll()
+            .pathMatchers("/api/v1/admin/**").hasRole("ADMIN")
+            .pathMatchers("/api/v1/mentor/**").hasRole("MENTOR")
+            .anyExchange().authenticated()
+        )
+        .build();
+}
+
+// 2. Downstream Service Method Security (collab-service / user-service)
+@RestController
+@RequestMapping("/api/v1/collab/tickets")
+public class TicketController {
+    @PostMapping("/{id}/claim")
+    @PreAuthorize("hasAnyRole('MENTOR', 'ADMIN')")
+    public ResponseEntity<Void> claimTicket(@PathVariable String id, HttpSession session) {
+        String mentorId = (String) session.getAttribute("user_id");
+        ticketService.claim(id, mentorId);
+        return ResponseEntity.ok().build();
+    }
+}
+
+// 3. Instant Role Elevation on Admin Approval (user-service)
+@Transactional
+public void approveMentor(String mentorUserId, String adminId) {
+    userRepository.updateRoleAndStatus(mentorUserId, Role.ROLE_MENTOR, Status.ACTIVE);
+    // Find active Redis sessions for this user and mutate role in O(1) time
+    sessionRepository.findByPrincipalName(mentorUserId).forEach((sessionId, session) -> {
+        session.setAttribute("role", "ROLE_MENTOR");
+        sessionRepository.save(session);
+    });
+}
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 5: PRODUCTION EVOLUTION -->
+    <section id="tab-production" class="tab-panel">
+      <div class="panel-header" style="max-width: 1000px; margin: 0 auto 1.5rem auto;">
+        <div>
+          <h2>Enterprise Production Gateway Evolution</h2>
+          <p>Connecting the Dots: How Local Architecture Matures into Cloud Production Infrastructure</p>
+        </div>
+      </div>
+
+      <div class="compare-container" style="max-width: 1000px; margin: 0 auto;">
+        <!-- Phase 1: Local / Learning -->
+        <div class="compare-card highlight">
+          <div class="compare-header">
+            <h3>Phase 1: Local Kubernetes / MVP</h3>
+            <p>Spring Cloud Gateway as Dedicated Auth & Router</p>
+          </div>
+          <ul class="inspector-details-list">
+            <li>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span><strong>Unified Ingress & Auth:</strong> <code>gateway-service</code> handles path-based routing, CORS, rate-limiting, and login/session creation.</span>
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span><strong>Zero Extra Infra:</strong> No complex NGINX / Envoy controllers needed on local machine; simple Helm chart deployment.</span>
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span><strong>Shared Redis:</strong> Both Gateway and internal services speak the same Java Spring Session serialization protocol natively.</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Phase 2: Enterprise -->
+        <div class="compare-card">
+          <div class="compare-header">
+            <h3>Phase 2: Enterprise Production Scale</h3>
+            <p>Cloud Ingress (Envoy / Kong / ALB) + Auth Service</p>
+          </div>
+          <ul class="inspector-details-list">
+            <li>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span><strong>L7 Edge Termination:</strong> AWS ALB or NGINX Ingress Controller terminates public TLS certificates and handles DDoS protection (WAF / Cloudflare).</span>
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span><strong>External Auth Filter:</strong> Envoy / Ingress delegates session verification to <code>gateway-service</code> or dedicated Auth pods via <code>forward-auth</code>.</span>
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span><strong>Managed Redis Cluster:</strong> AWS ElastiCache / Redis Enterprise with Multi-AZ replication ensures zero downtime failover.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const nodeDetails = {
+      frontend: {
+        title: "💻 Next.js Client Application",
+        type: "Frontend Cockpit (React 19 / Next.js 15)",
+        port: "Port 3000",
+        responsibilities: [
+          "50/50 Split Coding Cockpit with Monaco Editor and Expand Mode.",
+          "Automatic transmission of HttpOnly APP_SESSION cookie on all fetch calls.",
+          "Maintains STOMP over WebSocket connection to /ws-connect for async test results.",
+          "Zero token storage in localStorage or sessionStorage (protects against XSS)."
+        ],
+        code: `// lib/api-client.ts\nexport const fetcher = async (url: string, options: RequestInit = {}) => {\n  // Browser automatically attaches HttpOnly cookie APP_SESSION\n  const res = await fetch(\`http://localhost:8080\${url}\`, {\n    ...options,\n    credentials: 'include',\n    headers: { 'Content-Type': 'application/json', ...options.headers }\n  });\n  return res.json();\n};`
+      },
+      gateway: {
+        title: "🛡️ gateway-service",
+        type: "Dedicated Auth Handler & Edge Reverse Proxy",
+        port: "Port 8080",
+        responsibilities: [
+          "Dedicated Auth Endpoints: Handles /api/v1/auth/login, signup, logout.",
+          "Issues and invalidates opaque APP_SESSION cookie backed by Redis.",
+          "Validates active Redis session on incoming protected routes.",
+          "Proxies traffic downstream and upgrades WebSocket handshakes."
+        ],
+        code: `@Bean\npublic WebSessionIdResolver webSessionIdResolver() {\n    CookieWebSessionIdResolver resolver = new CookieWebSessionIdResolver();\n    resolver.setCookieName("APP_SESSION");\n    resolver.addCookieInitializer(b -> b\n        .httpOnly(true)\n        .secure(true)\n        .sameSite("Strict")\n        .path("/"));\n    return resolver;\n}`
+      },
+      redis: {
+        title: "⚡ Shared Redis Session Cache",
+        type: "Distributed In-Memory Session & Presence Store",
+        port: "Port 6379",
+        responsibilities: [
+          "Shared spring-session-data-redis storage for Gateway and ALL microservices.",
+          "Session keys: spring:session:sessions:<id> (TTL 7 days).",
+          "User presence heartbeats: presence:<userId> (TTL 60s).",
+          "Instant O(1) logout invalidation across the entire cluster."
+        ],
+        code: `# Redis session keyspace\nspring:session:sessions:<session-id>\nspring:session:sessions:expires:<session-id>\nspring:session:expirations:<timestamp>\npresence:<user-id> -> "active" (TTL: 60s)`
+      },
+      user: {
+        title: "👤 user-service",
+        type: "User Profile, RBAC & Mentor Verification",
+        port: "Port 8081",
+        responsibilities: [
+          "Manages Student and Mentor profile documents in MongoDB.",
+          "Handles Mentor Admin-approval workflow queue (FR-15).",
+          "Reads user session directly from shared Redis cache.",
+          "Emits user registration and role change events."
+        ],
+        code: `@RestController\n@RequestMapping("/api/v1/users")\npublic class UserController {\n    @GetMapping("/me")\n    public ResponseEntity<UserProfile> getMe(HttpSession session) {\n        String userId = (String) session.getAttribute("user_id");\n        return ResponseEntity.ok(userService.findById(userId));\n    }\n}`
+      },
+      curriculum: {
+        title: "📚 curriculum-service",
+        type: "Curriculum Engine & Prerequisite Gatekeeper",
+        port: "Port 8082",
+        responsibilities: [
+          "Stores Tracks, Footholds, text stories, and starter Java code templates.",
+          "Validates load-bearing prerequisite constraints before unlocking footholds.",
+          "Records student completion events in MongoDB.",
+          "Directly accesses shared Redis session context."
+        ],
+        code: `@GetMapping("/tracks/{trackId}/footholds/{id}")\npublic FootholdDTO getFoothold(@PathVariable String id, HttpSession session) {\n    String userId = (String) session.getAttribute("user_id");\n    // Verify prerequisite foothold completion before returning\n    return curriculumService.getUnlockedFoothold(userId, id);\n}`
+      },
+      submission: {
+        title: "📤 submission-service",
+        type: "Asynchronous Submission Ingestion Engine",
+        port: "Port 8083",
+        responsibilities: [
+          "Receives student code submission from Monaco Cockpit.",
+          "Generates unique submissionId and publishes to Kafka topic 'code.submissions'.",
+          "Returns immediate HTTP 202 Accepted { submissionId } in under 20ms.",
+          "Zero blocking on code compilation or execution."
+        ],
+        code: `@PostMapping("/submissions")\npublic ResponseEntity<SubmissionResponse> submit(\n    @RequestBody SubmissionRequest req,\n    HttpSession session) {\n    String userId = (String) session.getAttribute("user_id");\n    String subId = submissionService.queueSubmission(userId, req);\n    return ResponseEntity.accepted().body(new SubmissionResponse(subId));\n}`
+      },
+      collab: {
+        title: "💬 collab-service",
+        type: "STOMP WebSocket & Socratic Spring AI 2 Engine",
+        port: "Port 8084",
+        responsibilities: [
+          "STOMP broker over SockJS for /topic/submissions.{id} and /topic/chat.{id}.",
+          "Consumes Kafka 'code.results' topic and pushes test results to clients.",
+          "Spring AI 2 OpenAI integration with story-anchored Socratic prompts.",
+          "Tracks Redis presence heartbeats for Peer Solver discovery."
+        ],
+        code: `@KafkaListener(topics = "code.results")\npublic void handleExecutionResult(ExecutionResultEvent event) {\n    // Push result directly to client's private subscription channel\n    messagingTemplate.convertAndSend(\n        "/topic/submissions." + event.getSubmissionId(),\n        event\n    );\n}`
+      },
+      kafka: {
+        title: "📨 Apache Kafka",
+        type: "High-Throughput Event Streaming Backbone",
+        port: "Port 9092",
+        responsibilities: [
+          "Operates in KRaft mode (zero Zookeeper overhead, saving 500MB RAM).",
+          "Topic 'code.submissions': Decouples HTTP ingest from worker execution.",
+          "Topic 'code.results': Delivers completed sandbox evaluation payloads.",
+          "Guarantees at-least-once message processing."
+        ],
+        code: `# Helm Values for Kafka KRaft\nkafka:\n  kraft:\n    enabled: true\n  zookeeper:\n    enabled: false\n  resources:\n    limits:\n      memory: 384Mi\n      cpu: 500m`
+      },
+      worker: {
+        title: "⚙️ sandbox-runner-service",
+        type: "Isolated Ephemeral Docker Code Execution Worker",
+        port: "Worker Pod (Docker Engine)",
+        responsibilities: [
+          "Consumes code submissions from Kafka 'code.submissions' topic.",
+          "Spawns isolated ephemeral container: docker run --network none --memory 128m.",
+          "Hard 3000ms CPU execution timeout and read-only tmpfs mount.",
+          "Publishes stdout/stderr outcome to Kafka 'code.results' topic."
+        ],
+        code: `docker run --rm \\\n  --network none \\\n  --memory 128m \\\n  --cpus 1.0 \\\n  --tmpfs /sandbox:rw,size=16m \\\n  codeconnect-runner:java21`
+      },
+      mongo: {
+        title: "🍃 MongoDB Community",
+        type: "Unified Persistent Document Database",
+        port: "Port 27017",
+        responsibilities: [
+          "Single document database for all domain models across all microservices.",
+          "Collections: users, mentor_approval_requests, tracks, footholds, progress, chat_messages.",
+          "Optimized compound indexes for fast prerequisite traversal.",
+          "Clean migration model without polyglot database drift."
+        ],
+        code: `// MongoDB Collections Schema Overview\ndb.users.createIndex({ "email": 1 }, { unique: true });\ndb.user_progress.createIndex({ "userId": 1, "footholdId": 1 });\ndb.chat_messages.createIndex({ "threadId": 1, "createdAt": -1 });`
+      }
+    };
+
+    function selectNode(nodeKey) {
+      document.querySelectorAll('.node-card').forEach(c => c.classList.remove('selected'));
+      const activeCard = document.getElementById('node-' + nodeKey);
+      if (activeCard) activeCard.classList.add('selected');
+
+      const details = nodeDetails[nodeKey];
+      if (!details) return;
+
+      document.getElementById('insp-title').innerText = details.title;
+      document.getElementById('insp-type').innerText = details.type;
+      document.getElementById('insp-port').innerText = details.port;
+
+      const respList = document.getElementById('insp-responsibilities');
+      respList.innerHTML = details.responsibilities.map(r => `
+        <li>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <span>${r}</span>
+        </li>
+      `).join('');
+
+      document.getElementById('insp-code').innerText = details.code;
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+
+      event.currentTarget.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+    }
+  </script>
+</body>
+</html>
