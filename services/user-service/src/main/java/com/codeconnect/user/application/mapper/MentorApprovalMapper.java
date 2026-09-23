@@ -1,6 +1,6 @@
 package com.codeconnect.user.application.mapper;
 
-import com.codeconnect.user.application.dto.MentorApprovalResponse;
+import com.codeconnect.user.application.dto.response.MentorApprovalResponse;
 import com.codeconnect.user.domain.model.MentorApprovalRequest;
 import org.springframework.stereotype.Component;
 

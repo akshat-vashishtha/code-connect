@@ -41,18 +41,6 @@
             <artifactId>spring-session-data-redis</artifactId>
         </dependency>
 
-        <!-- Reactive MongoDB for user persistence and verification requests -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb-reactive</artifactId>
-        </dependency>
-
-        <!-- Spring Security Crypto for BCrypt password hashing -->
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-crypto</artifactId>
-        </dependency>
-
         <!-- Actuator for Health & Telemetry -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -20,6 +20,10 @@ public record ApiResponse<T>(
         return ok("Success", data);
     }
 
+    public static <T> ApiResponse<T> created(String message, T data) {
+        return new ApiResponse<>(true, message, data, null, Instant.now());
+    }
+
     public static <T> ApiResponse<T> failure(String message, String traceId) {
         return new ApiResponse<>(false, message, null, traceId, Instant.now());
     }

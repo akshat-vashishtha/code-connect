@@ -1,6 +1,6 @@
 package com.codeconnect.user.application.service;
 
-import com.codeconnect.user.application.dto.MentorApprovalResponse;
+import com.codeconnect.user.application.dto.response.MentorApprovalResponse;
 
 import java.util.List;
 

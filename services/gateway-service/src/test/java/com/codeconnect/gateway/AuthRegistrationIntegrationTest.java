@@ -1,20 +1,28 @@
 package com.codeconnect.gateway;
 
 import com.codeconnect.gateway.application.dto.request.SignupRequest;
-import com.codeconnect.gateway.domain.enums.MentorApprovalStatus;
+import com.codeconnect.gateway.application.dto.response.UserResponse;
 import com.codeconnect.gateway.domain.enums.UserRole;
-import com.codeconnect.gateway.domain.repository.ReactiveMentorApprovalRepository;
-import com.codeconnect.gateway.domain.repository.ReactiveUserRepository;
-import org.junit.jupiter.api.BeforeEach;
+import com.codeconnect.gateway.domain.enums.UserStatus;
+import com.codeconnect.gateway.domain.exception.EmailAlreadyExistsException;
+import com.codeconnect.gateway.infrastructure.client.UserServiceClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Mono;
+
+import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @AutoConfigureWebTestClient
@@ -23,17 +31,8 @@ class AuthRegistrationIntegrationTest {
     @Autowired
     private WebTestClient webTestClient;
 
-    @Autowired
-    private ReactiveUserRepository userRepository;
-
-    @Autowired
-    private ReactiveMentorApprovalRepository mentorApprovalRepository;
-
-    @BeforeEach
-    void setUp() {
-        userRepository.deleteAll().block();
-        mentorApprovalRepository.deleteAll().block();
-    }
+    @MockBean
+    private UserServiceClient userServiceClient;
 
     @Test
     @DisplayName("Should successfully register Student with ACTIVE status and return APP_SESSION cookie")
@@ -46,6 +45,17 @@ class AuthRegistrationIntegrationTest {
             null,
             null
         );
+
+        UserResponse mockResponse = new UserResponse(
+            "user-student-1",
+            "student@codeconnect.dev",
+            "Aarav Sharma",
+            UserRole.ROLE_STUDENT,
+            UserStatus.ACTIVE,
+            Instant.now()
+        );
+
+        when(userServiceClient.register(any(SignupRequest.class))).thenReturn(Mono.just(mockResponse));
 
         webTestClient.post()
             .uri("/api/v1/auth/signup")
@@ -63,20 +73,14 @@ class AuthRegistrationIntegrationTest {
             .jsonPath("$.data.email").isEqualTo("student@codeconnect.dev")
             .jsonPath("$.data.displayName").isEqualTo("Aarav Sharma")
             .jsonPath("$.data.role").isEqualTo("ROLE_STUDENT")
-            .jsonPath("$.data.status").isEqualTo("ACTIVE")
-            .jsonPath("$.data.password").doesNotExist()
-            .jsonPath("$.data.passwordHash").doesNotExist();
+            .jsonPath("$.data.status").isEqualTo("ACTIVE");
 
-        // Verify MongoDB persistence and password hashing
-        var savedUser = userRepository.findByEmail("student@codeconnect.dev").block();
-        assertThat(savedUser).isNotNull();
-        assertThat(savedUser.getPasswordHash()).startsWith("$2a$");
-        assertThat(savedUser.getPasswordHash()).isNotEqualTo("SecurePass123!");
+        verify(userServiceClient).register(any(SignupRequest.class));
     }
 
     @Test
-    @DisplayName("Should register Mentor with PENDING_APPROVAL status and create approval audit request")
-    void shouldRegisterMentorWithPendingApprovalAndCreateAuditRequest() {
+    @DisplayName("Should register Mentor with PENDING_APPROVAL status and issue session")
+    void shouldRegisterMentorWithPendingApproval() {
         SignupRequest request = new SignupRequest(
             "mentor@codeconnect.dev",
             "MentorPass123!",
@@ -85,6 +89,17 @@ class AuthRegistrationIntegrationTest {
             "https://linkedin.com/in/priyapatel",
             "Principal Distributed Systems Architect with 10+ years experience"
         );
+
+        UserResponse mockResponse = new UserResponse(
+            "user-mentor-1",
+            "mentor@codeconnect.dev",
+            "Priya Patel",
+            UserRole.ROLE_MENTOR,
+            UserStatus.PENDING_APPROVAL,
+            Instant.now()
+        );
+
+        when(userServiceClient.register(any(SignupRequest.class))).thenReturn(Mono.just(mockResponse));
 
         webTestClient.post()
             .uri("/api/v1/auth/signup")
@@ -100,113 +115,32 @@ class AuthRegistrationIntegrationTest {
             .jsonPath("$.data.email").isEqualTo("mentor@codeconnect.dev")
             .jsonPath("$.data.role").isEqualTo("ROLE_MENTOR")
             .jsonPath("$.data.status").isEqualTo("PENDING_APPROVAL");
-
-        // Verify user in Mongo
-        var savedUser = userRepository.findByEmail("mentor@codeconnect.dev").block();
-        assertThat(savedUser).isNotNull();
-        assertThat(savedUser.getStatus().name()).isEqualTo("PENDING_APPROVAL");
-
-        // Verify mentor approval audit entry in Mongo
-        var approvalRequest = mentorApprovalRepository.findByUserId(savedUser.getId()).block();
-        assertThat(approvalRequest).isNotNull();
-        assertThat(approvalRequest.getLinkedInUrl()).isEqualTo("https://linkedin.com/in/priyapatel");
-        assertThat(approvalRequest.getBio()).contains("Principal Distributed Systems Architect");
-        assertThat(approvalRequest.getStatus()).isEqualTo(MentorApprovalStatus.PENDING);
     }
 
     @Test
-    @DisplayName("Should reject duplicate email registration with HTTP 409 Conflict in RFC 7807 Problem Details")
-    void shouldRejectDuplicateEmailWith409ConflictAndRfc7807ProblemDetail() {
-        SignupRequest initialRequest = new SignupRequest(
+    @DisplayName("Should reject duplicate registration with HTTP 409 Conflict ProblemDetail")
+    void shouldRejectDuplicateEmailRegistration() {
+        SignupRequest request = new SignupRequest(
             "duplicate@codeconnect.dev",
-            "Password123!",
-            "First User",
+            "SecurePass123!",
+            "Existing User",
             UserRole.ROLE_STUDENT,
             null,
             null
         );
 
-        // First registration succeeds
-        webTestClient.post()
-            .uri("/api/v1/auth/signup")
-            .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(initialRequest)
-            .exchange()
-            .expectStatus().isCreated();
-
-        // Second registration with identical email (case-insensitive) fails with 409
-        SignupRequest duplicateRequest = new SignupRequest(
-            "DUPLICATE@codeconnect.dev",
-            "DifferentPass456!",
-            "Second User",
-            UserRole.ROLE_STUDENT,
-            null,
-            null
-        );
+        when(userServiceClient.register(argThat(r -> r != null && "duplicate@codeconnect.dev".equals(r.email()))))
+            .thenReturn(Mono.error(new EmailAlreadyExistsException("duplicate@codeconnect.dev")));
 
         webTestClient.post()
             .uri("/api/v1/auth/signup")
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(duplicateRequest)
+            .bodyValue(request)
             .exchange()
             .expectStatus().isEqualTo(409)
             .expectHeader().contentType(MediaType.APPLICATION_PROBLEM_JSON)
             .expectBody()
-            .jsonPath("$.type").isEqualTo("https://codeconnect.dev/errors/email-conflict")
             .jsonPath("$.title").isEqualTo("Email Conflict")
-            .jsonPath("$.status").isEqualTo(409)
-            .jsonPath("$.detail").value(detail -> {
-                assertThat(detail.toString()).contains("duplicate@codeconnect.dev");
-                assertThat(detail.toString()).contains("already registered");
-            });
-    }
-
-    @Test
-    @DisplayName("Should reject invalid email format with HTTP 400 Bad Request")
-    void shouldRejectInvalidEmailFormatWith400BadRequest() {
-        SignupRequest invalidRequest = new SignupRequest(
-            "invalid-email-address",
-            "Password123!",
-            "User Name",
-            UserRole.ROLE_STUDENT,
-            null,
-            null
-        );
-
-        webTestClient.post()
-            .uri("/api/v1/auth/signup")
-            .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(invalidRequest)
-            .exchange()
-            .expectStatus().isBadRequest()
-            .expectHeader().contentType(MediaType.APPLICATION_PROBLEM_JSON)
-            .expectBody()
-            .jsonPath("$.status").isEqualTo(400)
-            .jsonPath("$.title").isEqualTo("Validation Failed");
-    }
-
-    @Test
-    @DisplayName("Should reject mentor signup without LinkedIn URL with HTTP 400 Bad Request")
-    void shouldRejectMentorWithoutLinkedInUrlWith400BadRequest() {
-        SignupRequest mentorWithoutLinkedIn = new SignupRequest(
-            "incomplete-mentor@codeconnect.dev",
-            "Password123!",
-            "Incomplete Mentor",
-            UserRole.ROLE_MENTOR,
-            "",
-            "A valid bio description"
-        );
-
-        webTestClient.post()
-            .uri("/api/v1/auth/signup")
-            .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(mentorWithoutLinkedIn)
-            .exchange()
-            .expectStatus().isBadRequest()
-            .expectHeader().contentType(MediaType.APPLICATION_PROBLEM_JSON)
-            .expectBody()
-            .jsonPath("$.status").isEqualTo(400)
-            .jsonPath("$.detail").value(detail ->
-                assertThat(detail.toString()).contains("LinkedIn URL is required"));
+            .jsonPath("$.status").isEqualTo(409);
     }
 }

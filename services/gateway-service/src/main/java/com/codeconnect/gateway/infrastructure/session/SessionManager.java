@@ -1,7 +1,7 @@
 package com.codeconnect.gateway.infrastructure.session;
 
+import com.codeconnect.gateway.application.dto.response.UserResponse;
 import com.codeconnect.gateway.domain.exception.UnauthorizedException;
-import com.codeconnect.gateway.domain.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.WebSession;
@@ -20,12 +20,12 @@ public class SessionManager {
     public static final String ATTR_USER_ROLE = "USER_ROLE";
     public static final String ATTR_USER_STATUS = "USER_STATUS";
 
-    public Mono<Void> establishSession(User user, WebSession webSession) {
+    public Mono<Void> establishSession(UserResponse user, WebSession webSession) {
         return Mono.fromRunnable(() -> {
-            webSession.getAttributes().put(ATTR_USER_ID, user.getId());
-            webSession.getAttributes().put(ATTR_USER_EMAIL, user.getEmail());
-            webSession.getAttributes().put(ATTR_USER_ROLE, user.getRole().name());
-            webSession.getAttributes().put(ATTR_USER_STATUS, user.getStatus().name());
+            webSession.getAttributes().put(ATTR_USER_ID, user.id());
+            webSession.getAttributes().put(ATTR_USER_EMAIL, user.email());
+            webSession.getAttributes().put(ATTR_USER_ROLE, user.role().name());
+            webSession.getAttributes().put(ATTR_USER_STATUS, user.status().name());
         })
         .then(webSession.changeSessionId())
         .then(webSession.save());

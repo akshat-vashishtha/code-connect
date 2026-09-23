@@ -1,5 +1,8 @@
 package com.codeconnect.user.presentation.exception;
 
+import com.codeconnect.user.domain.exception.AccountBannedException;
+import com.codeconnect.user.domain.exception.EmailAlreadyExistsException;
+import com.codeconnect.user.domain.exception.InvalidCredentialsException;
 import com.codeconnect.user.domain.exception.ResourceNotFoundException;
 import com.codeconnect.user.infrastructure.config.UserProperties;
 import lombok.RequiredArgsConstructor;
@@ -55,6 +58,71 @@ public class GlobalExceptionHandler {
         problem.setType(buildErrorUri("validation-error"));
         problem.setTitle("Validation Failed");
         problem.setProperty("errors", errors);
+        problem.setProperty("timestamp", Instant.now());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+            .body(problem);
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ProblemDetail> handleIllegalState(IllegalStateException ex) {
+        log.warn("Handling IllegalStateException: {}", ex.getMessage());
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(buildErrorUri("state-conflict"));
+        problem.setTitle("State Conflict");
+        problem.setProperty("timestamp", Instant.now());
+
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+            .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+            .body(problem);
+    }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<ProblemDetail> handleEmailAlreadyExists(EmailAlreadyExistsException ex) {
+        log.warn("Handling EmailAlreadyExistsException: {}", ex.getMessage());
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(buildErrorUri("email-conflict"));
+        problem.setTitle("Email Conflict");
+        problem.setProperty("timestamp", Instant.now());
+
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+            .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+            .body(problem);
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ProblemDetail> handleInvalidCredentials(InvalidCredentialsException ex) {
+        log.warn("Handling InvalidCredentialsException: {}", ex.getMessage());
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
+        problem.setType(buildErrorUri("invalid-credentials"));
+        problem.setTitle("Invalid Credentials");
+        problem.setProperty("timestamp", Instant.now());
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+            .body(problem);
+    }
+
+    @ExceptionHandler(AccountBannedException.class)
+    public ResponseEntity<ProblemDetail> handleAccountBanned(AccountBannedException ex) {
+        log.warn("Handling AccountBannedException: {}", ex.getMessage());
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
+        problem.setType(buildErrorUri("account-banned"));
+        problem.setTitle("Account Banned");
+        problem.setProperty("timestamp", Instant.now());
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+            .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+            .body(problem);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ProblemDetail> handleIllegalArgument(IllegalArgumentException ex) {
+        log.warn("Handling IllegalArgumentException: {}", ex.getMessage());
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setType(buildErrorUri("validation-error"));
+        problem.setTitle("Invalid Request");
         problem.setProperty("timestamp", Instant.now());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)

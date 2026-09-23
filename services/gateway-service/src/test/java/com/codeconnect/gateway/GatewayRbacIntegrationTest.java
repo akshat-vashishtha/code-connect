@@ -1,24 +1,27 @@
 package com.codeconnect.gateway;
 
 import com.codeconnect.gateway.application.dto.request.LoginRequest;
-import com.codeconnect.gateway.domain.model.User;
+import com.codeconnect.gateway.application.dto.response.UserResponse;
 import com.codeconnect.gateway.domain.enums.UserRole;
 import com.codeconnect.gateway.domain.enums.UserStatus;
-import com.codeconnect.gateway.domain.repository.ReactiveUserRepository;
+import com.codeconnect.gateway.infrastructure.client.UserServiceClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Mono;
 
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @AutoConfigureWebTestClient
@@ -27,39 +30,16 @@ class GatewayRbacIntegrationTest {
     @Autowired
     private WebTestClient webTestClient;
 
-    @Autowired
-    private ReactiveUserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    @MockBean
+    private UserServiceClient userServiceClient;
 
     @BeforeEach
     void setUp() {
-        userRepository.deleteAll().block();
+        when(userServiceClient.authenticate(argThat(r -> r != null && "student-rbac@codeconnect.dev".equals(r.email()))))
+            .thenReturn(Mono.just(new UserResponse("student-1", "student-rbac@codeconnect.dev", "Student", UserRole.ROLE_STUDENT, UserStatus.ACTIVE, Instant.now())));
 
-        // Seed Active Student
-        User student = User.builder()
-            .email("student-rbac@codeconnect.dev")
-            .passwordHash(passwordEncoder.encode("StudentPass123!"))
-            .displayName("Active Student")
-            .role(UserRole.ROLE_STUDENT)
-            .status(UserStatus.ACTIVE)
-            .createdAt(Instant.now())
-            .updatedAt(Instant.now())
-            .build();
-        userRepository.save(student).block();
-
-        // Seed Active Mentor
-        User mentor = User.builder()
-            .email("mentor-rbac@codeconnect.dev")
-            .passwordHash(passwordEncoder.encode("MentorPass123!"))
-            .displayName("Active Mentor")
-            .role(UserRole.ROLE_MENTOR)
-            .status(UserStatus.ACTIVE)
-            .createdAt(Instant.now())
-            .updatedAt(Instant.now())
-            .build();
-        userRepository.save(mentor).block();
+        when(userServiceClient.authenticate(argThat(r -> r != null && "mentor-rbac@codeconnect.dev".equals(r.email()))))
+            .thenReturn(Mono.just(new UserResponse("mentor-1", "mentor-rbac@codeconnect.dev", "Mentor", UserRole.ROLE_MENTOR, UserStatus.ACTIVE, Instant.now())));
     }
 
     private String loginAndGetSessionCookie(String email, String password) {

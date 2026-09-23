@@ -1,6 +1,6 @@
 package com.codeconnect.user;
 
-import com.codeconnect.user.application.dto.LanguageDetectionRequest;
+import com.codeconnect.user.application.dto.request.LanguageDetectionRequest;
 import com.codeconnect.user.domain.enums.LanguagePreference;
 import com.codeconnect.user.domain.model.MentorApprovalRequest;
 import com.codeconnect.user.domain.enums.MentorApprovalStatus;
@@ -167,6 +167,26 @@ class AdminMentorVerificationIntegrationTest {
 
         MentorApprovalRequest updatedReq = mentorApprovalRepository.findById(savedReq.getId()).orElseThrow();
         assertThat(updatedReq.getStatus()).isEqualTo(MentorApprovalStatus.REJECTED);
+    }
+
+    @Test
+    @DisplayName("Should return HTTP 409 Conflict when attempting to adjudicate an already processed application")
+    void shouldRejectReAdjudicationOfAlreadyProcessedApplication() throws Exception {
+        MentorApprovalRequest req = MentorApprovalRequest.builder()
+            .userId("user-already-processed")
+            .email("processed@codeconnect.dev")
+            .linkedInUrl("https://linkedin.com/in/processed")
+            .bio("Brief bio")
+            .status(MentorApprovalStatus.APPROVED)
+            .submittedAt(Instant.now())
+            .build();
+        MentorApprovalRequest savedReq = mentorApprovalRepository.save(req);
+
+        mockMvc.perform(post("/api/v1/admin/mentors/{id}/approve", savedReq.getId())
+                .header("X-User-Email", "admin@codeconnect.dev"))
+            .andExpect(status().isConflict())
+            .andExpect(jsonPath("$.title").value("State Conflict"))
+            .andExpect(jsonPath("$.status").value(409));
     }
 
     @Test

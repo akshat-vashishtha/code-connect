@@ -32,20 +32,18 @@ public class MentorApprovalManager {
             .orElseThrow(() -> new ResourceNotFoundException("Mentor approval application not found for id: " + applicationId));
     }
 
-    public MentorApprovalRequest markApproved(MentorApprovalRequest request, String reviewerAdminEmail) {
-        request.setStatus(MentorApprovalStatus.APPROVED);
-        request.setReviewedAt(Instant.now());
-        request.setReviewedBy(resolveReviewer(reviewerAdminEmail));
+    public void validateAdjudicable(MentorApprovalRequest request) {
+        request.validatePending();
+    }
 
+    public MentorApprovalRequest markApproved(MentorApprovalRequest request, String reviewerAdminEmail) {
+        request.approve(resolveReviewer(reviewerAdminEmail));
         log.debug("Marked application id={} as APPROVED by reviewer={}", request.getId(), request.getReviewedBy());
         return mentorApprovalRepository.save(request);
     }
 
     public MentorApprovalRequest markRejected(MentorApprovalRequest request, String reviewerAdminEmail) {
-        request.setStatus(MentorApprovalStatus.REJECTED);
-        request.setReviewedAt(Instant.now());
-        request.setReviewedBy(resolveReviewer(reviewerAdminEmail));
-
+        request.reject(resolveReviewer(reviewerAdminEmail));
         log.debug("Marked application id={} as REJECTED by reviewer={}", request.getId(), request.getReviewedBy());
         return mentorApprovalRepository.save(request);
     }

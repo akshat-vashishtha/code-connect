@@ -2,9 +2,10 @@ package com.codeconnect.user.domain.model;
 
 import com.codeconnect.user.domain.enums.UserRole;
 import com.codeconnect.user.domain.enums.UserStatus;
+import com.codeconnect.user.domain.valueobject.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -13,9 +14,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.Instant;
 
 /**
- * MongoDB document entity representing user accounts in the 'users' collection.
+ * Rich domain entity representing user accounts in the 'users' MongoDB collection.
+ * Enforces domain invariants and encapsulates lifecycle state transitions.
  */
-@Data
+@Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -39,4 +41,46 @@ public class User {
     private Instant createdAt;
 
     private Instant updatedAt;
+
+    public static User createStudent(String email, String passwordHash, String displayName) {
+        String validatedEmail = new Email(email).value();
+        Instant now = Instant.now();
+        return User.builder()
+            .email(validatedEmail)
+            .passwordHash(passwordHash)
+            .displayName(displayName != null ? displayName.trim() : "")
+            .role(UserRole.ROLE_STUDENT)
+            .status(UserStatus.ACTIVE)
+            .createdAt(now)
+            .updatedAt(now)
+            .build();
+    }
+
+    public static User createMentor(String email, String passwordHash, String displayName) {
+        String validatedEmail = new Email(email).value();
+        Instant now = Instant.now();
+        return User.builder()
+            .email(validatedEmail)
+            .passwordHash(passwordHash)
+            .displayName(displayName != null ? displayName.trim() : "")
+            .role(UserRole.ROLE_MENTOR)
+            .status(UserStatus.PENDING_APPROVAL)
+            .createdAt(now)
+            .updatedAt(now)
+            .build();
+    }
+
+    /**
+     * Elevates a pending mentor's role to ROLE_MENTOR and activates account status.
+     * Encapsulates state mutation and timestamp updating.
+     */
+    public void elevateToMentor() {
+        this.role = UserRole.ROLE_MENTOR;
+        this.status = UserStatus.ACTIVE;
+        this.updatedAt = Instant.now();
+    }
+
+    public boolean isBanned() {
+        return this.status == UserStatus.BANNED;
+    }
 }

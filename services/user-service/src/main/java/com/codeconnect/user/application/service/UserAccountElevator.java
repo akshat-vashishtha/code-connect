@@ -26,9 +26,7 @@ public class UserAccountElevator {
             .or(() -> userRepository.findByEmail(email))
             .orElseThrow(() -> new ResourceNotFoundException("User associated with application not found"));
 
-        user.setRole(UserRole.ROLE_MENTOR);
-        user.setStatus(UserStatus.ACTIVE);
-        user.setUpdatedAt(Instant.now());
+        user.elevateToMentor();
 
         log.debug("Elevated user id={} email={} to ROLE_MENTOR and ACTIVE", user.getId(), user.getEmail());
         return userRepository.save(user);

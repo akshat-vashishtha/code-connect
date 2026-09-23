@@ -1,11 +1,11 @@
-package com.codeconnect.user.application.dto;
+package com.codeconnect.user.application.dto.response;
 
 import com.codeconnect.user.domain.enums.MentorApprovalStatus;
 
 import java.time.Instant;
 
 /**
- * Immutable response DTO representing mentor verification audit applications.
+ * Immutable response projection for mentor onboarding applications.
  */
 public record MentorApprovalResponse(
     String id,

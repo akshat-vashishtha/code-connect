@@ -104,6 +104,8 @@ export default function AdminMentorsPage() {
           type: "success",
           text: `Application for ${email} approved! Elevated user to ROLE_MENTOR and active Redis session updated in O(1) time.`,
         });
+      } else {
+        setFeedbackMessage({ type: "error", text: res.message || "Approval failed" });
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Approval failed";
@@ -124,6 +126,8 @@ export default function AdminMentorsPage() {
           type: "success",
           text: `Application for ${email} has been rejected.`,
         });
+      } else {
+        setFeedbackMessage({ type: "error", text: res.message || "Rejection failed" });
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Rejection failed";

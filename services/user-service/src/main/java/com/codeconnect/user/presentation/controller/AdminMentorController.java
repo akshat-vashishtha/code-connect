@@ -1,7 +1,7 @@
 package com.codeconnect.user.presentation.controller;
 
-import com.codeconnect.user.application.dto.ApiResponse;
-import com.codeconnect.user.application.dto.MentorApprovalResponse;
+import com.codeconnect.user.application.dto.response.ApiResponse;
+import com.codeconnect.user.application.dto.response.MentorApprovalResponse;
 import com.codeconnect.user.application.service.AdminMentorService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

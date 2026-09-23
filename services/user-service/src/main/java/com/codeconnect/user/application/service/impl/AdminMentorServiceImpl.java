@@ -1,6 +1,6 @@
 package com.codeconnect.user.application.service.impl;
 
-import com.codeconnect.user.application.dto.MentorApprovalResponse;
+import com.codeconnect.user.application.dto.response.MentorApprovalResponse;
 import com.codeconnect.user.application.mapper.MentorApprovalMapper;
 import com.codeconnect.user.application.service.AdminMentorService;
 import com.codeconnect.user.application.service.MentorApprovalManager;
@@ -41,6 +41,7 @@ public class AdminMentorServiceImpl implements AdminMentorService {
         log.info("Approving mentor application id={} by reviewer={}", applicationId, reviewerAdminEmail);
 
         MentorApprovalRequest request = mentorApprovalManager.findApplication(applicationId);
+        mentorApprovalManager.validateAdjudicable(request);
         User user = userAccountElevator.elevateToMentor(request.getUserId(), request.getEmail());
         MentorApprovalRequest approvedRequest = mentorApprovalManager.markApproved(request, reviewerAdminEmail);
 
