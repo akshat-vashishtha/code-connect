@@ -39,7 +39,7 @@ public class MentorApprovalRequest {
     private String bio;
 
     @Builder.Default
-    private String status = "PENDING";
+    private MentorApprovalStatus status = MentorApprovalStatus.PENDING;
 
     @CreatedDate
     private Instant submittedAt;

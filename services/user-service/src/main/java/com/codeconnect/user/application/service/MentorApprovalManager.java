@@ -2,6 +2,7 @@ package com.codeconnect.user.application.service;
 
 import com.codeconnect.user.domain.exception.ResourceNotFoundException;
 import com.codeconnect.user.domain.model.MentorApprovalRequest;
+import com.codeconnect.user.domain.model.MentorApprovalStatus;
 import com.codeconnect.user.domain.repository.MentorApprovalRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,7 @@ public class MentorApprovalManager {
     private final MentorApprovalRepository mentorApprovalRepository;
 
     public List<MentorApprovalRequest> findPendingApplications() {
-        return mentorApprovalRepository.findByStatus("PENDING");
+        return mentorApprovalRepository.findByStatus(MentorApprovalStatus.PENDING);
     }
 
     public MentorApprovalRequest findApplication(String applicationId) {
@@ -31,7 +32,7 @@ public class MentorApprovalManager {
     }
 
     public MentorApprovalRequest markApproved(MentorApprovalRequest request, String reviewerAdminEmail) {
-        request.setStatus("APPROVED");
+        request.setStatus(MentorApprovalStatus.APPROVED);
         request.setReviewedAt(Instant.now());
         request.setReviewedBy(resolveReviewer(reviewerAdminEmail));
 
@@ -40,7 +41,7 @@ public class MentorApprovalManager {
     }
 
     public MentorApprovalRequest markRejected(MentorApprovalRequest request, String reviewerAdminEmail) {
-        request.setStatus("REJECTED");
+        request.setStatus(MentorApprovalStatus.REJECTED);
         request.setReviewedAt(Instant.now());
         request.setReviewedBy(resolveReviewer(reviewerAdminEmail));
 

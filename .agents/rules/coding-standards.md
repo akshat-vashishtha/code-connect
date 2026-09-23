@@ -171,6 +171,11 @@ com.codeconnect.<servicename>/
     - The `@ConfigurationProperties` class/record must remain a completely pure, dumb data container.
 * **Centralized Global Exception Handling**:
   - Throw domain-specific exceptions. Centralized `@RestControllerAdvice` catches them and produces standardized `ApiResponse<T>` with HTTP error codes.
+* **Mandatory Enums for Discrete States, Roles & Statuses (Zero Magic Strings)**:
+  - Whenever domain values, lifecycle statuses, account states, roles, or discrete categories are known (e.g., `PENDING`, `APPROVED`, `REJECTED`, `ACTIVE`, `BANNED`, `ROLE_STUDENT`, `ROLE_MENTOR`, `ROLE_ADMIN`), they **MUST** be modeled as type-safe Java `enum`s.
+  - **Zero Hardcoded Strings**: Never use magic string literals in entities, repositories, services, or DTO records (e.g., forbidding `setStatus("APPROVED")`, `findByStatus("PENDING")`, `status.equals("REJECTED")`).
+  - Enums provide compile-time type safety, IDE refactoring support, exhaustive `switch` pattern matching, and self-documenting domain models.
+  - DTO records, MongoDB `@Document` models, and repository query methods must declare the `enum` type directly (e.g., `List<MentorApprovalRequest> findByStatus(MentorApprovalStatus status)`), allowing Jackson and Spring Data to handle serialization and persistence reliably.
 
 ---
 

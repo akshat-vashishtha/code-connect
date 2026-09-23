@@ -3,6 +3,7 @@ package com.codeconnect.user;
 import com.codeconnect.user.application.dto.LanguageDetectionRequest;
 import com.codeconnect.user.domain.model.LanguagePreference;
 import com.codeconnect.user.domain.model.MentorApprovalRequest;
+import com.codeconnect.user.domain.model.MentorApprovalStatus;
 import com.codeconnect.user.domain.model.User;
 import com.codeconnect.user.domain.model.UserRole;
 import com.codeconnect.user.domain.model.UserStatus;
@@ -61,7 +62,7 @@ class AdminMentorVerificationIntegrationTest {
             .email("mentor.pending@codeconnect.dev")
             .linkedInUrl("https://linkedin.com/in/mentor-pending")
             .bio("Staff Systems Engineer with 8+ years experience")
-            .status("PENDING")
+            .status(MentorApprovalStatus.PENDING)
             .submittedAt(Instant.now())
             .build();
         mentorApprovalRepository.save(pendingReq);
@@ -71,7 +72,7 @@ class AdminMentorVerificationIntegrationTest {
             .email("mentor.approved@codeconnect.dev")
             .linkedInUrl("https://linkedin.com/in/mentor-approved")
             .bio("Senior Architect")
-            .status("APPROVED")
+            .status(MentorApprovalStatus.APPROVED)
             .submittedAt(Instant.now())
             .build();
         mentorApprovalRepository.save(approvedReq);
@@ -106,7 +107,7 @@ class AdminMentorVerificationIntegrationTest {
             .email(user.getEmail())
             .linkedInUrl("https://linkedin.com/in/priyapatel")
             .bio("Principal Engineer at CloudScale")
-            .status("PENDING")
+            .status(MentorApprovalStatus.PENDING)
             .submittedAt(Instant.now())
             .build();
         MentorApprovalRequest savedReq = mentorApprovalRepository.save(approvalReq);
@@ -133,7 +134,7 @@ class AdminMentorVerificationIntegrationTest {
 
         // 6. Verify MongoDB Approval Request Status
         MentorApprovalRequest updatedReq = mentorApprovalRepository.findById(savedReq.getId()).orElseThrow();
-        assertThat(updatedReq.getStatus()).isEqualTo("APPROVED");
+        assertThat(updatedReq.getStatus()).isEqualTo(MentorApprovalStatus.APPROVED);
 
         // 7. Verify Redis Session Attributes Mutated
         Object redisRole = redisTemplate.opsForHash().get(sessionKey, "sessionAttr:USER_ROLE");
@@ -153,7 +154,7 @@ class AdminMentorVerificationIntegrationTest {
             .email("unqualified@codeconnect.dev")
             .linkedInUrl("https://linkedin.com/in/unqualified")
             .bio("Brief bio")
-            .status("PENDING")
+            .status(MentorApprovalStatus.PENDING)
             .submittedAt(Instant.now())
             .build();
         MentorApprovalRequest savedReq = mentorApprovalRepository.save(req);
@@ -165,7 +166,7 @@ class AdminMentorVerificationIntegrationTest {
             .andExpect(jsonPath("$.data.status").value("REJECTED"));
 
         MentorApprovalRequest updatedReq = mentorApprovalRepository.findById(savedReq.getId()).orElseThrow();
-        assertThat(updatedReq.getStatus()).isEqualTo("REJECTED");
+        assertThat(updatedReq.getStatus()).isEqualTo(MentorApprovalStatus.REJECTED);
     }
 
     @Test

@@ -1,5 +1,7 @@
 package com.codeconnect.user.application.dto;
 
+import com.codeconnect.user.domain.model.MentorApprovalStatus;
+
 import java.time.Instant;
 
 /**
@@ -11,7 +13,7 @@ public record MentorApprovalResponse(
     String email,
     String linkedInUrl,
     String bio,
-    String status,
+    MentorApprovalStatus status,
     Instant submittedAt,
     Instant reviewedAt,
     String reviewedBy

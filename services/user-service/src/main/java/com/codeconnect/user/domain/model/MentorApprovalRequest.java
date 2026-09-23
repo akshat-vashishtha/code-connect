@@ -33,7 +33,8 @@ public class MentorApprovalRequest {
 
     private String bio;
 
-    private String status; // PENDING, APPROVED, REJECTED
+    @Builder.Default
+    private MentorApprovalStatus status = MentorApprovalStatus.PENDING;
 
     private Instant submittedAt;
 

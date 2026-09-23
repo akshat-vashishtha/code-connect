@@ -1,5 +1,6 @@
 package com.codeconnect.gateway.infrastructure.security;
 
+import com.codeconnect.gateway.domain.model.UserRole;
 import com.codeconnect.gateway.infrastructure.config.GatewayProperties;
 import com.codeconnect.gateway.infrastructure.session.SessionManager;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
+import org.springframework.web.server.WebSession;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
@@ -35,8 +37,8 @@ import java.time.Instant;
 @Component
 public class RbacGatewayFilter implements WebFilter, Ordered {
 
-    private static final String ROLE_ADMIN = "ROLE_ADMIN";
-    private static final String ROLE_MENTOR = "ROLE_MENTOR";
+    private static final String ADMIN_PATH_PREFIX = "/api/v1/admin";
+    private static final String MENTOR_PATH_PREFIX = "/api/v1/mentor";
 
     private final ObjectMapper objectMapper;
     private final GatewayProperties gatewayProperties;
@@ -54,43 +56,57 @@ public class RbacGatewayFilter implements WebFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         String path = exchange.getRequest().getPath().value();
-
-        boolean isAdminPath = path.startsWith("/api/v1/admin");
-        boolean isMentorPath = path.startsWith("/api/v1/mentor");
-
-        if (!isAdminPath && !isMentorPath) {
+        if (!isProtectedPath(path)) {
             return chain.filter(exchange);
         }
+        return authorizeAndDispatch(exchange, chain, path);
+    }
 
+    private Mono<Void> authorizeAndDispatch(ServerWebExchange exchange, WebFilterChain chain, String path) {
         return exchange.getSession().flatMap(session -> {
             String role = session.getAttribute(SessionManager.ATTR_USER_ROLE);
-            String userId = session.getAttribute(SessionManager.ATTR_USER_ID);
-            String email = session.getAttribute(SessionManager.ATTR_USER_EMAIL);
-
-            if (role == null) {
-                log.warn("RBAC Access Denied: Unauthenticated attempt to access protected path={}", path);
-                return writeForbiddenResponse(exchange, "Authentication required with appropriate role permissions");
+            if (!isAuthorized(path, role)) {
+                return rejectUnauthorized(exchange, path, role);
             }
-
-            if (isAdminPath && !ROLE_ADMIN.equals(role)) {
-                log.warn("RBAC Access Denied: User role={} attempted to access admin path={}", role, path);
-                return writeForbiddenResponse(exchange, "Insufficient role permissions for requested resource");
-            }
-
-            if (isMentorPath && !ROLE_MENTOR.equals(role) && !ROLE_ADMIN.equals(role)) {
-                log.warn("RBAC Access Denied: User role={} attempted to access mentor path={}", role, path);
-                return writeForbiddenResponse(exchange, "Insufficient role permissions for requested resource");
-            }
-
-            // Propagate user identity headers to downstream microservices
-            ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
-                .header("X-User-Id", userId != null ? userId : "")
-                .header("X-User-Role", role)
-                .header("X-User-Email", email != null ? email : "")
-                .build();
-
+            ServerHttpRequest mutatedRequest = buildDownstreamRequest(exchange.getRequest(), session, role);
             return chain.filter(exchange.mutate().request(mutatedRequest).build());
         });
+    }
+
+    private boolean isProtectedPath(String path) {
+        return path.startsWith(ADMIN_PATH_PREFIX) || path.startsWith(MENTOR_PATH_PREFIX);
+    }
+
+    private boolean isAuthorized(String path, String role) {
+        if (role == null) {
+            return false;
+        }
+        if (path.startsWith(ADMIN_PATH_PREFIX)) {
+            return UserRole.ROLE_ADMIN.name().equals(role);
+        }
+        if (path.startsWith(MENTOR_PATH_PREFIX)) {
+            return UserRole.ROLE_MENTOR.name().equals(role) || UserRole.ROLE_ADMIN.name().equals(role);
+        }
+        return true;
+    }
+
+    private Mono<Void> rejectUnauthorized(ServerWebExchange exchange, String path, String role) {
+        log.warn("RBAC Access Denied: User role={} attempted to access path={}", role, path);
+        String detail = role == null
+            ? "Authentication required with appropriate role permissions"
+            : "Insufficient role permissions for requested resource";
+        return writeForbiddenResponse(exchange, detail);
+    }
+
+    private ServerHttpRequest buildDownstreamRequest(ServerHttpRequest request, WebSession session, String role) {
+        String userId = session.getAttribute(SessionManager.ATTR_USER_ID);
+        String email = session.getAttribute(SessionManager.ATTR_USER_EMAIL);
+
+        return request.mutate()
+            .header("X-User-Id", userId != null ? userId : "")
+            .header("X-User-Role", role)
+            .header("X-User-Email", email != null ? email : "")
+            .build();
     }
 
     private Mono<Void> writeForbiddenResponse(ServerWebExchange exchange, String detail) {
@@ -98,20 +114,22 @@ public class RbacGatewayFilter implements WebFilter, Ordered {
         response.setStatusCode(HttpStatus.FORBIDDEN);
         response.getHeaders().setContentType(MediaType.APPLICATION_PROBLEM_JSON);
 
+        byte[] bodyBytes = serializeProblem(detail);
+        DataBuffer buffer = response.bufferFactory().wrap(bodyBytes);
+        return response.writeWith(Mono.just(buffer));
+    }
+
+    private byte[] serializeProblem(String detail) {
         String forbiddenUri = gatewayProperties.errorBaseUri() + "/forbidden";
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, detail);
         problem.setType(URI.create(forbiddenUri));
         problem.setTitle("Access Denied");
         problem.setProperty("timestamp", Instant.now());
 
-        byte[] bytes;
         try {
-            bytes = objectMapper.writeValueAsBytes(problem);
+            return objectMapper.writeValueAsBytes(problem);
         } catch (JsonProcessingException e) {
-            bytes = ("{\"type\":\"" + forbiddenUri + "\",\"title\":\"Access Denied\",\"status\":403,\"detail\":\"" + detail + "\"}").getBytes(StandardCharsets.UTF_8);
+            return ("{\"type\":\"" + forbiddenUri + "\",\"title\":\"Access Denied\",\"status\":403,\"detail\":\"" + detail + "\"}").getBytes(StandardCharsets.UTF_8);
         }
-
-        DataBuffer buffer = response.bufferFactory().wrap(bytes);
-        return response.writeWith(Mono.just(buffer));
     }
 }

@@ -1,6 +1,7 @@
 package com.codeconnect.gateway;
 
 import com.codeconnect.gateway.application.dto.request.SignupRequest;
+import com.codeconnect.gateway.domain.model.MentorApprovalStatus;
 import com.codeconnect.gateway.domain.model.UserRole;
 import com.codeconnect.gateway.domain.repository.ReactiveMentorApprovalRepository;
 import com.codeconnect.gateway.domain.repository.ReactiveUserRepository;
@@ -110,7 +111,7 @@ class AuthRegistrationIntegrationTest {
         assertThat(approvalRequest).isNotNull();
         assertThat(approvalRequest.getLinkedInUrl()).isEqualTo("https://linkedin.com/in/priyapatel");
         assertThat(approvalRequest.getBio()).contains("Principal Distributed Systems Architect");
-        assertThat(approvalRequest.getStatus()).isEqualTo("PENDING");
+        assertThat(approvalRequest.getStatus()).isEqualTo(MentorApprovalStatus.PENDING);
     }
 
     @Test

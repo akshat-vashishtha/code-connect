@@ -3,6 +3,7 @@ package com.codeconnect.gateway.application.service.impl;
 import com.codeconnect.gateway.application.dto.request.SignupRequest;
 import com.codeconnect.gateway.application.service.MentorApprovalService;
 import com.codeconnect.gateway.domain.model.MentorApprovalRequest;
+import com.codeconnect.gateway.domain.model.MentorApprovalStatus;
 import com.codeconnect.gateway.domain.model.User;
 import com.codeconnect.gateway.domain.model.UserRole;
 import com.codeconnect.gateway.domain.repository.ReactiveMentorApprovalRepository;
@@ -38,7 +39,7 @@ public class MentorApprovalServiceImpl implements MentorApprovalService {
             .displayName(user.getDisplayName())
             .linkedInUrl(request.linkedInUrl() != null ? request.linkedInUrl().trim() : null)
             .bio(request.bio() != null ? request.bio().trim() : null)
-            .status("PENDING")
+            .status(MentorApprovalStatus.PENDING)
             .submittedAt(Instant.now())
             .build();
 
