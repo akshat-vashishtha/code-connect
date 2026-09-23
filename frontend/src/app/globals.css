@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* CodeConnect Light Design Tokens (UX-DR1) */
+  --bg-primary: #F8FAFC;
+  --bg-card: #FFFFFF;
+  --brand-primary: #2563EB;
+  --brand-primary-hover: #1D4ED8;
+  --brand-accent: #38BDF8;
+  --border-subtle: #E2E8F0;
+  --text-primary: #0F172A;
+  --text-secondary: #64748B;
+  --success: #10B981;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+}

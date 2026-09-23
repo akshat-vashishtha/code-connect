@@ -1,0 +1,171 @@
+<mxfile host="app.diagrams.net" modified="2026-09-23T10:45:00.000Z" agent="Antigravity Winston" version="24.0.0" type="device">
+  <diagram id="codeconnect-c4-container" name="C4-Container-Diagram">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1050" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ========================================== -->
+        <!-- SYSTEM BOUNDARY: CodeConnect Platform      -->
+        <!-- ========================================== -->
+        <mxCell id="boundary_platform" value="&lt;b&gt;CodeConnect Platform [Software System]&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 8;strokeColor=#90A4AE;fillColor=#F8FAFC;strokeWidth=2;align=left;verticalAlign=top;spacingLeft=18;spacingTop=14;fontColor=#37474F;fontStyle=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="340" y="40" width="1280" height="920" as="geometry" />
+        </mxCell>
+
+        <!-- ========================================== -->
+        <!-- TIER 0: CLIENT & INGRESS (y=90)            -->
+        <!-- ========================================== -->
+        <!-- Student Browser Client -->
+        <mxCell id="client_browser" value="&lt;div style=&quot;font-weight: bold; font-size: 14px; margin-bottom: 4px;&quot;&gt;Student / Dev Browser&lt;/div&gt;&lt;div style=&quot;font-size: 11px; opacity: 0.85; margin-bottom: 4px;&quot;&gt;[Next.js 14 App Router, Monaco]&lt;/div&gt;&lt;div style=&quot;font-size: 10px; line-height: 1.2;&quot;&gt;Monaco IDE, Foothold runner &amp;amp; real-time chat client (:3000)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#37474F;strokeColor=#263238;fontColor=#ffffff;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="90" width="240" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- API Gateway Service -->
+        <mxCell id="gateway" value="&lt;div style=&quot;font-weight: bold; font-size: 14px; margin-bottom: 4px;&quot;&gt;API Gateway&lt;/div&gt;&lt;div style=&quot;font-size: 11px; opacity: 0.85; margin-bottom: 4px;&quot;&gt;[gateway-service : Spring Cloud]&lt;/div&gt;&lt;div style=&quot;font-size: 10px; line-height: 1.2;&quot;&gt;Edge router, auth gatekeeper, session issuer (:8080)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#1976D2;strokeColor=#0D47A1;fontColor=#ffffff;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="400" y="90" width="260" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- Redis Session Cache -->
+        <mxCell id="redis_session" value="&lt;div style=&quot;font-weight: bold; font-size: 14px; margin-bottom: 4px;&quot;&gt;Shared Session Cache&lt;/div&gt;&lt;div style=&quot;font-size: 11px; opacity: 0.85; margin-bottom: 4px;&quot;&gt;[Redis 7.2 Cache]&lt;/div&gt;&lt;div style=&quot;font-size: 10px; line-height: 1.2;&quot;&gt;Spring Session (spring:session) &amp;amp; presence heartbeat (:6379)&lt;/div&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=14;fillColor=#2E7D32;strokeColor=#1B5E20;fontColor=#ffffff;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="840" y="90" width="250" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- ========================================== -->
+        <!-- TIER 1: DOMAIN MICROSERVICES (y=300)       -->
+        <!-- ========================================== -->
+        <!-- User Service -->
+        <mxCell id="user_svc" value="&lt;div style=&quot;font-weight: bold; font-size: 14px; margin-bottom: 4px;&quot;&gt;User Service&lt;/div&gt;&lt;div style=&quot;font-size: 11px; opacity: 0.85; margin-bottom: 4px;&quot;&gt;[Spring Boot 3.3, Java 21]&lt;/div&gt;&lt;div style=&quot;font-size: 10px; line-height: 1.2;&quot;&gt;Profiles, RBAC, Admin Approvals (:8081)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#1976D2;strokeColor=#0D47A1;fontColor=#ffffff;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="400" y="300" width="240" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- Curriculum Service -->
+        <mxCell id="curric_svc" value="&lt;div style=&quot;font-weight: bold; font-size: 14px; margin-bottom: 4px;&quot;&gt;Curriculum Service&lt;/div&gt;&lt;div style=&quot;font-size: 11px; opacity: 0.85; margin-bottom: 4px;&quot;&gt;[Spring Boot 3.3, Java 21]&lt;/div&gt;&lt;div style=&quot;font-size: 10px; line-height: 1.2;&quot;&gt;Tracks, Stages &amp;amp; Footholds (:8082)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#1976D2;strokeColor=#0D47A1;fontColor=#ffffff;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="690" y="300" width="240" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- Submission Service -->
+        <mxCell id="sub_svc" value="&lt;div style=&quot;font-weight: bold; font-size: 14px; margin-bottom: 4px;&quot;&gt;Submission Service&lt;/div&gt;&lt;div style=&quot;font-size: 11px; opacity: 0.85; margin-bottom: 4px;&quot;&gt;[Spring Boot 3.3, Java 21]&lt;/div&gt;&lt;div style=&quot;font-size: 10px; line-height: 1.2;&quot;&gt;Fast Ingest (202 Accepted) &amp;amp; Kafka Dispatch (:8083)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#1976D2;strokeColor=#0D47A1;fontColor=#ffffff;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="980" y="300" width="250" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- Collab Service -->
+        <mxCell id="collab_svc" value="&lt;div style=&quot;font-weight: bold; font-size: 14px; margin-bottom: 4px;&quot;&gt;Collab Service&lt;/div&gt;&lt;div style=&quot;font-size: 11px; opacity: 0.85; margin-bottom: 4px;&quot;&gt;[Spring Boot 3.3, Java 21]&lt;/div&gt;&lt;div style=&quot;font-size: 10px; line-height: 1.2;&quot;&gt;WebSocket STOMP &amp;amp; Spring AI Tutor (:8084)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#1976D2;strokeColor=#0D47A1;fontColor=#ffffff;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="300" width="250" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- ========================================== -->
+        <!-- TIER 2: ASYNC PIPELINE (y=520)             -->
+        <!-- ========================================== -->
+        <!-- Kafka Event Backbone -->
+        <mxCell id="kafka" value="&lt;div style=&quot;font-weight: bold; font-size: 14px; margin-bottom: 4px;&quot;&gt;Event Streaming Backbone&lt;/div&gt;&lt;div style=&quot;font-size: 11px; opacity: 0.85; margin-bottom: 4px;&quot;&gt;[Apache Kafka 3.7 - KRaft]&lt;/div&gt;&lt;div style=&quot;font-size: 10px; line-height: 1.2;&quot;&gt;Topics: code.submissions, code.results (:9092)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#D84315;strokeColor=#BF360C;fontColor=#ffffff;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="980" y="520" width="250" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- Sandbox Runner Worker -->
+        <mxCell id="worker" value="&lt;div style=&quot;font-weight: bold; font-size: 14px; margin-bottom: 4px;&quot;&gt;Sandbox Runner Worker&lt;/div&gt;&lt;div style=&quot;font-size: 11px; opacity: 0.85; margin-bottom: 4px;&quot;&gt;[Spring Boot 3.3 Worker Pod]&lt;/div&gt;&lt;div style=&quot;font-size: 10px; line-height: 1.2;&quot;&gt;Consumes jobs, invokes Docker Engine daemon&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#1976D2;strokeColor=#0D47A1;fontColor=#ffffff;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="520" width="250" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- ========================================== -->
+        <!-- TIER 3: ISOLATED RUNNER & DATA TIER (y=740) -->
+        <!-- ========================================== -->
+        <!-- MongoDB Document Store -->
+        <mxCell id="mongo" value="&lt;div style=&quot;font-weight: bold; font-size: 15px; margin-bottom: 4px;&quot;&gt;Document Store&lt;/div&gt;&lt;div style=&quot;font-size: 11px; opacity: 0.85; margin-bottom: 4px;&quot;&gt;[MongoDB 7.0 (codeconnect_db)]&lt;/div&gt;&lt;div style=&quot;font-size: 10px; line-height: 1.2;&quot;&gt;Collections: users, curriculums, submissions, chat_messages (:27017)&lt;/div&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=14;fillColor=#2E7D32;strokeColor=#1B5E20;fontColor=#ffffff;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="400" y="740" width="530" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- Ephemeral Java 21 Sandbox -->
+        <mxCell id="sandbox" value="&lt;div style=&quot;font-weight: bold; font-size: 14px; margin-bottom: 4px;&quot;&gt;Ephemeral Docker Sandbox&lt;/div&gt;&lt;div style=&quot;font-size: 11px; opacity: 0.85; margin-bottom: 4px;&quot;&gt;[codeconnect-runner:java21]&lt;/div&gt;&lt;div style=&quot;font-size: 10px; line-height: 1.2;&quot;&gt;Isolated container (--net=none, 128MB RAM, 10s timeout)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#455A64;strokeColor=#263238;fontColor=#ffffff;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="740" width="250" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- ========================================== -->
+        <!-- CONNECTORS WITH ORTHOGONAL ROUTING         -->
+        <!-- ========================================== -->
+        <!-- Browser -> Gateway -->
+        <mxCell id="rel_browser_gw" value="HTTP / WebSocket&lt;br&gt;(Cookie: APP_SESSION)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#455A64;strokeWidth=1.5;fontColor=#263238;fontSize=10;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="client_browser" target="gateway">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Gateway -> Redis -->
+        <mxCell id="rel_gw_redis" value="1. Authenticate &amp;amp; Validate Session" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#2E7D32;strokeWidth=1.5;fontColor=#1B5E20;fontSize=10;fontStyle=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="gateway" target="redis_session">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Gateway -> User Service -->
+        <mxCell id="rel_gw_user" value="REST: /api/v1/users/**" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;strokeColor=#1976D2;strokeWidth=1.5;fontColor=#0D47A1;fontSize=10;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="gateway" target="user_svc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Gateway -> Curriculum Service -->
+        <mxCell id="rel_gw_curric" value="REST: /api/v1/curriculum/**" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.6;exitY=1;exitDx=0;exitDy=0;entryX=0.3;entryY=0;entryDx=0;entryDy=0;strokeColor=#1976D2;strokeWidth=1.5;fontColor=#0D47A1;fontSize=10;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="gateway" target="curric_svc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Gateway -> Submission Service -->
+        <mxCell id="rel_gw_sub" value="REST: /api/v1/submissions/**" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.85;exitY=1;exitDx=0;exitDy=0;entryX=0.3;entryY=0;entryDx=0;entryDy=0;strokeColor=#1976D2;strokeWidth=1.5;fontColor=#0D47A1;fontSize=10;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="gateway" target="sub_svc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Gateway -> Collab Service (WebSocket Upgrade) -->
+        <mxCell id="rel_gw_collab" value="WS Upgrade: /ws-connect" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.9;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#1976D2;strokeWidth=1.5;fontColor=#0D47A1;fontSize=10;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="gateway" target="collab_svc">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="634" y="60" />
+              <mxPoint x="1405" y="60" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Services -> MongoDB -->
+        <mxCell id="rel_user_mongo" value="Reads/Writes" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;strokeColor=#2E7D32;strokeWidth=1.5;fontColor=#1B5E20;fontSize=10;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="user_svc" target="mongo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rel_curric_mongo" value="Reads/Writes" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.6;entryY=0;entryDx=0;entryDy=0;strokeColor=#2E7D32;strokeWidth=1.5;fontColor=#1B5E20;fontSize=10;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="curric_svc" target="mongo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rel_sub_mongo" value="Reads/Writes Submissions" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.2;exitY=1;exitDx=0;exitDy=0;entryX=0.9;entryY=0;entryDx=0;entryDy=0;strokeColor=#2E7D32;strokeWidth=1.5;fontColor=#1B5E20;fontSize=10;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="sub_svc" target="mongo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Submission Service -> Kafka -->
+        <mxCell id="rel_sub_kafka" value="Publishes CodeSubmissionEvent" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#D84315;strokeWidth=2;fontColor=#BF360C;fontStyle=1;fontSize=10;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="sub_svc" target="kafka">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Kafka -> Worker -->
+        <mxCell id="rel_kafka_worker" value="Consumes Job" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#D84315;strokeWidth=2;fontColor=#BF360C;fontStyle=1;fontSize=10;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="kafka" target="worker">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Worker -> Docker Sandbox -->
+        <mxCell id="rel_worker_sandbox" value="Spawns: docker run --rm" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#455A64;strokeWidth=1.5;fontColor=#263238;fontSize=10;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="worker" target="sandbox">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Worker -> Kafka (Results Topic) -->
+        <mxCell id="rel_worker_kafka_res" value="Publishes ExecutionResultEvent" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;strokeColor=#D84315;strokeWidth=1.5;fontColor=#BF360C;fontSize=10;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="worker" target="kafka">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Kafka -> Collab Service -->
+        <mxCell id="rel_kafka_collab" value="Consumes: code.results" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.8;exitY=0;exitDx=0;exitDy=0;entryX=0.3;entryY=1;entryDx=0;entryDy=0;strokeColor=#D84315;strokeWidth=1.5;fontColor=#BF360C;fontSize=10;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="kafka" target="collab_svc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Collab Service -> Client Browser (STOMP WebSocket Push) -->
+        <mxCell id="rel_collab_push" value="STOMP Push: /topic/submissions.{id} (Test Outcomes &amp;amp; Chat)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeColor=#6A1B9A;strokeWidth=2;fontColor=#4A148C;fontStyle=1;fontSize=10;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="collab_svc" target="client_browser">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1405" y="900" />
+              <mxPoint x="160" y="900" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

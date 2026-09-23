@@ -1,0 +1,45 @@
+# OS files
+.DS_Store
+*.swp
+*~
+
+# Java / Maven
+target/
+*.class
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.ipr
+*.iws
+.settings/
+.project
+.classpath
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+build/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Environment / Local configs
+.env
+.env*.local
+
+# Logs
+logs/
+*.log
