@@ -5,8 +5,6 @@ import com.codeconnect.gateway.domain.exception.ForbiddenException;
 import com.codeconnect.gateway.domain.exception.InvalidCredentialsException;
 import com.codeconnect.gateway.domain.exception.UnauthorizedException;
 import com.codeconnect.gateway.domain.exception.ValidationException;
-import com.codeconnect.gateway.infrastructure.config.GatewayProperties;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,26 +15,22 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.support.WebExchangeBindException;
 
-import java.net.URI;
 import java.time.Instant;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
  * Centralized exception handler producing RFC 7807 Problem Details envelopes.
+ * Uses RFC 7807 default "about:blank" for type.
  */
 @Slf4j
 @RestControllerAdvice
-@RequiredArgsConstructor
 public class GlobalExceptionHandler {
-
-    private final GatewayProperties gatewayProperties;
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ResponseEntity<ProblemDetail> handleEmailAlreadyExists(EmailAlreadyExistsException ex) {
         log.warn("Handling EmailAlreadyExistsException: {}", ex.getMessage());
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
-        problem.setType(buildType("email-conflict"));
         problem.setTitle("Email Conflict");
         problem.setProperty("timestamp", Instant.now());
 
@@ -49,7 +43,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ProblemDetail> handleInvalidCredentials(InvalidCredentialsException ex) {
         log.warn("Handling InvalidCredentialsException: {}", ex.getMessage());
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
-        problem.setType(buildType("invalid-credentials"));
         problem.setTitle("Invalid Credentials");
         problem.setProperty("timestamp", Instant.now());
 
@@ -58,12 +51,10 @@ public class GlobalExceptionHandler {
             .body(problem);
     }
 
-
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ProblemDetail> handleUnauthorized(UnauthorizedException ex) {
         log.warn("Handling UnauthorizedException: {}", ex.getMessage());
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
-        problem.setType(buildType("unauthorized"));
         problem.setTitle("Unauthorized");
         problem.setProperty("timestamp", Instant.now());
 
@@ -76,7 +67,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ProblemDetail> handleForbiddenException(ForbiddenException ex) {
         log.warn("Handling ForbiddenException: {}", ex.getMessage());
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
-        problem.setType(buildType("forbidden"));
         problem.setTitle("Access Denied");
         problem.setProperty("timestamp", Instant.now());
 
@@ -89,7 +79,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ProblemDetail> handleValidationException(ValidationException ex) {
         log.warn("Handling ValidationException: {}", ex.getMessage());
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
-        problem.setType(buildType("validation-error"));
         problem.setTitle("Invalid Request");
         problem.setProperty("timestamp", Instant.now());
 
@@ -109,7 +98,6 @@ public class GlobalExceptionHandler {
 
         log.warn("Handling WebExchangeBindException: {}", fieldErrors);
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Validation failed for request fields");
-        problem.setType(buildType("validation-error"));
         problem.setTitle("Validation Failed");
         problem.setProperty("errors", fieldErrors);
         problem.setProperty("timestamp", Instant.now());
@@ -126,15 +114,11 @@ public class GlobalExceptionHandler {
             HttpStatus.INTERNAL_SERVER_ERROR,
             "An unexpected internal error occurred"
         );
-        problem.setType(buildType("internal-error"));
         problem.setTitle("Internal Server Error");
         problem.setProperty("timestamp", Instant.now());
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .contentType(MediaType.APPLICATION_PROBLEM_JSON)
             .body(problem);
-    }
-    private URI buildType(String path) {
-        return URI.create(gatewayProperties.errorBaseUri() + "/" + path);
     }
 }

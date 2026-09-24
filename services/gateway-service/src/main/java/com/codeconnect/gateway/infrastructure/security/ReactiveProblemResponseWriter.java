@@ -1,6 +1,5 @@
 package com.codeconnect.gateway.infrastructure.security;
 
-import com.codeconnect.gateway.infrastructure.config.GatewayProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -13,13 +12,13 @@ import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 
 /**
  * Writes RFC 7807 Problem Details reactively to HTTP response streams.
  * Encapsulates JSON serialization, status code setting, and DataBuffer wrapping.
+ * Uses RFC 7807 default "about:blank" for type.
  */
 @Slf4j
 @Component
@@ -27,7 +26,6 @@ import java.time.Instant;
 public class ReactiveProblemResponseWriter {
 
     private final ObjectMapper objectMapper;
-    private final GatewayProperties gatewayProperties;
 
     public Mono<Void> writeForbiddenResponse(ServerHttpResponse response, String detail) {
         response.setStatusCode(HttpStatus.FORBIDDEN);
@@ -39,9 +37,7 @@ public class ReactiveProblemResponseWriter {
     }
 
     private byte[] serializeForbiddenProblem(String detail) {
-        String forbiddenUri = gatewayProperties.forbiddenErrorUri();
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, detail);
-        problem.setType(URI.create(forbiddenUri));
         problem.setTitle("Access Denied");
         problem.setProperty("timestamp", Instant.now());
 
@@ -49,7 +45,7 @@ public class ReactiveProblemResponseWriter {
             return objectMapper.writeValueAsBytes(problem);
         } catch (JsonProcessingException ex) {
             log.error("Failed to serialize RFC 7807 ProblemDetail, using fallback bytes", ex);
-            return ("{\"type\":\"" + forbiddenUri + "\",\"title\":\"Access Denied\",\"status\":403,\"detail\":\"" + detail + "\"}")
+            return ("{\"type\":\"about:blank\",\"title\":\"Access Denied\",\"status\":403,\"detail\":\"" + detail + "\"}")
                 .getBytes(StandardCharsets.UTF_8);
         }
     }
