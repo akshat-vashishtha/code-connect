@@ -79,8 +79,4 @@ public class User {
         this.status = UserStatus.ACTIVE;
         this.updatedAt = Instant.now();
     }
-
-    public boolean isBanned() {
-        return this.status == UserStatus.BANNED;
-    }
 }

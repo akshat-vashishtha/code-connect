@@ -1,7 +1,6 @@
 package com.codeconnect.user.application.service.collaborator.auth;
 
 import com.codeconnect.user.application.dto.request.UserAuthenticationRequest;
-import com.codeconnect.user.domain.exception.AccountBannedException;
 import com.codeconnect.user.domain.exception.InvalidCredentialsException;
 import com.codeconnect.user.domain.model.User;
 import com.codeconnect.user.domain.repository.UserRepository;
@@ -35,11 +34,6 @@ public class UserCredentialAuthenticator {
         if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
             log.warn("Authentication failed: password mismatch for userId={}", user.getId());
             throw new InvalidCredentialsException();
-        }
-
-        if (user.isBanned()) {
-            log.warn("Authentication rejected: account is banned for userId={}", user.getId());
-            throw new AccountBannedException();
         }
 
         log.debug("Credentials and account status verified for userId={} email={}", user.getId(), user.getEmail());

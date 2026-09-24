@@ -4,7 +4,6 @@ import com.codeconnect.gateway.application.dto.request.LoginRequest;
 import com.codeconnect.gateway.application.dto.request.SignupRequest;
 import com.codeconnect.gateway.application.dto.response.ApiResponse;
 import com.codeconnect.gateway.application.dto.response.UserResponse;
-import com.codeconnect.gateway.domain.exception.AccountBannedException;
 import com.codeconnect.gateway.domain.exception.EmailAlreadyExistsException;
 import com.codeconnect.gateway.domain.exception.InvalidCredentialsException;
 import com.codeconnect.gateway.domain.exception.UnauthorizedException;
@@ -51,8 +50,6 @@ public class WebClientUserServiceClient implements UserServiceClient {
             .retrieve()
             .onStatus(status -> status.equals(HttpStatus.UNAUTHORIZED), response ->
                 Mono.error(new InvalidCredentialsException()))
-            .onStatus(status -> status.equals(HttpStatus.FORBIDDEN), response ->
-                Mono.error(new AccountBannedException()))
             .bodyToMono(new ParameterizedTypeReference<ApiResponse<UserResponse>>() {})
             .map(ApiResponse::data);
     }

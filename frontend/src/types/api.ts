@@ -18,7 +18,7 @@ export type UserRole = "ROLE_STUDENT" | "ROLE_MENTOR" | "ROLE_ADMIN";
 /**
  * User Account status lifecycle
  */
-export type UserStatus = "ACTIVE" | "PENDING_APPROVAL" | "BANNED";
+export type UserStatus = "ACTIVE" | "PENDING_APPROVAL";
 
 /**
  * User Profile view representation

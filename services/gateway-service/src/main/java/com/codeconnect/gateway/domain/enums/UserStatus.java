@@ -5,6 +5,5 @@ package com.codeconnect.gateway.domain.enums;
  */
 public enum UserStatus {
     ACTIVE,
-    PENDING_APPROVAL,
-    BANNED
+    PENDING_APPROVAL
 }

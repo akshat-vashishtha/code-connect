@@ -175,29 +175,6 @@ class InternalAuthIntegrationTest {
             .andExpect(jsonPath("$.status").value(401));
     }
 
-    @Test
-    @DisplayName("Should reject authentication for BANNED user (403 Forbidden)")
-    void shouldRejectBannedUser() throws Exception {
-        String hash = passwordEncoder.encode("Pass123!");
-        User bannedUser = User.builder()
-            .email("banned@codeconnect.dev")
-            .passwordHash(hash)
-            .displayName("Banned User")
-            .role(UserRole.ROLE_STUDENT)
-            .status(UserStatus.BANNED)
-            .createdAt(Instant.now())
-            .updatedAt(Instant.now())
-            .build();
-        userRepository.save(bannedUser);
-
-        UserAuthenticationRequest authReq = new UserAuthenticationRequest("banned@codeconnect.dev", "Pass123!");
-
-        mockMvc.perform(post("/api/v1/internal/users/authenticate")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(authReq)))
-            .andExpect(status().isForbidden())
-            .andExpect(jsonPath("$.status").value(403));
-    }
 
     @Test
     @DisplayName("Should retrieve user profile by ID")

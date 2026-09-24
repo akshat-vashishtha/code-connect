@@ -1,6 +1,5 @@
 package com.codeconnect.gateway.presentation.exception;
 
-import com.codeconnect.gateway.domain.exception.AccountBannedException;
 import com.codeconnect.gateway.domain.exception.EmailAlreadyExistsException;
 import com.codeconnect.gateway.domain.exception.ForbiddenException;
 import com.codeconnect.gateway.domain.exception.InvalidCredentialsException;
@@ -59,18 +58,6 @@ public class GlobalExceptionHandler {
             .body(problem);
     }
 
-    @ExceptionHandler(AccountBannedException.class)
-    public ResponseEntity<ProblemDetail> handleAccountBanned(AccountBannedException ex) {
-        log.warn("Handling AccountBannedException: {}", ex.getMessage());
-        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
-        problem.setType(buildType("account-banned"));
-        problem.setTitle("Account Banned");
-        problem.setProperty("timestamp", Instant.now());
-
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-            .contentType(MediaType.APPLICATION_PROBLEM_JSON)
-            .body(problem);
-    }
 
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ProblemDetail> handleUnauthorized(UnauthorizedException ex) {

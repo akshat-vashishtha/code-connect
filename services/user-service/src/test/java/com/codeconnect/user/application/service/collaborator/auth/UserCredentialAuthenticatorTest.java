@@ -3,7 +3,6 @@ package com.codeconnect.user.application.service.collaborator.auth;
 import com.codeconnect.user.application.dto.request.UserAuthenticationRequest;
 import com.codeconnect.user.domain.enums.UserRole;
 import com.codeconnect.user.domain.enums.UserStatus;
-import com.codeconnect.user.domain.exception.AccountBannedException;
 import com.codeconnect.user.domain.exception.InvalidCredentialsException;
 import com.codeconnect.user.domain.model.User;
 import com.codeconnect.user.domain.repository.UserRepository;
@@ -79,28 +78,5 @@ class UserCredentialAuthenticatorTest {
 
         assertThatThrownBy(() -> authenticator.authenticate(request))
             .isInstanceOf(InvalidCredentialsException.class);
-    }
-
-    @Test
-    @DisplayName("Should throw AccountBannedException when user account status is BANNED")
-    void shouldThrowWhenAccountBanned() {
-        UserAuthenticationRequest request = new UserAuthenticationRequest(
-            "banned@codeconnect.dev",
-            "ValidPassword123!"
-        );
-
-        User mockUser = User.builder()
-            .id("banned-id")
-            .email("banned@codeconnect.dev")
-            .passwordHash("hashedPassword")
-            .role(UserRole.ROLE_STUDENT)
-            .status(UserStatus.BANNED)
-            .build();
-
-        when(userRepository.findByEmail("banned@codeconnect.dev")).thenReturn(Optional.of(mockUser));
-        when(passwordEncoder.matches("ValidPassword123!", "hashedPassword")).thenReturn(true);
-
-        assertThatThrownBy(() -> authenticator.authenticate(request))
-            .isInstanceOf(AccountBannedException.class);
     }
 }

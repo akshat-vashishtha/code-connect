@@ -4,7 +4,6 @@ import com.codeconnect.gateway.application.dto.request.LoginRequest;
 import com.codeconnect.gateway.application.dto.response.UserResponse;
 import com.codeconnect.gateway.domain.enums.UserRole;
 import com.codeconnect.gateway.domain.enums.UserStatus;
-import com.codeconnect.gateway.domain.exception.AccountBannedException;
 import com.codeconnect.gateway.domain.exception.InvalidCredentialsException;
 import com.codeconnect.gateway.infrastructure.client.UserServiceClient;
 import org.junit.jupiter.api.DisplayName;
@@ -119,25 +118,6 @@ class AuthLoginLogoutIntegrationTest {
             .jsonPath("$.status").isEqualTo(401);
     }
 
-    @Test
-    @DisplayName("Should reject banned user login with 403 Forbidden ProblemDetail")
-    void shouldRejectBannedUserLogin() {
-        LoginRequest request = new LoginRequest("banned@codeconnect.dev", "BannedPass123!");
-
-        when(userServiceClient.authenticate(argThat(r -> r != null && "banned@codeconnect.dev".equals(r.email()))))
-            .thenReturn(Mono.error(new AccountBannedException()));
-
-        webTestClient.post()
-            .uri("/api/v1/auth/login")
-            .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(request)
-            .exchange()
-            .expectStatus().isForbidden()
-            .expectHeader().contentType(MediaType.APPLICATION_PROBLEM_JSON)
-            .expectBody()
-            .jsonPath("$.title").isEqualTo("Account Banned")
-            .jsonPath("$.status").isEqualTo(403);
-    }
 
     @Test
     @DisplayName("Should successfully retrieve current user profile from active session via /api/v1/auth/me")
