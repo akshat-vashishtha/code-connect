@@ -1,4 +1,4 @@
-package com.codeconnect.user.application.service;
+package com.codeconnect.user.application.service.collaborator.auth;
 
 import com.codeconnect.user.domain.exception.ResourceNotFoundException;
 import com.codeconnect.user.domain.model.User;

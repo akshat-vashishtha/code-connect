@@ -1,4 +1,4 @@
-package com.codeconnect.user.application.service;
+package com.codeconnect.user.application.service.collaborator.language;
 
 import com.codeconnect.user.domain.enums.LanguagePreference;
 import org.springframework.stereotype.Component;

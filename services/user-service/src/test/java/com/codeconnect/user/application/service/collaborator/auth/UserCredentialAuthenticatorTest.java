@@ -1,4 +1,4 @@
-package com.codeconnect.user.application.service;
+package com.codeconnect.user.application.service.collaborator.auth;
 
 import com.codeconnect.user.application.dto.request.UserAuthenticationRequest;
 import com.codeconnect.user.domain.enums.UserRole;

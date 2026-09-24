@@ -2,7 +2,7 @@ package com.codeconnect.user.application.service.impl;
 
 import com.codeconnect.user.application.dto.request.LanguageDetectionRequest;
 import com.codeconnect.user.application.dto.response.LanguageDetectionResponse;
-import com.codeconnect.user.application.service.LanguageDetector;
+import com.codeconnect.user.application.service.collaborator.language.LanguageDetector;
 import com.codeconnect.user.application.service.UserLanguageService;
 import com.codeconnect.user.domain.enums.LanguagePreference;
 import com.codeconnect.user.infrastructure.session.UserSessionPreferenceManager;

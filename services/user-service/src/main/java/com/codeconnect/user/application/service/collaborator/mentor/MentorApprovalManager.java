@@ -1,19 +1,18 @@
-package com.codeconnect.user.application.service;
+package com.codeconnect.user.application.service.collaborator.mentor;
 
+import com.codeconnect.user.domain.enums.MentorApprovalStatus;
 import com.codeconnect.user.domain.exception.ResourceNotFoundException;
 import com.codeconnect.user.domain.model.MentorApprovalRequest;
-import com.codeconnect.user.domain.enums.MentorApprovalStatus;
 import com.codeconnect.user.domain.repository.MentorApprovalRepository;
 import com.codeconnect.user.infrastructure.config.UserProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
 import java.util.List;
 
 /**
- * Collaborator responsible for querying and mutating MentorApprovalRequest lifecycle state.
+ * Collaborator responsible for querying, creating, and mutating MentorApprovalRequest lifecycle state.
  */
 @Slf4j
 @Component

@@ -1,15 +1,11 @@
-package com.codeconnect.user.application.service;
+package com.codeconnect.user.application.service.collaborator.mentor;
 
 import com.codeconnect.user.domain.exception.ResourceNotFoundException;
 import com.codeconnect.user.domain.model.User;
-import com.codeconnect.user.domain.enums.UserRole;
-import com.codeconnect.user.domain.enums.UserStatus;
 import com.codeconnect.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-
-import java.time.Instant;
 
 /**
  * Collaborator responsible for executing user account elevation state transitions in persistence.

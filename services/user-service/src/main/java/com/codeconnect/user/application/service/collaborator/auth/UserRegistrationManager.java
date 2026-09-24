@@ -1,6 +1,7 @@
-package com.codeconnect.user.application.service;
+package com.codeconnect.user.application.service.collaborator.auth;
 
 import com.codeconnect.user.application.dto.request.UserRegistrationRequest;
+import com.codeconnect.user.application.service.collaborator.mentor.MentorApprovalManager;
 import com.codeconnect.user.domain.enums.UserRole;
 import com.codeconnect.user.domain.exception.EmailAlreadyExistsException;
 import com.codeconnect.user.domain.model.User;
