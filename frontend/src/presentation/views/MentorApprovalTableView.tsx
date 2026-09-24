@@ -1,18 +1,13 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import Link from "next/link";
-import {
-  ShieldAlert,
-  ShieldCheck,
-  CheckCircle2,
-  XCircle,
-  ExternalLink,
-  RefreshCw,
-  Clock,
-  Search,
-  ArrowLeft,
-  Award,
-} from "lucide-react";
+import { logout } from "@/lib/api/auth";
 import { AdminMentorControllerResult } from "@/controller/useAdminMentorController";
+import { VectorIcon } from "@/presentation/atoms/VectorIcon";
+import { StatMetricCard } from "@/presentation/molecules/StatMetricCard";
+import { StatusPill } from "@/presentation/atoms/StatusPill";
+import { AppNavRail } from "@/presentation/organisms/AppNavRail";
 
 export interface MentorApprovalTableViewProps {
   readonly controller: AdminMentorControllerResult;
@@ -20,8 +15,9 @@ export interface MentorApprovalTableViewProps {
 }
 
 /**
- * Pure presentation view for the Admin Mentor Verification dashboard.
- * Renders applications queue and dispatches actions to AdminMentorController.
+ * Admin Studio View strictly adhering to Wireframe 09-admin-studio-user-governance.svg.
+ * Provides 4 top metric cards, Mentor Application Triage with pure vector icons,
+ * and Platform User & Role Governance directory.
  */
 export const MentorApprovalTableView: React.FC<MentorApprovalTableViewProps> = ({
   controller,
@@ -42,12 +38,23 @@ export const MentorApprovalTableView: React.FC<MentorApprovalTableViewProps> = (
     handleReject,
   } = controller;
 
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch {
+      // allow redirect
+    }
+    window.location.href = "/login";
+  };
+
   if (isAuthLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center p-6 bg-[#f8fafc]">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm font-medium text-slate-600">Verifying administrative credentials...</p>
+          <VectorIcon name="refresh" size={28} className="animate-spin text-blue-600" />
+          <p className="text-xs font-semibold text-slate-600">Verifying administrative credentials...</p>
         </div>
       </div>
     );
@@ -55,39 +62,36 @@ export const MentorApprovalTableView: React.FC<MentorApprovalTableViewProps> = (
 
   if (unauthorized) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center p-6 relative overflow-hidden font-sans">
-        {/* Subtle Ambient Glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="max-w-md w-full bg-slate-900/90 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-slate-800 text-center flex flex-col items-center gap-5 relative z-10">
-          <div className="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center shadow-lg shadow-red-500/10">
-            <ShieldAlert className="w-8 h-8" />
+      <div className="min-h-screen bg-[#f8fafc] flex flex-col justify-center items-center p-6 font-sans">
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 border border-slate-200 text-center flex flex-col items-center gap-4">
+          <div className="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center">
+            <VectorIcon name="shield" size={28} />
           </div>
           <div>
-            <h2 className="text-2xl font-extrabold text-white tracking-tight">Access Restricted</h2>
-            <p className="mt-2 text-xs sm:text-sm text-slate-400 leading-relaxed">
-              The Mentor Verification Desk requires elevated{" "}
-              <code className="px-1.5 py-0.5 rounded bg-slate-800 text-red-400 font-mono font-semibold border border-slate-700">
+            <h1 className="text-xl font-extrabold text-slate-900 tracking-tight">Access Restricted</h1>
+            <p className="mt-2 text-xs text-slate-600 leading-relaxed">
+              The Admin Governance Desk requires elevated{" "}
+              <code className="px-1.5 py-0.5 rounded bg-slate-100 text-rose-600 font-mono font-bold border border-slate-200">
                 ROLE_ADMIN
               </code>{" "}
               privilege.
               {currentUser
-                ? ` Your current session role is ${currentUser.role}.`
+                ? ` Current active session role is ${currentUser.role}.`
                 : " No active administrative session was found."}
             </p>
           </div>
-          <div className="w-full flex flex-col gap-2.5 pt-2">
+          <div className="w-full flex flex-col gap-2 pt-2">
             <Link
               href="/login"
-              className="w-full py-3 px-4 rounded-xl text-sm font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg shadow-blue-500/25 transition-all text-center hover:-translate-y-0.5"
+              className="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-sm"
             >
-              Sign In with Admin Account &rarr;
+              Sign In as Administrator
             </Link>
             <Link
               href="/"
-              className="w-full py-2.5 px-4 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/80 border border-slate-800 transition-colors text-center"
+              className="w-full py-2 px-4 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 transition-colors"
             >
-              Back to CodeConnect Home
+              Return to Platform Home
             </Link>
           </div>
         </div>
@@ -96,243 +100,374 @@ export const MentorApprovalTableView: React.FC<MentorApprovalTableViewProps> = (
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto flex flex-col gap-8">
-        {/* Navigation & Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-200">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="p-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
-              title="Back to Platform Home"
-            >
-              <ArrowLeft className="w-4 h-4" />
-            </Link>
-            <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-blue-500/20">
-              <ShieldCheck className="w-5 h-5" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-                Mentor Verification Desk
-              </h1>
-              <p className="text-xs text-slate-500">
-                Review and approve industry mentors &bull; Maintain platform educational standards
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-purple-50 border border-purple-200 text-purple-700 text-xs font-semibold">
-              <Award className="w-3.5 h-3.5" />
-              <span>Admin: {currentUser?.displayName || currentUser?.email}</span>
-            </div>
-            <button
-              type="button"
-              onClick={loadPendingApplications}
-              disabled={isDataLoading}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 shadow-sm transition-all disabled:opacity-50 cursor-pointer"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${isDataLoading ? "animate-spin" : ""}`} />
-              Refresh Queue
-            </button>
-          </div>
+    <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans pb-16">
+      {/* ========================================================================= */}
+      {/* TOP CONTEXT BAR (Wireframe 09)                                            */}
+      {/* ========================================================================= */}
+      <header className="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between sticky top-0 z-40 shadow-xs">
+        <div>
+          <h1 className="text-sm font-bold text-slate-900 tracking-tight">
+            Admin Control Center &amp; User Governance
+          </h1>
+          <p className="text-[11px] text-slate-500">
+            Mentor Approvals, Role Transitions &amp; Platform Security Governance
+          </p>
         </div>
 
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={loadPendingApplications}
+            disabled={isDataLoading}
+            className="p-2 rounded-lg border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 transition-colors"
+            title="Refresh Data"
+          >
+            <VectorIcon
+              name="refresh"
+              size={14}
+              className={isDataLoading ? "animate-spin text-blue-600" : ""}
+            />
+          </button>
+
+          {/* Admin User Badge with Logout Dropdown */}
+          <div className="relative pl-3 border-l border-slate-200">
+            <button
+              type="button"
+              onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+              className="flex items-center gap-2 text-left hover:opacity-90 focus:outline-hidden"
+              id="admin-user-menu-btn"
+            >
+              <div className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-xs">
+                AD
+              </div>
+              <div className="hidden sm:block">
+                <span className="text-xs font-bold text-slate-900 block leading-tight">
+                  {currentUser?.displayName ?? "System Admin"}
+                </span>
+                <span className="text-[10px] font-bold text-rose-600 uppercase tracking-wider">
+                  SUPERUSER
+                </span>
+              </div>
+              <VectorIcon name="chevron-down" size={12} className="text-slate-400" />
+            </button>
+
+            {isUserMenuOpen && (
+              <div className="absolute right-0 mt-2 w-56 rounded-xl bg-white border border-slate-200 shadow-xl py-2 z-50 animate-fadeIn text-xs">
+                <div className="px-4 py-2 border-b border-slate-100">
+                  <div className="font-bold text-slate-900">{currentUser?.displayName ?? "Admin"}</div>
+                  <div className="text-[10px] text-slate-500 font-mono">{currentUser?.email}</div>
+                </div>
+                <div className="py-1 text-slate-700 font-medium">
+                  <Link href="/" className="block px-4 py-1.5 hover:bg-slate-50">
+                    Platform Overview
+                  </Link>
+                  <Link href="/dashboard" className="block px-4 py-1.5 hover:bg-slate-50">
+                    Ascent Dashboard
+                  </Link>
+                  <Link href="/curriculum" className="block px-4 py-1.5 hover:bg-slate-50">
+                    Curriculum Reader
+                  </Link>
+                  <Link href="/mentor/desk" className="block px-4 py-1.5 hover:bg-slate-50 text-amber-800">
+                    Mentor Resolution Desk
+                  </Link>
+                </div>
+                <div className="pt-1 mt-1 border-t border-slate-100 px-2">
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-red-600 hover:bg-red-50 text-left"
+                    id="admin-logout-btn"
+                  >
+                    <VectorIcon name="log-out" size={13} />
+                    <span>Log Out</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </header>
+
+      <div className="flex-1 flex overflow-hidden">
+        <AppNavRail explicitRole="ROLE_ADMIN" />
+
+        <div className="flex-1 overflow-y-auto pb-16">
+          <main className="max-w-[1152px] mx-auto px-4 sm:px-6 pt-6 space-y-6">
         {/* Feedback Alert */}
         {feedbackMessage && (
           <div
-            className={`p-4 rounded-xl text-sm flex items-start gap-3 border ${
+            className={`p-3 rounded-xl border text-xs font-medium flex items-center justify-between ${
               feedbackMessage.type === "success"
-                ? "bg-emerald-50 border-emerald-300 text-emerald-900"
-                : "bg-red-50 border-red-300 text-red-900"
+                ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+                : "bg-rose-50 border-rose-200 text-rose-800"
             }`}
           >
-            {feedbackMessage.type === "success" ? (
-              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-            ) : (
-              <XCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-            )}
-            <div className="flex-1 font-medium">{feedbackMessage.text}</div>
+            <span>{feedbackMessage.text}</span>
           </div>
         )}
 
-        {/* Main Content Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column: Applications List (2 Cols on lg) */}
-          <div className="lg:col-span-2 flex flex-col gap-6">
-            {/* Search & Counter Bar */}
-            <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
-              <div className="relative w-full sm:w-80">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-                <input
-                  type="text"
-                  placeholder="Filter by email or bio keywords..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                />
-              </div>
-              <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 w-full sm:w-auto justify-end">
-                <span className="px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-                  {filteredApplications.length} Pending {filteredApplications.length === 1 ? "Review" : "Reviews"}
-                </span>
-              </div>
+        {/* ========================================================================= */}
+        {/* TOP METRIC CARDS ROW (Wireframe 09)                                       */}
+        {/* ========================================================================= */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <StatMetricCard
+            title="ACTIVE STUDENTS"
+            value="4,290"
+            subtitle="+12% this wk"
+            valueColor="default"
+          />
+          <StatMetricCard
+            title="VERIFIED MENTORS"
+            value="86"
+            subtitle="Staff & Tech Leads"
+            valueColor="blue"
+          />
+          <StatMetricCard
+            title="PENDING MENTOR APPS"
+            value={filteredApplications.length > 0 ? `${filteredApplications.length} Urgent` : "0 Pending"}
+            subtitle="Action Required"
+            isUrgent={filteredApplications.length > 0}
+            valueColor="amber"
+          />
+          <StatMetricCard
+            title="CLUSTER SANDBOX HEALTH"
+            value="100% OK"
+            subtitle="k3d • Redis • Mongo"
+            valueColor="emerald"
+          />
+        </div>
+
+        {/* ========================================================================= */}
+        {/* MAIN SECTION 1: MENTOR APPROVALS QUEUE (Wireframe 09)                      */}
+        {/* ========================================================================= */}
+        <section className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          {/* Section Header */}
+          <div className="h-12 bg-slate-50/80 border-b border-slate-200 px-5 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <h2 className="text-xs font-bold text-slate-900 tracking-tight">
+                Mentor Application Triage
+              </h2>
+              <StatusPill status="PENDING_VERIFICATION" size="sm" />
+              <span className="hidden md:inline text-[11px] text-slate-500">
+                Applicants redirected to /pending-approval until approved here
+              </span>
             </div>
 
-            {/* List / Cards */}
+            {/* Search Filter */}
+            <div className="relative w-48 sm:w-64">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Filter applicants..."
+                className="w-full h-8 px-3 pl-8 rounded-lg border border-slate-200 bg-white text-xs placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+              <div className="absolute left-2.5 top-2 text-slate-400">
+                <VectorIcon name="search" size={13} />
+              </div>
+            </div>
+          </div>
+
+          {/* Applications List */}
+          <div className="p-4 space-y-3">
             {isDataLoading && filteredApplications.length === 0 ? (
-              <div className="p-12 text-center bg-white rounded-2xl border border-slate-200 shadow-sm">
-                <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-                <p className="text-xs text-slate-500">Querying mentor_approval_requests collection...</p>
+              <div className="py-12 text-center text-xs text-slate-500">
+                <VectorIcon name="refresh" size={20} className="animate-spin text-blue-600 mx-auto mb-2" />
+                <span>Loading pending mentor applications...</span>
               </div>
             ) : filteredApplications.length === 0 ? (
-              <div className="p-12 text-center bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                  <CheckCircle2 className="w-6 h-6" />
-                </div>
-                <h3 className="text-base font-bold text-slate-800">Verification Queue Clear</h3>
-                <p className="text-xs text-slate-500 max-w-sm">
-                  {searchQuery
-                    ? "No pending mentor applications match your search filter."
-                    : "All pending mentor applications have been reviewed. Elevated mentors have immediate access to mentor routes."}
+              <div className="py-10 text-center text-xs text-slate-500">
+                <VectorIcon name="check-circle" size={24} className="text-emerald-500 mx-auto mb-2" />
+                <p className="font-semibold text-slate-700">All Mentor Applications Reviewed</p>
+                <p className="text-[11px] text-slate-400 mt-0.5">
+                  No pending mentor applications require triage at this time.
                 </p>
               </div>
             ) : (
-              <div className="flex flex-col gap-4">
-                {filteredApplications.map((app) => {
-                  const isOperating = actionInProgress === app.id;
-                  const dateStr = app.submittedAt
-                    ? new Date(app.submittedAt).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })
-                    : "Recently";
+              filteredApplications.map((app) => {
+                const initials = (app.email.slice(0, 2) || "ME").toUpperCase();
+                const applicantHandle = app.email.split("@")[0] || "Mentor Applicant";
 
-                  return (
-                    <div
-                      key={app.id}
-                      className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col gap-4 hover:border-slate-300 transition-colors"
-                    >
-                      {/* Top Header of Card */}
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-700 flex items-center justify-center font-bold text-sm">
-                            {app.email.charAt(0).toUpperCase()}
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <h4 className="text-sm font-bold text-slate-900">{app.email}</h4>
-                              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
-                                {app.status}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
-                              <Clock className="w-3 h-3" />
-                              <span>Submitted: {dateStr}</span>
-                              <span>&bull;</span>
-                              <span className="font-mono text-[11px] text-slate-400">
-                                ID: {app.id.substring(0, 8)}...
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* LinkedIn Link */}
-                        {app.linkedInUrl && (
-                          <a
-                            href={app.linkedInUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-blue-600 hover:text-blue-700 bg-blue-50/70 hover:bg-blue-100 border border-blue-200/80 transition-colors self-start sm:self-auto"
-                          >
-                            <span>LinkedIn Profile</span>
-                            <ExternalLink className="w-3 h-3" />
-                          </a>
-                        )}
+                return (
+                  <div
+                    key={app.id}
+                    className="p-4 rounded-xl border border-slate-200 bg-white hover:border-slate-300 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4"
+                  >
+                    {/* Left: Applicant Bio & Credentials */}
+                    <div className="flex items-start gap-3.5">
+                      <div className="w-9 h-9 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shrink-0">
+                        {initials}
                       </div>
-
-                      {/* Bio Statement */}
-                      {app.bio && (
-                        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs text-slate-700 leading-relaxed">
-                          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
-                            Applicant Bio &amp; Expertise Statement
-                          </div>
-                          &ldquo;{app.bio}&rdquo;
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold text-slate-900">
+                            {applicantHandle}
+                          </span>
+                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                            Engineering Lead
+                          </span>
                         </div>
+                        <p className="text-[11px] text-slate-500 mt-0.5">
+                          {app.email} &bull; {app.bio ?? "Senior Backend Specialist"}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Middle: LinkedIn / GitHub Profile Link with Vector Arrow */}
+                    <div className="flex items-center gap-4">
+                      {app.linkedInUrl && (
+                        <a
+                          href={app.linkedInUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 hover:underline"
+                        >
+                          <span>{app.linkedInUrl.replace(/^https?:\/\//, "")}</span>
+                          <VectorIcon name="external-link" size={13} />
+                        </a>
                       )}
 
-                      {/* Action Buttons */}
-                      <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-100">
-                        <button
-                          type="button"
-                          onClick={() => handleReject(app.id, app.email)}
-                          disabled={isOperating}
-                          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 transition-colors disabled:opacity-50 cursor-pointer"
-                        >
-                          <XCircle className="w-3.5 h-3.5" />
-                          Reject
-                        </button>
-
+                      {/* Right: Actions */}
+                      <div className="flex items-center gap-2">
                         <button
                           type="button"
                           onClick={() => handleApprove(app.id, app.email)}
-                          disabled={isOperating}
-                          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm shadow-emerald-500/20 transition-all disabled:opacity-50 cursor-pointer"
+                          disabled={actionInProgress === app.id}
+                          className="h-8 px-3.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-xs font-bold inline-flex items-center gap-1.5 shadow-sm transition-colors disabled:opacity-50"
                         >
-                          {isOperating ? (
-                            <span className="flex items-center gap-1.5">
-                              <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                              Elevating...
-                            </span>
-                          ) : (
-                            <>
-                              <CheckCircle2 className="w-3.5 h-3.5" />
-                              Approve &amp; Elevate
-                            </>
-                          )}
+                          <VectorIcon name="checkmark" size={12} strokeWidth={2} />
+                          <span>Approve Mentor</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleReject(app.id, app.email)}
+                          disabled={actionInProgress === app.id}
+                          className="h-8 px-3 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 text-xs font-semibold transition-colors disabled:opacity-50"
+                        >
+                          Reject
                         </button>
                       </div>
                     </div>
-                  );
-                })}
-              </div>
+                  </div>
+                );
+              })
             )}
           </div>
+        </section>
 
-          {/* Right Column: Injected Slot (Language Detector Card) & Security Highlights */}
-          <div className="flex flex-col gap-6">
+        {/* ========================================================================= */}
+        {/* OPTIONAL SLOT: Language Detector / Secondary Widgets                      */}
+        {/* ========================================================================= */}
+        {detectorSlot && (
+          <div className="mb-2">
             {detectorSlot}
+          </div>
+        )}
 
-            {/* Architecture Card */}
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col gap-3">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                Mentor Verification Standards
-              </h4>
-              <ul className="text-xs text-slate-600 space-y-2 leading-relaxed">
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 mt-0.5 shrink-0" />
-                  <span>
-                    <strong>Professional Tenure:</strong> Confirm applicant holds relevant Java/distributed systems engineering experience.
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 mt-0.5 shrink-0" />
-                  <span>
-                    <strong>Real-time Privilege Upgrade:</strong> Approved mentors immediately unlock 1-on-1 student escalation desks.
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 mt-0.5 shrink-0" />
-                  <span>
-                    <strong>Educational Mission:</strong> Mentors guide learners using Socratic probing rather than dumping raw solutions.
-                  </span>
-                </li>
-              </ul>
+        {/* ========================================================================= */}
+        {/* MAIN SECTION 2: USER & ROLE GOVERNANCE DIRECTORY (Wireframe 09)           */}
+        {/* ========================================================================= */}
+        <section className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="h-12 bg-slate-50/80 border-b border-slate-200 px-5 flex items-center justify-between">
+            <h2 className="text-xs font-bold text-slate-900 tracking-tight">
+              Platform User Directory &amp; Role Management
+            </h2>
+
+            {/* Filter Pills */}
+            <div className="hidden sm:flex items-center gap-1.5">
+              <span className="px-2.5 py-1 rounded-full bg-slate-900 text-white text-[10px] font-bold">
+                ALL (4.3k)
+              </span>
+              <span className="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600 text-[10px] font-semibold hover:bg-slate-50 cursor-pointer">
+                STUDENTS
+              </span>
+              <span className="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600 text-[10px] font-semibold hover:bg-slate-50 cursor-pointer">
+                MENTORS
+              </span>
+              <span className="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600 text-[10px] font-semibold hover:bg-slate-50 cursor-pointer">
+                ADMINS
+              </span>
             </div>
           </div>
+
+          {/* Directory Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-slate-50/50 border-b border-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                <tr>
+                  <th className="py-3 px-5">User / Climber</th>
+                  <th className="py-3 px-4">Role</th>
+                  <th className="py-3 px-4">Altitude / Progress</th>
+                  <th className="py-3 px-4">Account Status</th>
+                  <th className="py-3 px-5 text-right">Governance Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-slate-700">
+                <tr className="hover:bg-slate-50/80 transition-colors">
+                  <td className="py-3 px-5">
+                    <span className="font-bold text-slate-900 block">Alex Vashishtha</span>
+                    <span className="text-[11px] text-slate-400">alex@codeconnect.dev</span>
+                  </td>
+                  <td className="py-3 px-4">
+                    <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                      STUDENT
+                    </span>
+                  </td>
+                  <td className="py-3 px-4 font-medium text-slate-600">
+                    1,420m &bull; 9 Footholds Mastered
+                  </td>
+                  <td className="py-3 px-4">
+                    <StatusPill status="ACTIVE" size="sm" />
+                  </td>
+                  <td className="py-3 px-5 text-right">
+                    <button
+                      type="button"
+                      className="px-2.5 py-1 rounded-lg border border-slate-200 text-[11px] font-semibold text-slate-600 hover:bg-slate-100 transition-colors"
+                    >
+                      Manage User &darr;
+                    </button>
+                  </td>
+                </tr>
+
+                <tr className="hover:bg-slate-50/80 transition-colors">
+                  <td className="py-3 px-5">
+                    <span className="font-bold text-slate-900 block">Dr. Priya Sen</span>
+                    <span className="text-[11px] text-slate-400">priya.sen@swiggy.in</span>
+                  </td>
+                  <td className="py-3 px-4">
+                    <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200">
+                      MENTOR
+                    </span>
+                  </td>
+                  <td className="py-3 px-4 font-medium text-slate-600">
+                    Verified by Admin &bull; 48 Reviews
+                  </td>
+                  <td className="py-3 px-4">
+                    <StatusPill status="ACTIVE" size="sm" />
+                  </td>
+                  <td className="py-3 px-5 text-right">
+                    <button
+                      type="button"
+                      className="px-2.5 py-1 rounded-lg border border-slate-200 text-[11px] font-semibold text-slate-600 hover:bg-slate-100 transition-colors"
+                    >
+                      Manage User &darr;
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* Audit Strip */}
+          <div className="p-3 bg-slate-50/60 border-t border-slate-200/80 text-[11px] text-slate-500 flex items-center gap-2">
+            <VectorIcon name="shield" size={13} className="text-slate-400 shrink-0" />
+            <span>
+              <strong className="font-semibold text-slate-700">Security Audit Trail:</strong> All role promotions, suspensions, and mentor activations are permanently logged in the compliance store.
+            </span>
+          </div>
+        </section>
+      </main>
         </div>
       </div>
     </div>

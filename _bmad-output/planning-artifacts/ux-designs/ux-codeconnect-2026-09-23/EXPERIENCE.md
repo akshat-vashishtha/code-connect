@@ -1,183 +1,221 @@
 ---
-title: Experience Specification — CodeConnect
+title: Experience Specification — CodeConnect (SaaS Light Workbench)
 created: 2026-09-23
-updated: 2026-09-23
+updated: 2026-09-24
 status: final
 ---
 
-# Experience Specification: CodeConnect (Professional Light System)
+# Experience Specification: CodeConnect
 
-## 1. Foundation & Layout System
-CodeConnect is a responsive web application designed with a **clean, professional light theme** that delivers maximum clarity, focus, and trust.
+## 1. Executive Product Architecture
 
-The application operates across five core surface templates:
-1. **Auth Surface**: Focused single-card container for frictionless login, registration, and role selection.
-2. **Student Dashboard Surface**: Overview of the student's mountain ascent, active tracks, and recent breakthroughs.
-3. **The Coding Cockpit Surface**: The primary learning workspace, featuring a **50/50 split** between the conceptual text story and the HackerRank-inspired Java code runner, complete with a one-click **Editor Expand Mode**.
-4. **Collaboration & Chat Surface**: Available as an in-cockpit slide-out drawer or a full-page messaging view connecting students with the Socratic AI, online/offline Peer Solvers, and human Mentors.
-5. **Admin Management Surface**: Administrative control center for reviewing mentor approval requests, managing user roles, and monitoring platform activity.
+CodeConnect is an engineering mastery platform built with an **enterprise SaaS workbench architecture**. Designed around Java 21 LTS and clean Data Structures & Algorithms (DSA), the system replaces passive tutorial consumption with active problem-solving anchored to **real-world physical mechanisms**.
 
-All visual styles, colors, and typography inherit from [DESIGN.md](file:///Users/Akshat.x.Vashishtha/Machine/Learnings/projects/git/idea/_bmad-output/planning-artifacts/ux-designs/ux-codeconnect-2026-09-23/DESIGN.md).
+### Core Platform Tenets
+1. **The 3-Tier Resolution Ecosystem**: When a student is blocked, they never face an impenetrable wall. They progress through:
+   - **Tier 1 (Instant Socratic AI)**: Clues and conceptual physical models without code spoilers.
+   - **Tier 2 (Verified Peer Solvers)**: Live 1-on-1 discussion and code snapshot sharing with classmates who conquered the identical foothold.
+   - **Tier 3 (Staff Mentor Escalation)**: Side-by-side diff review and personalized architectural coaching from staff engineers.
+2. **Clear Role Segregation**:
+   - **Student (Climber)**: Auth, Mountain Tracks, Monaco Cockpit, Socratic AI, Peer Solvers, Ascent Dashboard.
+   - **Mentor (Guide)**: Mentor Resolution Desk (Ticket Queue + Side-by-side Diff Viewer), Curriculum Authoring Studio (Story 2.3 - Foothold Builder & Bulk Uploader).
+   - **Admin (Governance)**: Platform User Directory, Role Lifecycle Management, Mentor Application Triage (Approve/Reject), Cluster Sandbox Health.
+3. **Pure Vector Ergonomics**: 100% SVG mathematical vector paths across all UI components; zero comic emojis or non-standard glyphs.
 
 ---
 
 ## 2. Information Architecture & Navigation
 
+The platform navigation is structured across 10 wireframe surfaces:
+
 ```
-[ CodeConnect Root Navigation ]
+[ CodeConnect Master Application Shell ]
 │
-├── 1. Auth Surface
-│     ├── Sign In (Email/Password or Google OAuth)
-│     └── Sign Up (Role Picker: Student [Instant] | Mentor [Pending Admin Review])
+├── 1. Authentication & Onboarding (`01-epic1-auth-onboarding.svg`)
+│     ├── Student Sign In / Sign Up (Instant Workspace Access)
+│     ├── Mentor Application (Requires GitHub profile, Bio, Admin Approval)
+│     └── Pending Approval Holding State (`/pending-approval`)
 │
-├── 2. Student Dashboard
-│     ├── Ascent Progress Hero (Current Streak, Active Foothold, Next Milestone)
-│     ├── Track Cards (Java Basics, OOP, Data Structures, Algorithms)
-│     └── Visual Foothold Roadmap (Completed [Green], Active [Blue], Locked [Gray])
+├── 2. Mountain Curriculum Explorer (`02-epic2-curriculum-reader.svg`)
+│     ├── Progressive Ascent Routes (Track 1 ➔ Track 4)
+│     ├── Real-World Physical Mechanism Diagram Card
+│     └── Foothold Challenge Specifications & Constraints
 │
-├── 3. The Coding Cockpit (50/50 Split + Expandable)
-│     ├── Left Panel: Story Reader + Problem Prompt + Input/Output Constraints
-│     └── Right Panel: Java Editor + Run/Submit Actions + Bottom Test Console
+├── 3. Monaco Interactive Coding Cockpit (`03-epic3-coding-cockpit.svg`)
+│     ├── 50/50 Dual-Pane Viewport (Problem Spec vs Java 21 Editor)
+│     ├── 100% Expand Mode Toggle (`Cmd+B`)
+│     └── Test Evaluation Console Tray (Pass/Fail matrix, RAM, Duration, Diagnostics)
 │
-├── 4. Collaboration & Chat Center (Drawer & Dedicated View)
-│     ├── Tab 1: Socratic AI Guide (Story-anchored diagnostic debugging)
-│     ├── Tab 2: Peer Solver Directory (Online & Offline solver list + 1-on-1 thread)
-│     └── Tab 3: Mentor Escalation (Pending tickets + direct coach conversation)
+├── 4. Socratic AI Coach Drawer (`04-epic4-socratic-ai.svg`)
+│     ├── Strict Anti-Spoiler Guardrail Banner
+│     ├── 3-Tier Progressive Hint Ladder (Metaphor ➔ Formula ➔ Structural Model)
+│     └── Hinglish / English Natural Language Toggle
 │
-├── 5. User Profile Surface
-│     ├── User Bio, Role Badge, Account Settings
-│     └── Solved Problems History & Code Solutions
+├── 5. Peer Solver Network (`05-epic5-peer-solvers.svg`)
+│     ├── Verified Solvers Directory (Online Presence & Altitude)
+│     ├── 1-on-1 Discussion Tray with Code Snapshot Attachment
+│     └── Tier-3 Mentor Escalation Link
 │
-└── 6. Admin Management Portal (Admins Only)
-      ├── Metrics Overview (Active Students, Verified Mentors, Pending Requests)
-      ├── Mentor Approval Queue (Review applicant, Approve/Reject action)
-      └── User Directory (Search, filter by role, edit/deactivate accounts)
+├── 6. Mentor Resolution Desk (`06-epic6-mentor-desk.svg`)
+│     ├── Student Ticket Triage Queue (Urgency, Foothold, Resolution State)
+│     ├── Side-by-Side Diff Viewer (Student Attempt vs Canon Implementation)
+│     └── Markdown Coaching Feedback Editor & "Mark Resolved" Action
+│
+├── 7. Mountain Ascent Dashboard (`07-epic7-ascent-dashboard.svg`)
+│     ├── Topographic Elevation Ridgeline (Base Camp 0m to Summit 4,000m)
+│     ├── 4 Load-Bearing Waypoint Checkpoint Drills
+│     └── Momentum Streak & Spaced Repetition Retention Engine
+│
+├── 8. Curriculum Authoring Studio (`08-epic2-curriculum-authoring-studio.svg`)
+│     ├── Track & Foothold Metadata Builder
+│     ├── Physical Mental Model Story Editor & SVG Mechanism Uploader
+│     ├── Dynamic Test-Case Matrix Builder (Public & Hidden Cases)
+│     └── Bulk Curriculum Syllabus JSON/ZIP Package Uploader
+│
+└── 9. Admin Control Center & Governance (`09-admin-studio-user-governance.svg`)
+      ├── Real-Time Platform Metrics Bar
+      ├── Mentor Application Triage Queue (Approve / Reject Actions)
+      ├── User & Role Governance Directory (Search, Role Filters, Status Actions)
+      └── Cluster Sandbox Infrastructure Health Monitor
 ```
 
 ---
 
-## 3. Surface Specifications & User Experiences
+## 3. Surface Specifications & Interaction Details
 
-### 3.1 Authentication & Role Selection (`/login`, `/signup`)
-* **Layout**: Centered card (width: 440px) on `{colors.bg-base}` with subtle elevation.
-* **Role Selection**:
-  * On the Sign Up tab, the user encounters a clear segmented role toggle:
-    * **Student**: Microcopy: *"Instant access to all tracks, coding sandbox, and AI guide."*
-    * **Mentor**: Microcopy: *"Author tracks and mentor students. Requires Admin review and approval before activation."*
-* **OAuth Integration**: One-click **"Continue with Google"** button with official branding.
-* **Email Verification**: Clean confirmation feedback toast upon registration.
-* **Pending Mentor Screen**: If a user signs up as a Mentor, upon submission they see a dedicated status card:
-  * *"Thank you for applying to mentor on CodeConnect! Your application has been sent to the Admin team for review. You will receive an email once approved."*
+### 3.1 Authentication & Role Onboarding (`01-epic1-auth-onboarding.svg`)
+- **Route**: `/login`, `/register`
+- **Container**: Centered 440px card on `{colors.bg-base}` with `{rounded.2xl}` and soft shadow.
+- **Interactive Role Selector**:
+  - Segmented radio card for **Student**: *"Instant access to all tracks, coding cockpit, and AI coach."*
+  - Segmented radio card for **Mentor**: *"Author tracks & mentor students. Requires staff review & approval."*
+- **OAuth & Credentials**: One-click Google OAuth button, standard email/password inputs with validation feedback.
+- **Pending Approval Workflow**: When a user registers as a Mentor, their status is set to `PENDING_APPROVAL`. They are redirected to `/pending-approval` showing a clear holding banner while Admin reviews their application.
 
----
+### 3.2 Mountain Curriculum Explorer (`02-epic2-curriculum-reader.svg`)
+- **Route**: `/curriculum`, `/track/:trackId`
+- **Left Column (340px)**: Ascent Route Tree showing tracks (Track 1: Java 21 Mental Models, Track 2: Data Structures) with conquered footholds and altitude progress.
+- **Right Column (812px)**:
+  - Header: Foothold title, status pill (`CONQUERED`, `ACTIVE`), altitude gain (`+150m`), estimated duration (`25 mins`).
+  - Embedded Physical Mechanism Diagram Card: Interactive vector diagram illustrating the mechanical real-world analogy (e.g., Circular Queue airport baggage conveyor carousel with Front/Rear indices).
+  - Key Mental Model Banner: Single-sentence structural rule converting abstract algorithms into concrete physical intuition.
+  - Action Bar: Prominent primary CTA **"Step Into Code Cockpit (Java 21) →"**.
 
-### 3.2 Student Dashboard (`/dashboard`)
-* **Header / Greeting**: *"Welcome back, Arjun. You are climbing the Java & DSA Track."*
-* **Metrics Snapshot**:
-  * Active Foothold: `Foothold 4: Two-Pointer Technique`
-  * Progress: `7 of 18 Footholds Mastered (38%)`
-  * Momentum: `🔥 4-Day Streak`
-* **Resume Action**: Prominent primary button: **"Resume Ascent →"** which takes the student straight into their active foothold cockpit.
-* **Track Roadmap Visualizer**:
-  * Interactive vertical ascent path:
-    * **Passed Nodes**: Green circle with checkmark, clickable to review past code.
-    * **Current Node**: Pulsing cyan ring with "Current Foothold" label.
-    * **Locked Nodes**: Muted padlock icon, displaying required prerequisites on hover.
+### 3.3 Monaco Interactive Coding Cockpit (`03-epic3-coding-cockpit.svg`)
+- **Route**: `/cockpit/:footholdId`
+- **Layout**: 50/50 split container filling the browser viewport.
+  - **Left Pane (570px)**: Story narrative, method contract signatures, inputs/outputs, and edge-case constraints. Includes an "Expand" toggle to collapse this pane.
+  - **Right Pane (575px)**:
+    - Editor Toolbar: Tab with `CircularQueue.java`, `Java 21 LTS` pill, starter code Reset button, and Expand Mode button (`⤢`).
+    - Monaco Code Editor: Dark slate theme (`#0f172a`), line numbers, bracket pair colorization, and Java 21 syntax support.
+    - Action Buttons: `Run Visible Tests` (secondary button) and `Submit Solution →` (primary blue button).
+  - **Bottom Test Console Tray (Height: 210px)**:
+    - Tabbed test case results (`Case 1 [PASS]`, `Case 2 [PASS]`, `Case 3 [FAIL]`).
+    - Real-time sandbox metrics: execution duration (`18ms`), memory footprint (`24MB`).
+    - Detailed Diagnostic Diff: Displays input sequence, expected output, and actual stdout / stack trace.
+    - Socratic Clue Recommendation Bar: When tests fail, suggests the relevant physical analogy with a direct CTA to open the Socratic AI drawer.
 
----
+### 3.4 Socratic AI Clue Drawer (`04-epic4-socratic-ai.svg`)
+- **Interaction**: Slides out from the right (width: 450px) over the cockpit without obscuring active editor code.
+- **Anti-Spoiler Guardrail Banner**: Explicitly confirms that the coach will never write the solution code, protecting the student's learning ascent.
+- **Natural Language Toggle**: Allows switching between English and Hinglish explanations.
+- **3-Tier Progressive Hint Ladder**:
+  - `Tier 1: Conceptual Metaphor`: Relates the issue back to the physical story (e.g., Baggage Carousel wrap-around).
+  - `Tier 2: Formula & Constraints`: Provides the mathematical formula (e.g., `(tail + 1) % capacity`).
+  - `Tier 3: Structural Model`: Outlines pseudocode structure, guarded behind a confirmation button to prevent accidental revelation.
+- **Quick Prompt Chips**: Pre-canned prompts (*"Explain error in Hinglish"*, *"Why did modulo wrap fail?"*).
 
-### 3.3 The Coding Cockpit (`/track/{id}/foothold/{id}`)
-* **Layout**: 50/50 split by default, filling the entire browser viewport beneath the 60px header.
-* **Left Panel (Story & Problem)**:
-  * Story Box: Formatted with clean typography and a light tinted background. Explains the real-world mental model (no jargon).
-  * Problem Statement: Input/Output specifications, constraints, and sample test cases with copy buttons.
-* **Right Panel (HackerRank-Inspired Editor & Console)**:
-  * Top Bar: Language indicator (`Java 17`), Reset Starter Code button, and the **Expand Editor** (`⤢`) button.
-  * In-Browser Editor: High-contrast light theme with line numbers, code completion, and syntax highlighting.
-  * **Expand Mode**: Clicking `⤢` (or pressing `Cmd+B`) collapses the left story pane to a slim 48px vertical rail, expanding the code editor to ~95% width for undistracted coding.
-  * Bottom Controls:
-    * **"Run Code"** (Secondary outline button; shortcut: `Cmd+Enter`).
-    * **"Submit"** (Primary green button; shortcut: `Cmd+Shift+Enter`).
-  * Test Results Drawer:
-    * Sits beneath the editor. Displays horizontal test chips (`Test 1`, `Test 2`, etc.).
-    * Green badge for `PASS`, red badge for `FAIL`.
-    * Clicking a failed test expands the expected vs. actual output and displays an amber action button: *"Ask AI what went wrong on this case"*.
+### 3.5 Peer Solver Network (`05-epic5-peer-solvers.svg`)
+- **Interaction**: Slide-out drawer / dedicated modal (width: 450px) connecting the climber with peers who have already conquered the active foothold.
+- **Climber Directory**: Filterable by `ONLINE` and `ALL`. Displays peer name, altitude achieved, and master badge.
+- **1-on-1 Chat Tray**:
+  - Synced code snippet card displaying student's line-specific blocker.
+  - Message thread with syntax-highlighted suggestions.
+  - Quick action to escalate to a human mentor if the peer discussion does not resolve the blocker within 10 minutes.
 
----
+### 3.6 Mentor Resolution Desk (`06-epic6-mentor-desk.svg`)
+- **Route**: `/mentor/desk`
+- **Role Guard**: Accessible strictly to approved users with `MENTOR` role.
+- **Left Column (400px)**:
+  - Incoming ticket list with filter pills (`ACTIVE`, `RESOLVED`).
+  - Ticket cards display student name, altitude, foothold ID, escalation tier (`TIER 3 ESCALATED`), and student problem summary.
+- **Right Column (728px)**:
+  - Student report details and failure symptoms.
+  - **Side-by-Side Code Diff Viewer**: Compares student attempt (`CircularQueue.java`) directly against the canon reference implementation, highlighting exact logical discrepancies.
+  - Mentor Feedback Editor: Markdown text area for entering structural guidance.
+  - Action Bar: **"Mark Resolved & Notify Student"** (primary emerald button).
 
-### 3.4 Collaboration & Chat Center (Drawer & Dedicated View)
-* **Drawer Behavior**: Sits docked on the right side of the Cockpit (width: 380px). Slides in smoothly without covering the editor. Can also be opened as a full-page view under `/messages`.
-* **Tab 1: Socratic AI Guide**:
-  * Interactive chat stream.
-  * Automatically injects the active problem and story metaphor into prompt context.
-  * AI messages are styled in subtle amber-bordered cards with clear Socratic prompts (English or Hinglish).
-* **Tab 2: Peer Solver Directory**:
-  * Lists students who have successfully passed this specific problem.
-  * Displays: Avatar, Student Name, Solved Date, and Presence Badge:
-    * **Online**: Solid green badge (`● Online`)
-    * **Offline**: Light gray badge (`○ Offline`)
-  * Clicking any peer opens a direct 1-on-1 messaging thread.
-  * Message Input includes a **"Attach Code Snapshot"** toggle so the peer can see the exact blocker.
-* **Tab 3: Mentor Escalation**:
-  * One-click form: *"Describe where you are stuck for the mentor"*.
-  * Shows ticket status: `Pending Admin/Mentor Claim` → `Claimed by Mentor Vikram` → `Active Discussion`.
+### 3.7 Mountain Ascent Dashboard (`07-epic7-ascent-dashboard.svg`)
+- **Route**: `/dashboard`
+- **Header**: Climber altitude (`1,420m / 4,000m`), active streak (`5 Days`), and next objective prompt.
+- **Main Elevation Map (700px width)**:
+  - Topographic ridgeline visualization showing 4 load-bearing camps:
+    - Base Camp (0m) ➔ Camp 1 (1,000m) ➔ Camp 2 (2,200m) ➔ High Camp (3,100m) ➔ Summit (4,000m).
+  - Waypoints indicate completed checkpoints (green), active challenge (blue pulse), and locked checkpoints (muted gray).
+- **Right Column (428px)**:
+  - Spaced Repetition Retention Ring: Visual retention score (`88% Peak Retention`) and schedule for reviewing previously conquered concepts.
+  - Track Ascent Progress Cards: Progress percentages across Java Basics, OOP, Data Structures, and System Design.
 
----
+### 3.8 Curriculum Authoring Studio (`08-epic2-curriculum-authoring-studio.svg`)
+- **Route**: `/curriculum/studio`
+- **Role Guard**: Accessible to `MENTOR` and `ADMIN`.
+- **Foothold Authoring Builder (816px width)**:
+  - Metadata row: Track selection, Foothold ID, Name, Target Altitude gain in meters.
+  - Conceptual Story & Real-World Analogy Builder: Markdown editor requiring an attached physical mechanism.
+  - Method Contract & Java 21 Starter Code Editor.
+  - Dynamic Test-Case Matrix: Define inputs, expected return values, and toggle `Hidden Test Case` flag.
+  - Action Bar: `Save Draft` and `Publish Foothold` (primary blue button).
+- **Right Column (312px)**:
+  - Bulk Syllabus Uploader: Drag-and-drop zone accepting `.json` curriculum manifests or `.zip` packages for batch track publishing.
+  - Curriculum Quality Checklist: Verification gates ensuring every foothold contains a real-world story and test cases.
 
-### 3.5 User Profile Surface (`/profile`)
-* **Profile Header**: Avatar, Display Name, Role Badge (`STUDENT` / `MENTOR` / `ADMIN`), Bio, and Account Settings link.
-* **Learning Stats**: Total problems solved, favorite tracks, and current streak.
-* **Solved Problems History Table**:
-  * Columns: Foothold Name, Track, Date Completed, Execution Speed, and "View Solution" modal trigger.
-
----
-
-### 3.6 Admin Management Dashboard (`/admin`)
-* **Role Guard**: Accessible strictly to users authenticated with the `ADMIN` role.
-* **Top Metric Cards**:
-  * `Total Active Students` | `Verified Mentors` | `Pending Mentor Approvals` | `Daily Submissions`
-* **Pending Mentor Approvals Section (High Priority)**:
-  * Prominent review table showing pending mentor sign-ups.
-  * Columns: Applicant Name, Email, Registration Date, Submitted Experience/Bio.
-  * Actions:
-    * **Approve** (Emerald button): Instantly assigns `MENTOR` role and triggers confirmation email.
-    * **Reject** (Subtle red text button): Rejects application with optional feedback note.
-* **User Management Table**:
-  * Search bar (name/email) + Role filter dropdown (`All`, `Student`, `Mentor`, `Admin`).
-  * Actions: Change Role, Reset Password, or Deactivate Account.
-* **Curriculum Overview**: Quick link to the Curriculum Studio to add or edit footholds.
-
----
-
-## 4. Voice and Tone (Microcopy)
-
-* **Calm & Professional**: Clean, modern, respectful prose across all UI text.
-* **Constructive Debugging**: Errors are treated as natural checkpoints on the climb.
-  * *Instead of*: `Error 500: Execution timed out.`
-  * *CodeConnect says*: `Your program ran past the 3-second limit. Check if your loop has an exit condition that never triggers.`
-* **Personalized AI Tone**: The AI Socratic guide uses natural, encouraging language (adapting to English or Hinglish based on how the student writes).
+### 3.9 Admin Control Center & Governance (`09-admin-studio-user-governance.svg`)
+- **Route**: `/admin/governance`
+- **Role Guard**: Accessible strictly to `ADMIN` superusers.
+- **Top Metrics Bar**: 4 stat cards showing Active Students, Verified Mentors, Pending Mentor Applications, and Cluster Sandbox Health (`100% OK, k3d, Redis, Mongo`).
+- **Mentor Application Triage**:
+  - List of pending mentor applicants showing name, employer, years of experience, primary technical domain, and verified GitHub profile link with external arrow vector.
+  - Actions: **Approve Mentor** (emerald button, immediately grants `MENTOR` role) and **Reject** (muted button).
+- **Platform User & Role Governance Directory**:
+  - Search bar and role filters (`ALL`, `STUDENTS`, `MENTORS`, `ADMINS`).
+  - User table displaying climber details, role badge, altitude progress, account status (`ACTIVE`, `SUSPENDED`), and `Manage User` action menu.
 
 ---
 
-## 5. Key Flow Narratives
+## 4. Key End-to-End User Journeys
 
-### Flow 1: Mentor Sign-Up and Admin Approval
-1. **Sign Up**: Vikram visits `/signup`, enters his credentials, and selects the **Mentor** role tab.
-2. **Pending Notice**: Upon submitting, Vikram sees the friendly pending approval message.
-3. **Admin Review**: Admin opens `/admin`, sees a red badge `"1 Pending Mentor Application"`.
-4. **Accept**: Admin clicks **"Approve"**. Vikram's account is upgraded to `MENTOR`.
-5. **Login**: Vikram receives an approval email, logs in, and his topbar now includes the **Curriculum Studio** and **Escalations Inbox** tabs.
+### Journey 1: Student Ascent from Physical Analogy to Passing Sandbox
+1. Arjun navigates to `/dashboard` and clicks **"Resume Foothold 2.3: Circular Queue"**.
+2. On `/curriculum`, Arjun reads the story of the **Airport Baggage Conveyor Carousel** and examines the circular wrap-around diagram card.
+3. Arjun clicks **"Step Into Code Cockpit"**, opening the 50/50 dual pane on `/cockpit/2.3`.
+4. Arjun writes his initial queue implementation and hits `Ctrl+Enter` (`Run Visible Tests`).
+5. Tests 1 & 2 pass, but Test 3 throws `ArrayIndexOutOfBoundsException: Index 5 out of bounds`.
+6. Arjun clicks the **"Socratic Clue"** bar, which slides out the Socratic AI drawer.
+7. The AI points out: *"When your carousel reaches capacity, how does the next bag wrap to slot 0?"*
+8. Arjun updates his logic to `(rear + 1) % capacity`, hits `Ctrl+Shift+Enter` (`Submit Solution`), passes all visible and hidden tests, and gains `+150m` altitude.
 
-### Flow 2: Student Codes, Expands Editor, and Solves with AI Hint
-1. **Dashboard**: Arjun clicks **"Resume Ascent"** on `/dashboard`.
-2. **50/50 View**: Arjun reads the story of the Two Guides on the left, then clicks into the editor on the right.
-3. **Expand**: Arjun wants full screen width to write helper methods, so he presses `Cmd+B`. The story collapses to a slim rail, and the editor fills 95% of the screen.
-4. **Run**: Arjun hits `Cmd+Enter`. Test 1 passes, but Test 2 fails.
-5. **Hint**: Arjun clicks the failed chip's AI prompt. The right drawer slides out.
-6. **Breakthrough**: The AI prompts him about pointer crossing. Arjun adjusts his condition, presses `Cmd+Shift+Enter` (Submit), and passes all tests with green confetti.
+### Journey 2: Mentor Registration and Admin Approval Flow
+1. Dr. Priya Sen visits `/register`, selects the **Mentor** role card, enters her Swiggy work email, 10 years experience, and GitHub profile URL.
+2. Upon submission, Dr. Priya sees the pending approval banner informing her that an Admin will review her credentials.
+3. Admin logs into `/admin/governance`, sees `1 Urgent Pending Mentor App` in the yellow stat card.
+4. Admin reviews Dr. Priya's GitHub link (`github.com/psen-java`) and clicks **"Approve Mentor"**.
+5. Dr. Priya's role is updated to `MENTOR` in MongoDB. She receives an approval confirmation email, logs in, and gains immediate access to the **Mentor Desk** and **Curriculum Studio**.
 
-### Flow 3: Messaging an Offline Peer Solver
-1. **Ask Peer**: Arjun gets stuck on a dynamic programming foothold and opens Tab 2 in the Help Drawer.
-2. **Directory**: He sees **Rohan** is marked `Offline`, but Rohan solved this problem yesterday.
-3. **Send Question**: Arjun clicks Rohan, attaches his code snippet, and sends: *"Hey Rohan, quick question on your base case when array size is 1."*
-4. **Async Reply**: Rohan logs in 2 hours later, sees a message badge in his topbar, opens the thread, and leaves a helpful reply.
+### Journey 3: Mentor Resolves Student Tier-3 Escalation
+1. Alex gets stuck on Foothold 2.3 and submits a Tier-3 mentor escalation ticket.
+2. Mentor Vikram opens `/mentor/desk`, sees Alex's ticket in the triage queue marked `TIER 3 ESCALATED`.
+3. Vikram clicks the ticket. The side-by-side diff viewer renders Alex's code on the left and the canon solution on the right, highlighting Alex's omitted count variable.
+4. Vikram writes targeted architectural guidance: *"Maintain an explicit count integer so empty vs full buffer states can be disambiguated when head == tail."*
+5. Vikram clicks **"Mark Resolved & Notify Student"**. Alex receives an instant notification in his cockpit tray with the mentor's feedback.
+
+---
+
+## 5. Keyboard Shortcuts & Power-User Ergonomics
+
+| Shortcut (Mac) | Shortcut (Windows/Linux) | Action | Scope |
+| :--- | :--- | :--- | :--- |
+| `Cmd + Enter` | `Ctrl + Enter` | Run Visible Test Cases | Monaco Coding Cockpit |
+| `Cmd + Shift + Enter` | `Ctrl + Shift + Enter` | Submit Solution (All Tests) | Monaco Coding Cockpit |
+| `Cmd + B` | `Ctrl + B` | Toggle 50/50 Split to Full Editor | Monaco Coding Cockpit |
+| `Cmd + K` | `Ctrl + K` | Open Global Command Palette | Platform Wide |
+| `Esc` | `Esc` | Close Auxiliary Drawers (AI, Peers) | Cockpit & Drawers |

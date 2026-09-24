@@ -1,20 +1,10 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import Link from "next/link";
-import {
-  Mail,
-  Lock,
-  ArrowRight,
-  ArrowLeft,
-  CheckCircle2,
-  Sparkles,
-  Compass,
-  Layers,
-  Shield,
-} from "lucide-react";
-import { FormInput } from "@/presentation/atoms/FormInput";
-import { Button } from "@/presentation/atoms/Button";
-import { AlertBanner } from "@/presentation/atoms/AlertBanner";
 import { LoginControllerResult } from "@/controller/useLoginController";
+import { VectorIcon } from "@/presentation/atoms/VectorIcon";
+import { AlertBanner } from "@/presentation/atoms/AlertBanner";
 
 export interface LoginFormViewProps {
   readonly controller: LoginControllerResult;
@@ -22,8 +12,7 @@ export interface LoginFormViewProps {
 
 /**
  * Presentation view for User Login.
- * Features dual-pane layout: learner milestone progress on left,
- * focused card with explicit Back navigation on right.
+ * Strictly adheres to Wireframe 01-epic1-auth-onboarding.svg in SaaS Light Workbench theme.
  */
 export const LoginFormView: React.FC<LoginFormViewProps> = ({ controller }) => {
   const {
@@ -35,210 +24,223 @@ export const LoginFormView: React.FC<LoginFormViewProps> = ({ controller }) => {
     handleSubmit,
   } = controller;
 
+  const [rememberMe, setRememberMe] = useState(true);
+
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col lg:grid lg:grid-cols-12 font-sans selection:bg-blue-500 selection:text-white relative">
-      {/* ========================================================================= */}
-      {/* LEFT COLUMN: Student Progress & Story Mental Models (Desktop Only)        */}
-      {/* ========================================================================= */}
-      <div className="hidden lg:flex lg:col-span-5 xl:col-span-6 relative flex-col justify-between p-12 overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 border-r border-slate-800/80">
-        {/* Ambient Glow */}
-        <div className="absolute top-0 -left-20 w-96 h-96 bg-blue-600/15 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-10 right-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-
-        {/* Top: Brand Header + Back Link */}
-        <div className="relative z-10 flex items-center justify-between">
-          <Link href="/" className="inline-flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-extrabold text-xl shadow-lg shadow-blue-500/30 group-hover:scale-105 transition-transform">
-              CC
-            </div>
-            <div>
-              <span className="text-2xl font-bold tracking-tight text-white">
-                Code<span className="text-blue-400">Connect</span>
-              </span>
-              <span className="block text-xs font-medium text-slate-400">The Solo Mountain Climb</span>
-            </div>
-          </Link>
-
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white bg-slate-900/60 hover:bg-slate-800 border border-slate-800 transition-colors"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Back to Home</span>
-          </Link>
-        </div>
-
-        {/* Center: Mountain Climb Footholds */}
-        <div className="relative z-10 my-auto py-8 flex flex-col gap-6 max-w-lg">
+    <div className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col justify-between p-4 sm:p-6 font-sans">
+      {/* Top Header */}
+      <header className="max-w-6xl mx-auto w-full flex items-center justify-between py-2">
+        <Link href="/" className="inline-flex items-center gap-3 group">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-extrabold text-sm shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
+            CC
+          </div>
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 mb-4">
-              <Sparkles className="w-3.5 h-3.5" />
-              Welcome Back, Climber
-            </div>
-            <h1 className="text-3xl xl:text-4xl font-extrabold text-white tracking-tight leading-tight">
-              Resume Your Mountain Climb to Java Mastery.
-            </h1>
-            <p className="mt-3 text-sm text-slate-400 leading-relaxed">
-              Your active coding challenges, story analogies, and classmate doubt chats are waiting right where you left off.
-            </p>
+            <span className="text-lg font-bold tracking-tight text-slate-900">
+              Code<span className="text-blue-600">Connect</span>
+            </span>
+            <span className="block text-[10px] font-medium text-slate-500">
+              The Solo Mountain Climb
+            </span>
           </div>
+        </Link>
 
-          {/* Interactive Progress Footholds Card */}
-          <div className="rounded-2xl bg-slate-900/90 border border-slate-800 shadow-2xl p-5 backdrop-blur-xl space-y-3.5">
-            <div className="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center justify-between pb-2 border-b border-slate-800">
-              <span className="flex items-center gap-1.5 text-slate-300">
-                <Compass className="w-3.5 h-3.5 text-blue-400" />
-                Active Footholds
-              </span>
-              <span className="text-blue-400 font-mono text-[11px]">Track: Core Data Structures</span>
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition-colors"
+        >
+          <VectorIcon name="arrow-left" size={13} strokeWidth={2} />
+          <span>Back to Platform</span>
+        </Link>
+      </header>
+
+      {/* Main Centered 440px Auth Card (Wireframe 01) */}
+      <main className="flex-1 flex items-center justify-center py-8">
+        <div className="w-full max-w-[440px] bg-white rounded-2xl border border-slate-200/90 shadow-[0_8px_30px_rgba(15,23,42,0.06)] p-7 sm:p-8">
+          {/* Segmented Auth Navigation */}
+          <div className="grid grid-cols-2 p-1 bg-slate-100/80 rounded-xl mb-6 text-xs font-bold border border-slate-200/60">
+            <div className="py-2 text-center rounded-lg bg-white text-blue-600 shadow-sm border border-slate-200/80">
+              Sign In
             </div>
-
-            <div className="space-y-2.5">
-              <div className="flex items-center justify-between text-xs p-3 rounded-xl bg-slate-800/60 border border-slate-700/50">
-                <div className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span className="text-slate-200 font-medium">Story 1: The Airport Baggage Carousel (Queues)</span>
-                </div>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  Completed
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between text-xs p-3 rounded-xl bg-slate-800/60 border border-slate-700/50">
-                <div className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span className="text-slate-200 font-medium">Story 2: The Package Sorting Hub (Arrays)</span>
-                </div>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  Completed
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between text-xs p-3 rounded-xl bg-blue-500/10 border border-blue-500/30">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-4 h-4 rounded-full border-2 border-blue-400 border-t-transparent animate-spin shrink-0" />
-                  <span className="text-blue-200 font-medium">Story 3: Circular Buffer Synchronization</span>
-                </div>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                  Active Challenge
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom Info */}
-        <div className="relative z-10 flex items-center gap-2 text-xs text-slate-500">
-          <Shield className="w-4 h-4 text-blue-400" />
-          <span>Fear-Free Solo Learning Environment &bull; Zero Public Ranking Pressure</span>
-        </div>
-      </div>
-
-      {/* ========================================================================= */}
-      {/* RIGHT COLUMN: Sign In Form                                               */}
-      {/* ========================================================================= */}
-      <div className="lg:col-span-7 xl:col-span-6 bg-slate-50 flex flex-col justify-center items-center py-12 px-4 sm:px-8 lg:px-12 relative overflow-y-auto">
-        {/* Subtle Background Pattern */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-60 pointer-events-none" />
-
-        {/* Explicit Back to Home & Brand Navigation for Mobile Only */}
-        <div className="w-full max-w-[440px] mb-6 flex items-center justify-between relative z-10">
-          <div className="lg:hidden">
             <Link
-              href="/"
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-sm transition-all hover:-translate-x-0.5"
+              href="/signup"
+              className="py-2 text-center rounded-lg text-slate-500 hover:text-slate-900 transition-colors"
             >
-              <ArrowLeft className="w-3.5 h-3.5 text-slate-500" />
-              <span>Back to Home</span>
+              Create Account
             </Link>
           </div>
 
-          <Link href="/signup" className="text-xs font-semibold text-blue-600 hover:text-blue-700 hover:underline ml-auto">
-            Create an Account &rarr;
-          </Link>
-        </div>
+          <div className="mb-6">
+            <h1 className="text-xl font-extrabold text-slate-900 tracking-tight">
+              Welcome back, Climber
+            </h1>
+            <p className="text-xs text-slate-500 mt-1">
+              Resume your structured Java 21 &amp; DSA ascent where you left off.
+            </p>
+          </div>
 
-        {/* Card Container (Strictly bounded to max-w-[440px]) */}
-        <div className="w-full max-w-[440px] relative z-10">
-          <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-xl shadow-slate-200/60 border border-slate-200/90 p-6 sm:p-8">
-            {/* Header */}
-            <div className="mb-6">
-              <h2 className="text-2xl font-bold tracking-tight text-slate-900">
-                Sign in to your account
-              </h2>
-              <p className="mt-1 text-xs text-slate-500">
-                Don&apos;t have an account yet?{" "}
+          {/* Error Banner */}
+          {errorMessage && (
+            <div className="mb-5">
+              <AlertBanner variant="error" message={errorMessage} />
+            </div>
+          )}
+
+          {/* Social Google OAuth (Mock / Spec) */}
+          <button
+            type="button"
+            className="w-full h-10 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center justify-center gap-2.5 transition-colors shadow-sm mb-5"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24">
+              <path
+                fill="#4285F4"
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+              />
+              <path
+                fill="#34A853"
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+              />
+              <path
+                fill="#FBBC05"
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+              />
+              <path
+                fill="#EA4335"
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+              />
+            </svg>
+            <span>Continue with Google</span>
+          </button>
+
+          {/* Divider */}
+          <div className="relative flex items-center justify-center mb-5">
+            <div className="border-t border-slate-200 w-full" />
+            <span className="bg-white px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest absolute">
+              or continue with email
+            </span>
+          </div>
+
+          {/* Credentials Form */}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label
+                htmlFor="login-email"
+                className="block text-xs font-semibold text-slate-700 mb-1"
+              >
+                Email Address
+              </label>
+              <div className="relative">
+                <input
+                  id="login-email"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ email: e.target.value })}
+                  placeholder="alex@codeconnect.dev"
+                  disabled={isLoading}
+                  className={`w-full h-10 px-3.5 pl-9 rounded-xl border bg-slate-50/50 text-slate-900 text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all ${
+                    fieldErrors.email ? "border-rose-300 bg-rose-50/30" : "border-slate-200"
+                  }`}
+                />
+                <div className="absolute left-3 top-2.5 text-slate-400">
+                  <VectorIcon name="mail" size={15} />
+                </div>
+              </div>
+              {fieldErrors.email && (
+                <p className="text-[11px] text-rose-600 mt-1 font-medium">
+                  {fieldErrors.email}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label
+                  htmlFor="login-password"
+                  className="block text-xs font-semibold text-slate-700"
+                >
+                  Password
+                </label>
                 <Link
-                  href="/signup"
-                  className="font-semibold text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+                  href="#"
+                  className="text-[11px] font-medium text-blue-600 hover:underline"
                 >
-                  Create an account free
+                  Forgot password?
                 </Link>
-              </p>
+              </div>
+              <div className="relative">
+                <input
+                  id="login-password"
+                  type="password"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ password: e.target.value })}
+                  placeholder="••••••••••••"
+                  disabled={isLoading}
+                  className={`w-full h-10 px-3.5 pl-9 rounded-xl border bg-slate-50/50 text-slate-900 text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all ${
+                    fieldErrors.password
+                      ? "border-rose-300 bg-rose-50/30"
+                      : "border-slate-200"
+                  }`}
+                />
+                <div className="absolute left-3 top-2.5 text-slate-400">
+                  <VectorIcon name="lock" size={15} />
+                </div>
+              </div>
+              {fieldErrors.password && (
+                <p className="text-[11px] text-rose-600 mt-1 font-medium">
+                  {fieldErrors.password}
+                </p>
+              )}
             </div>
 
-            {/* Error Banner */}
-            {errorMessage && (
-              <div className="mb-5">
-                <AlertBanner variant="error" title="Sign In Unsuccessful" message={errorMessage} />
-              </div>
-            )}
-
-            {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <FormInput
-                id="email"
-                name="email"
-                type="email"
-                label="Email Address"
-                autoComplete="email"
-                icon={<Mail className="w-4 h-4" />}
-                value={formData.email}
-                onChange={(e) => setFormData({ email: e.target.value })}
-                placeholder="name@example.com"
-                error={fieldErrors.email}
-                disabled={isLoading}
+            {/* Remember Me Checkbox */}
+            <div className="flex items-center gap-2 pt-1">
+              <input
+                id="remember-me"
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
               />
-
-              <FormInput
-                id="password"
-                name="password"
-                label="Password"
-                autoComplete="current-password"
-                showTogglePassword
-                icon={<Lock className="w-4 h-4" />}
-                value={formData.password}
-                onChange={(e) => setFormData({ password: e.target.value })}
-                placeholder="Enter your password"
-                error={fieldErrors.password}
-                disabled={isLoading}
-              />
-
-              <div className="pt-2">
-                <Button
-                  type="submit"
-                  id="login-submit-btn"
-                  variant="primary"
-                  size="lg"
-                  className="w-full py-3.5 font-bold tracking-tight text-sm shadow-lg shadow-blue-500/25"
-                  isLoading={isLoading}
-                  loadingText="Signing In..."
-                  rightIcon={!isLoading ? <ArrowRight className="w-4 h-4" /> : undefined}
-                >
-                  Sign In
-                </Button>
-              </div>
-            </form>
-
-            <div className="mt-6 pt-5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-              <span className="text-slate-400">Learn at your own pace</span>
-              <Link href="/signup" className="text-blue-600 font-semibold hover:underline">
-                Apply as Mentor &rarr;
-              </Link>
+              <label
+                htmlFor="remember-me"
+                className="text-xs text-slate-600 font-medium select-none cursor-pointer"
+              >
+                Remember me on this workstation
+              </label>
             </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full h-11 mt-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md shadow-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isLoading ? (
+                <>
+                  <VectorIcon name="refresh" size={14} className="animate-spin text-white" />
+                  <span>Verifying Credentials...</span>
+                </>
+              ) : (
+                <>
+                  <span>Sign In to Cockpit</span>
+                  <VectorIcon name="arrow-right" size={14} className="text-white" />
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Quick Demo Access Note */}
+          <div className="mt-5 p-3 rounded-xl bg-slate-50 border border-slate-200/60 text-[11px] text-slate-500 leading-relaxed">
+            <span className="font-bold text-slate-700 block mb-0.5">Quick Demo Credentials:</span>
+            Student: <code className="font-mono text-slate-800 font-semibold">alex@codeconnect.dev</code> / <code className="font-mono text-slate-800">Password123!</code>
           </div>
         </div>
-      </div>
+      </main>
+
+      {/* Footer Security Note */}
+      <footer className="py-3 text-center text-xs text-slate-400 flex items-center justify-center gap-2">
+        <VectorIcon name="shield" size={14} className="text-slate-400" />
+        <span>Protected by Enterprise Rate Limiting &bull; Spring Security &bull; k3d Sandbox</span>
+      </footer>
     </div>
   );
 };

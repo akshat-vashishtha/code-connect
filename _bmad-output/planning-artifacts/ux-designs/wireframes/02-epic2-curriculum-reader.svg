@@ -1,0 +1,228 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750" style="background:#f8fafc; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <defs>
+    <filter id="cardShadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.04"/>
+    </filter>
+  </defs>
+
+  <!-- Canvas Background -->
+  <rect width="1200" height="750" fill="#f8fafc"/>
+
+  <!-- ========================================================================= -->
+  <!-- TOP CONTEXT BAR                                                           -->
+  <!-- ========================================================================= -->
+  <rect x="0" y="0" width="1200" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="24" y="26" fill="#0f172a" font-size="14" font-weight="700">Mountain Curriculum Explorer</text>
+  <text x="24" y="42" fill="#64748b" font-size="11">Browse Progressive Tracks • Read Real-World Conceptual Stories Before Writing Code</text>
+  
+  <g transform="translate(976, 12)">
+    <rect x="0" y="0" width="200" height="32" rx="8" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+    <!-- Mountain Vector -->
+    <path d="M 12 21 L 18 11 L 22 17 L 25 12 L 28 21 Z" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="34" y="20" fill="#1d4ed8" font-size="11" font-weight="600">Altitude: 1,420m / 4,000m</text>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- LEFT COLUMN: Mountain Track & Foothold Ascent Tree (Width: 340px)         -->
+  <!-- ========================================================================= -->
+  <g transform="translate(24, 76)">
+    <rect x="0" y="0" width="340" height="650" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#cardShadow)"/>
+    
+    <!-- Sidebar Header -->
+    <rect x="0" y="0" width="340" height="50" rx="12" fill="#f8fafc"/>
+    <line x1="0" y1="50" x2="340" y2="50" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="16" y="30" fill="#0f172a" font-size="13" font-weight="700">Ascent Route &amp; Tracks</text>
+    <rect x="250" y="14" width="74" height="22" rx="11" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1"/>
+    <text x="287" y="29" fill="#059669" font-size="10" font-weight="700" text-anchor="middle">TRACK 2/4</text>
+
+    <!-- Track 1: Java Basics (Completed) -->
+    <g transform="translate(16, 66)">
+      <rect x="0" y="0" width="308" height="60" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+      <circle cx="20" cy="30" r="10" fill="#ecfdf5"/>
+      <polyline points="16 30 19 33 24 27" fill="none" stroke="#059669" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="38" y="25" fill="#0f172a" font-size="12" font-weight="600">Track 1: Java 21 Mental Models</text>
+      <text x="38" y="42" fill="#64748b" font-size="11">5/5 Footholds Conquered • 500m</text>
+    </g>
+
+    <!-- Track 2: Core Data Structures (Active) -->
+    <g transform="translate(16, 138)">
+      <rect x="0" y="0" width="308" height="230" rx="8" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.5"/>
+      <circle cx="20" cy="24" r="10" fill="#2563eb"/>
+      <text x="20" y="28" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">2</text>
+      <text x="38" y="22" fill="#1e3a8a" font-size="12" font-weight="700">Track 2: Data Structures</text>
+      <text x="38" y="38" fill="#3b82f6" font-size="11">In Progress • 1,420m Altitude</text>
+
+      <!-- Footholds in Track 2 -->
+      <g transform="translate(12, 54)">
+        <!-- Foothold 2.1 (Done) -->
+        <rect x="0" y="0" width="284" height="34" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+        <polyline points="12 17 15 20 20 14" fill="none" stroke="#059669" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="28" y="21" fill="#334155" font-size="11" font-weight="500">2.1 Arrays: The Postal Mailbox Grid</text>
+
+        <!-- Foothold 2.2 (Done) -->
+        <rect x="0" y="40" width="284" height="34" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+        <polyline points="12 57 15 60 20 54" fill="none" stroke="#059669" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="28" y="61" fill="#334155" font-size="11" font-weight="500">2.2 Queues: The Cafeteria Tray Line</text>
+
+        <!-- Foothold 2.3 (ACTIVE SELECTED) -->
+        <rect x="0" y="80" width="284" height="42" rx="6" fill="#2563eb" stroke="#1d4ed8" stroke-width="1"/>
+        <polygon points="12 97 17 101 12 105" fill="#ffffff"/>
+        <text x="26" y="98" fill="#ffffff" font-size="11" font-weight="700">2.3 Circular Buffer Queue</text>
+        <text x="26" y="112" fill="#bfdbfe" font-size="10">Active Story • 15 Solvers Online</text>
+
+        <!-- Foothold 2.4 (Unlocked next) -->
+        <rect x="0" y="128" width="284" height="34" rx="6" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+        <circle cx="16" cy="145" r="4" fill="none" stroke="#94a3b8" stroke-width="1.5"/>
+        <text x="28" y="149" fill="#475569" font-size="11">2.4 Doubly Linked Train Couplers</text>
+      </g>
+    </g>
+
+    <!-- Track 3: Algorithms & Trees (Locked) -->
+    <g transform="translate(16, 380)">
+      <rect x="0" y="0" width="308" height="54" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+      <circle cx="20" cy="27" r="10" fill="#f1f5f9"/>
+      <!-- Lock Vector -->
+      <rect x="16" y="26" width="8" height="6" rx="1" fill="#94a3b8"/>
+      <path d="M 17 26 V 23 C 17 21.5 23 21.5 23 23 V 26" fill="none" stroke="#94a3b8" stroke-width="1.2"/>
+      <text x="38" y="24" fill="#64748b" font-size="12" font-weight="600">Track 3: Trees &amp; Graphs</text>
+      <text x="38" y="40" fill="#94a3b8" font-size="10">Requires Track 2 Prerequisite</text>
+    </g>
+
+    <!-- Track 4: Clean Architecture & Concurrency (Locked) -->
+    <g transform="translate(16, 444)">
+      <rect x="0" y="0" width="308" height="54" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+      <circle cx="20" cy="27" r="10" fill="#f1f5f9"/>
+      <!-- Lock Vector -->
+      <rect x="16" y="26" width="8" height="6" rx="1" fill="#94a3b8"/>
+      <path d="M 17 26 V 23 C 17 21.5 23 21.5 23 23 V 26" fill="none" stroke="#94a3b8" stroke-width="1.2"/>
+      <text x="38" y="24" fill="#64748b" font-size="12" font-weight="600">Track 4: Concurrency &amp; System Design</text>
+      <text x="38" y="40" fill="#94a3b8" font-size="10">Summit Peak • 4,000m Altitude</text>
+    </g>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- RIGHT COLUMN: Distraction-Free Story Reader Pane (Width: 800px)           -->
+  <!-- ========================================================================= -->
+  <g transform="translate(380, 76)">
+    <rect x="0" y="0" width="796" height="650" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#cardShadow)"/>
+
+    <!-- Reader Header Toolbar -->
+    <rect x="0" y="0" width="796" height="56" rx="12" fill="#ffffff"/>
+    <line x1="0" y1="56" x2="796" y2="56" stroke="#e2e8f0" stroke-width="1"/>
+    
+    <g transform="translate(24, 18)">
+      <rect x="0" y="0" width="68" height="20" rx="4" fill="#f1f5f9"/>
+      <text x="34" y="14" fill="#475569" font-size="10" font-weight="700" text-anchor="middle">STORY 2.3</text>
+      <text x="78" y="15" fill="#0f172a" font-size="14" font-weight="700">The Airport Baggage Carousel</text>
+      
+      <!-- Clock Icon & Duration (Clean Spacing) -->
+      <g transform="translate(330, 0)">
+        <circle cx="8" cy="11" r="5" fill="none" stroke="#94a3b8" stroke-width="1.2"/>
+        <polyline points="8 8 8 11 11 11" fill="none" stroke="#94a3b8" stroke-width="1.2"/>
+        <text x="18" y="15" fill="#94a3b8" font-size="11">4 min read • Zero syntax wall</text>
+      </g>
+    </g>
+
+    <!-- Action Button to Cockpit -->
+    <g transform="translate(626, 12)">
+      <rect x="0" y="0" width="150" height="32" rx="8" fill="#2563eb"/>
+      <text x="75" y="20" fill="#ffffff" font-size="11" font-weight="700" text-anchor="middle">Open in Cockpit →</text>
+    </g>
+
+    <!-- Story Text & Diagram Content Area -->
+    <g transform="translate(32, 80)">
+      <!-- Paragraph 1 -->
+      <text x="0" y="0" fill="#334155" font-size="13" font-weight="400">
+        Before touching index arithmetic, visualize how arriving passengers and luggage loaders interact on a circular conveyor.
+      </text>
+      <text x="0" y="22" fill="#334155" font-size="13" font-weight="400">
+        In a standard linear queue, items enter at the rear and exit at the front. Once the rear hits the final slot of the array,
+      </text>
+      <text x="0" y="44" fill="#334155" font-size="13" font-weight="400">
+        traditional implementations falsely claim the buffer is full—even if the front slots have already been vacated!
+      </text>
+
+      <!-- Embedded SVG Physical Mechanism Diagram Card -->
+      <g transform="translate(0, 70)">
+        <rect x="0" y="0" width="732" height="170" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+        <text x="20" y="26" fill="#0f172a" font-size="12" font-weight="700">Visual Model: The Circular Wrap-Around Indexing</text>
+        <text x="540" y="26" fill="#64748b" font-size="11">Formula: (rear + 1) % Capacity</text>
+        
+        <!-- Conveyor Array Cells -->
+        <g transform="translate(60, 50)">
+          <!-- Cell 0 -->
+          <rect x="0" y="0" width="60" height="50" rx="4" fill="#e2e8f0" stroke="#94a3b8"/>
+          <text x="30" y="30" fill="#64748b" font-size="12" font-weight="600" text-anchor="middle">Empty</text>
+          <text x="30" y="66" fill="#64748b" font-size="10" text-anchor="middle">Index 0</text>
+
+          <!-- Cell 1 -->
+          <rect x="70" y="0" width="60" height="50" rx="4" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+          <text x="100" y="30" fill="#1e3a8a" font-size="12" font-weight="700" text-anchor="middle">Bag #41</text>
+          <text x="100" y="66" fill="#2563eb" font-size="10" font-weight="700" text-anchor="middle">FRONT (1)</text>
+
+          <!-- Cell 2 -->
+          <rect x="140" y="0" width="60" height="50" rx="4" fill="#eff6ff" stroke="#93c5fd"/>
+          <text x="170" y="30" fill="#1e3a8a" font-size="12" font-weight="600" text-anchor="middle">Bag #42</text>
+          <text x="170" y="66" fill="#64748b" font-size="10" text-anchor="middle">Index 2</text>
+
+          <!-- Cell 3 -->
+          <rect x="210" y="0" width="60" height="50" rx="4" fill="#eff6ff" stroke="#93c5fd"/>
+          <text x="240" y="30" fill="#1e3a8a" font-size="12" font-weight="600" text-anchor="middle">Bag #43</text>
+          <text x="240" y="66" fill="#64748b" font-size="10" text-anchor="middle">Index 3</text>
+
+          <!-- Cell 4 -->
+          <rect x="280" y="0" width="60" height="50" rx="4" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+          <text x="310" y="30" fill="#1e3a8a" font-size="12" font-weight="700" text-anchor="middle">Bag #44</text>
+          <text x="310" y="66" fill="#2563eb" font-size="10" font-weight="700" text-anchor="middle">REAR (4)</text>
+
+          <!-- Wrap around arrow back to 0 -->
+          <path d="M 345 25 C 420 -30, -40 -30, -10 25" fill="none" stroke="#2563eb" stroke-width="2" stroke-dasharray="4 4"/>
+          <polygon points="-8,25 -14,15 -2,15" fill="#2563eb"/>
+          <text x="190" y="-12" fill="#2563eb" font-size="10" font-weight="700" text-anchor="middle">Next enqueue wraps around to Index 0!</text>
+        </g>
+
+        <!-- Rule summary banner inside card -->
+        <rect x="20" y="130" width="692" height="28" rx="4" fill="#ffffff" stroke="#e2e8f0"/>
+        <text x="30" y="148" fill="#0f172a" font-size="11" font-weight="600">Key Mental Model:</text>
+        <text x="150" y="148" fill="#475569" font-size="11">Connects end-to-beginning, converting an O(N) shift into an O(1) modulo increment.</text>
+      </g>
+
+      <!-- Paragraph 2: Challenge Definition -->
+      <g transform="translate(0, 260)">
+        <text x="0" y="0" fill="#0f172a" font-size="13" font-weight="700">Your Foothold Challenge:</text>
+        <text x="0" y="22" fill="#334155" font-size="13">
+          Implement a fixed-capacity circular queue in Java 21 supporting <tspan font-family="monospace" font-weight="600">enqueue()</tspan>, <tspan font-family="monospace" font-weight="600">dequeue()</tspan>, <tspan font-family="monospace" font-weight="600">peek()</tspan>, and <tspan font-family="monospace" font-weight="600">isFull()</tspan>.
+        </text>
+        <text x="0" y="44" fill="#334155" font-size="13">
+          Ensure your modulo math cleanly wraps around without throwing an <tspan font-family="monospace" font-weight="600">ArrayIndexOutOfBoundsException</tspan>.
+        </text>
+      </g>
+
+      <!-- 3-Tier Safety Net Badges with Vector Icons -->
+      <g transform="translate(0, 330)">
+        <rect x="0" y="0" width="732" height="60" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+        <text x="16" y="24" fill="#64748b" font-size="10" font-weight="700" letter-spacing="0.5">3-TIER RESOLUTION ECOSYSTEM READY:</text>
+        
+        <g transform="translate(16, 32)">
+          <!-- Tier 1 -->
+          <circle cx="8" cy="10" r="2.5" fill="#2563eb"/>
+          <text x="16" y="14" fill="#2563eb" font-size="11" font-weight="600">Tier 1: Socratic AI Clues</text>
+
+          <!-- Tier 2 -->
+          <circle cx="218" cy="10" r="2.5" fill="#059669"/>
+          <text x="226" y="14" fill="#059669" font-size="11" font-weight="600">Tier 2: 15 Peer Solvers Online</text>
+
+          <!-- Tier 3 -->
+          <circle cx="448" cy="10" r="2.5" fill="#7c3aed"/>
+          <text x="456" y="14" fill="#7c3aed" font-size="11" font-weight="600">Tier 3: Senior Mentor Escalation Desk</text>
+        </g>
+      </g>
+
+      <!-- Bottom Proceed Button -->
+      <g transform="translate(200, 420)">
+        <rect x="0" y="0" width="332" height="42" rx="8" fill="#2563eb"/>
+        <text x="166" y="26" fill="#ffffff" font-size="13" font-weight="700" text-anchor="middle">Step Into Code Cockpit (Java 21) →</text>
+      </g>
+    </g>
+  </g>
+</svg>

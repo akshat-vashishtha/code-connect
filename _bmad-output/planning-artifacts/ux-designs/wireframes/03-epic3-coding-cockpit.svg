@@ -1,0 +1,238 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750" style="background:#f8fafc; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.05"/>
+    </filter>
+  </defs>
+
+  <!-- Canvas Background -->
+  <rect width="1200" height="750" fill="#f8fafc"/>
+
+  <!-- Top Navigation Cockpit Strip -->
+  <rect x="0" y="0" width="1200" height="50" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+  <g transform="translate(20, 14)">
+    <text x="0" y="16" fill="#0f172a" font-size="13" font-weight="700">Code Cockpit</text>
+    <text x="100" y="16" fill="#94a3b8" font-size="12">/</text>
+    <text x="116" y="16" fill="#2563eb" font-size="12" font-weight="600">Track 2: Foothold 2.3 (Circular Queue)</text>
+    <rect x="390" y="2" width="64" height="18" rx="4" fill="#ecfdf5" stroke="#a7f3d0"/>
+    <text x="422" y="14" fill="#059669" font-size="9" font-weight="700" text-anchor="middle">SOLVING</text>
+  </g>
+
+  <!-- Right Drawer Launchers (AI & Peers) -->
+  <g transform="translate(840, 10)">
+    <!-- Socratic Coach Button with Vector Icon -->
+    <rect x="0" y="0" width="165" height="30" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+    <!-- Lightbulb Icon -->
+    <path d="M 17 21 H 23 M 18 23 H 22 M 20 12 A 4.5 4.5 0 0 0 15.5 16.5 C 15.5 18.5 17 19.5 17 21 H 23 C 23 19.5 24.5 18.5 24.5 16.5 A 4.5 4.5 0 0 0 20 12 Z" fill="none" stroke="#2563eb" stroke-width="1.3"/>
+    <text x="32" y="19" fill="#334155" font-size="11" font-weight="600">Socratic Coach (Clues)</text>
+
+    <!-- Peers Button with Vector Icon -->
+    <rect x="175" y="0" width="165" height="30" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+    <circle cx="190" cy="15" r="4" fill="#10b981"/>
+    <text x="202" y="19" fill="#334155" font-size="11" font-weight="600">15 Classmates Online</text>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- 50/50 SPLIT CONTAINER (Y: 60, Height: 675)                                -->
+  <!-- ========================================================================= -->
+
+  <!-- LEFT PANE: Problem Spec, Story Analogy & Constraints (Width: 570px)       -->
+  <g transform="translate(20, 60)">
+    <rect x="0" y="0" width="570" height="675" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
+    
+    <!-- Pane Header -->
+    <rect x="0" y="0" width="570" height="42" rx="10" fill="#f8fafc"/>
+    <line x1="0" y1="42" x2="570" y2="42" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="18" y="26" fill="#0f172a" font-size="12" font-weight="700">Problem Specification &amp; Story Constraints</text>
+    
+    <!-- Expand Story Toggle -->
+    <g transform="translate(470, 16)">
+      <path d="M 4 8 L 8 4 M 8 4 H 5 M 8 4 V 7 M 14 14 L 10 18 M 10 18 H 13 M 10 18 V 15" fill="none" stroke="#64748b" stroke-width="1.2" stroke-linecap="round"/>
+      <text x="22" y="10" fill="#64748b" font-size="11">Expand</text>
+    </g>
+
+    <!-- Content Body -->
+    <g transform="translate(20, 62)">
+      <text x="0" y="0" fill="#0f172a" font-size="14" font-weight="700">Design Circular Queue (FIFO with Wrap-Around)</text>
+      <text x="0" y="24" fill="#334155" font-size="12">
+        Design your implementation of the circular queue. The circular queue is a linear data
+      </text>
+      <text x="0" y="44" fill="#334155" font-size="12">
+        structure in which the operations are performed based on FIFO (First In First Out)
+      </text>
+      <text x="0" y="64" fill="#334155" font-size="12">
+        principle, and the last position is connected back to the first position to make a circle.
+      </text>
+
+      <!-- Story Mental Model Callout -->
+      <g transform="translate(0, 85)">
+        <rect x="0" y="0" width="530" height="75" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+        <circle cx="20" cy="20" r="2.5" fill="#2563eb"/>
+        <text x="30" y="22" fill="#1e3a8a" font-size="11" font-weight="700">Story Analogy (Airport Baggage Conveyor):</text>
+        <text x="14" y="42" fill="#1e40af" font-size="11">
+          When the luggage loader reaches the last tray of the carousel, the next tray is tray 0.
+        </text>
+        <text x="14" y="58" fill="#1e40af" font-size="11">
+          Always advance pointers with modulo arithmetic: <tspan font-family="monospace" font-weight="700">rear = (rear + 1) % capacity</tspan>.
+        </text>
+      </g>
+
+      <!-- API Signature Table -->
+      <g transform="translate(0, 180)">
+        <text x="0" y="0" fill="#0f172a" font-size="12" font-weight="700">Required Method Contract:</text>
+        <rect x="0" y="12" width="530" height="110" rx="6" fill="#f8fafc" stroke="#e2e8f0"/>
+        
+        <text x="14" y="32" font-family="monospace" font-size="11" fill="#2563eb" font-weight="600">boolean enqueue(int value)</text>
+        <text x="250" y="32" fill="#64748b" font-size="11">Inserts value at rear. Returns true if successful.</text>
+
+        <text x="14" y="58" font-family="monospace" font-size="11" fill="#2563eb" font-weight="600">int dequeue()</text>
+        <text x="250" y="58" fill="#64748b" font-size="11">Deletes item at front. Returns item or -1 if empty.</text>
+
+        <text x="14" y="84" font-family="monospace" font-size="11" fill="#2563eb" font-weight="600">int peek()</text>
+        <text x="250" y="84" fill="#64748b" font-size="11">Gets front item. Returns -1 if queue is empty.</text>
+
+        <text x="14" y="110" font-family="monospace" font-size="11" fill="#2563eb" font-weight="600">boolean isFull()</text>
+        <text x="250" y="110" fill="#64748b" font-size="11">Checks whether circular queue is full.</text>
+      </g>
+
+      <!-- Constraints & Test Specs -->
+      <g transform="translate(0, 320)">
+        <text x="0" y="0" fill="#0f172a" font-size="12" font-weight="700">Execution Constraints:</text>
+        <rect x="0" y="10" width="530" height="60" rx="6" fill="#f1f5f9"/>
+        <text x="14" y="30" fill="#475569" font-size="11">• <tspan font-family="monospace" font-weight="600">1 &lt;= capacity &lt;= 1000</tspan></text>
+        <text x="14" y="50" fill="#475569" font-size="11">• Maximum sandbox CPU time: 3.0s • RAM allocation: 128MB max</text>
+      </g>
+
+      <!-- Safety Net Action Prompt -->
+      <g transform="translate(0, 410)">
+        <rect x="0" y="0" width="530" height="60" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+        <text x="14" y="24" fill="#0f172a" font-size="11" font-weight="600">Stuck or failing a test case?</text>
+        <text x="14" y="42" fill="#64748b" font-size="11">Get a conceptual Socratic hint without code spoilers.</text>
+        <rect x="390" y="16" width="125" height="28" rx="6" fill="#eff6ff" stroke="#bfdbfe"/>
+        <text x="452" y="34" fill="#2563eb" font-size="10" font-weight="700" text-anchor="middle">Ask AI Clue →</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- RIGHT PANE: Monaco Code Editor + Test Console (Width: 575px)              -->
+  <g transform="translate(605, 60)">
+    <rect x="0" y="0" width="575" height="675" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
+
+    <!-- Editor Header Bar -->
+    <rect x="0" y="0" width="575" height="42" rx="10" fill="#1e293b"/>
+    <line x1="0" y1="42" x2="575" y2="42" stroke="#334155" stroke-width="1"/>
+    
+    <g transform="translate(16, 12)">
+      <rect x="0" y="0" width="125" height="20" rx="4" fill="#334155"/>
+      <text x="62" y="14" fill="#f8fafc" font-size="10" font-family="monospace" text-anchor="middle">CircularQueue.java</text>
+      <text x="140" y="14" fill="#94a3b8" font-size="11">Java 21 LTS</text>
+    </g>
+
+    <!-- Editor Buttons -->
+    <g transform="translate(410, 10)">
+      <rect x="0" y="0" width="70" height="22" rx="4" fill="#334155"/>
+      <text x="35" y="15" fill="#cbd5e1" font-size="10" text-anchor="middle">Reset</text>
+      
+      <rect x="80" y="0" width="75" height="22" rx="4" fill="#334155"/>
+      <text x="117" y="15" fill="#cbd5e1" font-size="10" text-anchor="middle">Expand</text>
+    </g>
+
+    <!-- Monaco Code Editor Area (Dark Theme Canvas) -->
+    <g transform="translate(0, 42)">
+      <rect x="0" y="0" width="575" height="380" fill="#0f172a"/>
+      
+      <!-- Line Numbers Gutter -->
+      <rect x="0" y="0" width="38" height="380" fill="#1e293b"/>
+      <text x="24" y="24" fill="#64748b" font-size="11" font-family="monospace" text-anchor="end">1</text>
+      <text x="24" y="44" fill="#64748b" font-size="11" font-family="monospace" text-anchor="end">2</text>
+      <text x="24" y="64" fill="#64748b" font-size="11" font-family="monospace" text-anchor="end">3</text>
+      <text x="24" y="84" fill="#64748b" font-size="11" font-family="monospace" text-anchor="end">4</text>
+      <text x="24" y="104" fill="#64748b" font-size="11" font-family="monospace" text-anchor="end">5</text>
+      <text x="24" y="124" fill="#64748b" font-size="11" font-family="monospace" text-anchor="end">6</text>
+      <text x="24" y="144" fill="#64748b" font-size="11" font-family="monospace" text-anchor="end">7</text>
+      <text x="24" y="164" fill="#64748b" font-size="11" font-family="monospace" text-anchor="end">8</text>
+      <text x="24" y="184" fill="#64748b" font-size="11" font-family="monospace" text-anchor="end">9</text>
+      <text x="24" y="204" fill="#64748b" font-size="11" font-family="monospace" text-anchor="end">10</text>
+      <text x="24" y="224" fill="#64748b" font-size="11" font-family="monospace" text-anchor="end">11</text>
+
+      <!-- Syntax-Colored Java Code Lines -->
+      <g transform="translate(50, 24)" font-family="monospace" font-size="11">
+        <text x="0" y="0"><tspan fill="#f43f5e">public class</tspan> <tspan fill="#38bdf8">CircularQueue</tspan> {</text>
+        <text x="16" y="20"><tspan fill="#f43f5e">private final int</tspan>[] data;</text>
+        <text x="16" y="40"><tspan fill="#f43f5e">private int</tspan> front = 0, rear = 0, size = 0;</text>
+        <text x="16" y="60"><tspan fill="#f43f5e">private final int</tspan> capacity;</text>
+        <text x="16" y="80"></text>
+        <text x="16" y="100"><tspan fill="#f43f5e">public</tspan> <tspan fill="#fbbf24">CircularQueue</tspan>(<tspan fill="#f43f5e">int</tspan> k) {</text>
+        <text x="32" y="120"><tspan fill="#f43f5e">this</tspan>.capacity = k; <tspan fill="#f43f5e">this</tspan>.data = <tspan fill="#f43f5e">new int</tspan>[k];</text>
+        <text x="16" y="140">}</text>
+        <text x="16" y="160"></text>
+        <text x="16" y="180"><tspan fill="#f43f5e">public boolean</tspan> <tspan fill="#fbbf24">enqueue</tspan>(<tspan fill="#f43f5e">int</tspan> value) {</text>
+        <text x="32" y="200"><tspan fill="#f43f5e">if</tspan> (isFull()) <tspan fill="#f43f5e">return false</tspan>;</text>
+        <text x="32" y="220">data[rear] = value; <tspan fill="#64748b">// Bug: missing modulo wrap!</tspan></text>
+        <text x="32" y="240">rear = rear + 1; size++; <tspan fill="#f43f5e">return true</tspan>;</text>
+      </g>
+    </g>
+
+    <!-- Action Bar (Run & Submit) -->
+    <rect x="0" y="422" width="575" height="42" fill="#1e293b"/>
+    <g transform="translate(16, 428)">
+      <rect x="0" y="0" width="160" height="30" rx="6" fill="#334155"/>
+      <polygon points="18 10 24 15 18 20" fill="#f8fafc"/>
+      <text x="88" y="19" fill="#f8fafc" font-size="11" font-weight="600" text-anchor="middle">Run Visible Tests</text>
+
+      <rect x="380" y="0" width="165" height="30" rx="6" fill="#2563eb"/>
+      <text x="462" y="19" fill="#ffffff" font-size="11" font-weight="700" text-anchor="middle">Submit Solution →</text>
+    </g>
+
+    <!-- TEST EVALUATION CONSOLE TRAY (Bottom 210px) -->
+    <g transform="translate(0, 464)">
+      <!-- Console Header -->
+      <rect x="0" y="0" width="575" height="34" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="16" y="22" fill="#0f172a" font-size="11" font-weight="700">Test Sandbox Output:</text>
+      
+      <!-- Test Status Pill -->
+      <rect x="156" y="6" width="120" height="22" rx="11" fill="#fef2f2" stroke="#fecaca"/>
+      <text x="216" y="21" fill="#dc2626" font-size="10" font-weight="700" text-anchor="middle">2 of 3 Passed (66%)</text>
+      <text x="290" y="21" fill="#64748b" font-size="10">Duration: 18ms • RAM: 24MB</text>
+
+      <!-- Test Tabs with Vector Pass/Fail Icons -->
+      <g transform="translate(16, 42)">
+        <rect x="0" y="0" width="90" height="24" rx="4" fill="#ecfdf5" stroke="#a7f3d0"/>
+        <polyline points="14 12 17 15 22 9" fill="none" stroke="#059669" stroke-width="1.5" stroke-linecap="round"/>
+        <text x="50" y="16" fill="#059669" font-size="10" font-weight="600" text-anchor="middle">Case 1</text>
+
+        <rect x="100" y="0" width="90" height="24" rx="4" fill="#ecfdf5" stroke="#a7f3d0"/>
+        <polyline points="114 12 117 15 122 9" fill="none" stroke="#059669" stroke-width="1.5" stroke-linecap="round"/>
+        <text x="150" y="16" fill="#059669" font-size="10" font-weight="600" text-anchor="middle">Case 2</text>
+
+        <!-- Failing Test Case 3 -->
+        <rect x="200" y="0" width="90" height="24" rx="4" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+        <line x1="214" y1="9" x2="220" y2="15" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="220" y1="9" x2="214" y2="15" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/>
+        <text x="250" y="16" fill="#dc2626" font-size="10" font-weight="700" text-anchor="middle">Case 3</text>
+      </g>
+
+      <!-- Test Diff & Diagnostic Details -->
+      <g transform="translate(16, 76)">
+        <rect x="0" y="0" width="543" height="125" rx="6" fill="#f8fafc" stroke="#e2e8f0"/>
+        
+        <text x="14" y="20" fill="#64748b" font-size="10" font-weight="700">INPUT SEQUENCE:</text>
+        <text x="120" y="20" font-family="monospace" font-size="10" fill="#0f172a">["CircularQueue(5)", "enqueue(10)", "enqueue(60)"]</text>
+
+        <text x="14" y="44" fill="#059669" font-size="10" font-weight="700">EXPECTED:</text>
+        <text x="120" y="44" font-family="monospace" font-size="10" fill="#059669">true (wraps around to index 0)</text>
+
+        <text x="14" y="68" fill="#dc2626" font-size="10" font-weight="700">ACTUAL OUTPUT:</text>
+        <text x="120" y="68" font-family="monospace" font-size="9.5" fill="#dc2626">java.lang.ArrayIndexOutOfBoundsException: Index 5 out of bounds</text>
+
+        <!-- Socratic Recommendation Bar -->
+        <g transform="translate(10, 86)">
+          <rect x="0" y="0" width="523" height="32" rx="4" fill="#eff6ff" stroke="#bfdbfe"/>
+          <circle cx="16" cy="16" r="2.5" fill="#2563eb"/>
+          <text x="26" y="20" fill="#1e40af" font-size="10" font-weight="700">Socratic Clue:</text>
+          <text x="118" y="20" fill="#1e3a8a" font-size="10">Remember modulo operator (%) from baggage carousel analogy!</text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

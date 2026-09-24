@@ -1,0 +1,195 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750" style="background:#f8fafc; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <defs>
+    <filter id="cardShadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.05"/>
+    </filter>
+  </defs>
+
+  <!-- Canvas Background -->
+  <rect width="1200" height="750" fill="#f8fafc"/>
+
+  <!-- ========================================================================= -->
+  <!-- TOP CONTEXT BAR (Mentor Escalation Desk)                                  -->
+  <!-- ========================================================================= -->
+  <rect x="0" y="0" width="1200" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="24" y="14" width="28" height="28" rx="6" fill="#b45309"/>
+  <!-- Shield Vector Icon -->
+  <path d="M 38 35 C 38 35 44 32 44 27 V 22 L 38 20 L 32 22 V 27 C 32 32 38 35 38 35 Z" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <text x="62" y="26" fill="#0f172a" font-size="14" font-weight="700">Mentor Escalation Resolution Desk</text>
+  <text x="62" y="42" fill="#64748b" font-size="11">Tier 3 Staff Support • Reviewing Student Blockers &amp; Verifying Footholds</text>
+
+  <!-- Mentor Status Pill & Switcher -->
+  <g transform="translate(940, 12)">
+    <rect x="0" y="0" width="236" height="32" rx="16" fill="#fef3c7" stroke="#fde68a" stroke-width="1"/>
+    <circle cx="16" cy="16" r="4" fill="#d97706"/>
+    <text x="28" y="21" fill="#92400e" font-size="11" font-weight="700">Dr. Priya Sen (Staff Mentor)</text>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- LEFT COLUMN: Escalation Ticket Queue (Width: 380px)                       -->
+  <!-- ========================================================================= -->
+  <g transform="translate(24, 76)">
+    <rect x="0" y="0" width="380" height="650" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#cardShadow)"/>
+
+    <!-- Desk Header & Filter Tabs -->
+    <rect x="0" y="0" width="380" height="50" rx="12" fill="#f8fafc"/>
+    <line x1="0" y1="50" x2="380" y2="50" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="16" y="31" fill="#0f172a" font-size="13" font-weight="700">Incoming Tickets</text>
+
+    <!-- Filter Pills (Non-colliding) -->
+    <g transform="translate(190, 12)">
+      <rect x="0" y="0" width="80" height="26" rx="13" fill="#b45309"/>
+      <text x="40" y="17" fill="#ffffff" font-size="10" font-weight="700" text-anchor="middle">ACTIVE (3)</text>
+      <rect x="86" y="0" width="88" height="26" rx="13" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+      <text x="130" y="17" fill="#64748b" font-size="10" font-weight="600" text-anchor="middle">RESOLVED (42)</text>
+    </g>
+
+    <!-- Ticket 1: Alex V. (Selected Active) -->
+    <g transform="translate(16, 66)">
+      <rect x="0" y="0" width="348" height="120" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+      <circle cx="24" cy="26" r="14" fill="#2563eb"/>
+      <text x="24" y="30" fill="#ffffff" font-size="10" font-weight="700" text-anchor="middle">AL</text>
+      <text x="46" y="22" fill="#0f172a" font-size="12" font-weight="700">Alex Vashishtha</text>
+      <text x="46" y="38" fill="#2563eb" font-size="10" font-weight="600">1,420m Altitude • Foothold 2.3</text>
+
+      <rect x="228" y="12" width="108" height="20" rx="10" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+      <text x="282" y="26" fill="#991b1b" font-size="9" font-weight="700" text-anchor="middle">TIER 3 ESCALATED</text>
+
+      <text x="14" y="66" fill="#1e3a8a" font-size="11" font-weight="600">Topic: Circular Queue Wrap-around Bug</text>
+      <text x="14" y="84" fill="#475569" font-size="10">AI Hints Used: 3/3 • Peer Chat: Tried Rohan S.</text>
+      <text x="14" y="104" fill="#64748b" font-size="10">Waiting for 14 mins • 1-click pairing ready</text>
+    </g>
+
+    <!-- Ticket 2: Kavita M. -->
+    <g transform="translate(16, 198)">
+      <rect x="0" y="0" width="348" height="106" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+      <circle cx="24" cy="26" r="14" fill="#64748b"/>
+      <text x="24" y="30" fill="#ffffff" font-size="10" font-weight="700" text-anchor="middle">KM</text>
+      <text x="46" y="22" fill="#0f172a" font-size="12" font-weight="700">Kavita Murthy</text>
+      <text x="46" y="38" fill="#64748b" font-size="10">850m Altitude • Foothold 1.5</text>
+
+      <rect x="250" y="12" width="86" height="20" rx="10" fill="#fffbeb" stroke="#fde68a" stroke-width="1"/>
+      <text x="293" y="26" fill="#b45309" font-size="9" font-weight="700" text-anchor="middle">IN REVIEW</text>
+
+      <text x="14" y="66" fill="#334155" font-size="11" font-weight="600">Topic: Object References vs Primitive Values</text>
+      <text x="14" y="84" fill="#64748b" font-size="10">AI Hints Used: 3/3 • Waiting for 28 mins</text>
+    </g>
+
+    <!-- Ticket 3: Jason L. -->
+    <g transform="translate(16, 316)">
+      <rect x="0" y="0" width="348" height="106" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+      <circle cx="24" cy="26" r="14" fill="#64748b"/>
+      <text x="24" y="30" fill="#ffffff" font-size="10" font-weight="700" text-anchor="middle">JL</text>
+      <text x="46" y="22" fill="#0f172a" font-size="12" font-weight="700">Jason Lin</text>
+      <text x="46" y="38" fill="#64748b" font-size="10">1,600m Altitude • Foothold 2.4</text>
+
+      <rect x="250" y="12" width="86" height="20" rx="10" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+      <text x="293" y="26" fill="#475569" font-size="9" font-weight="600" text-anchor="middle">OPEN</text>
+
+      <text x="14" y="66" fill="#334155" font-size="11" font-weight="600">Topic: Min-Heap Array Index Math</text>
+      <text x="14" y="84" fill="#64748b" font-size="10">AI Hints Used: 2/3 • Escalated directly</text>
+    </g>
+
+    <!-- Mentor Workload Stats -->
+    <g transform="translate(16, 520)">
+      <rect x="0" y="0" width="348" height="106" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="16" y="26" fill="#0f172a" font-size="11" font-weight="700">MENTOR RESOLUTION METRICS</text>
+      <text x="16" y="48" fill="#475569" font-size="11">Avg Resolution Time: <tspan font-weight="700" fill="#059669">8.4 mins</tspan></text>
+      <text x="16" y="68" fill="#475569" font-size="11">Total Footholds Verified: <tspan font-weight="700" fill="#2563eb">128</tspan></text>
+      <text x="16" y="88" fill="#475569" font-size="11">Climber Satisfaction: <tspan font-weight="700" fill="#b45309">98.5% Verified</tspan></text>
+    </g>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- RIGHT COLUMN: Deep Code Diff Inspection & Resolution Center (Width: 760px)-->
+  <!-- ========================================================================= -->
+  <g transform="translate(420, 76)">
+    <rect x="0" y="0" width="756" height="650" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#cardShadow)"/>
+
+    <!-- Ticket Detail Header -->
+    <rect x="0" y="0" width="756" height="60" rx="12" fill="#f8fafc"/>
+    <line x1="0" y1="60" x2="756" y2="60" stroke="#e2e8f0" stroke-width="1"/>
+    
+    <text x="24" y="26" fill="#0f172a" font-size="14" font-weight="700">Ticket #104: Alex Vashishtha — Circular Queue Wrap-around</text>
+    <text x="24" y="44" fill="#64748b" font-size="11">Foothold 2.3: Circular Queue Buffer • Track 2: Core Data Structures (Java 21)</text>
+
+    <!-- Student Blocker Note with Warning Vector -->
+    <g transform="translate(24, 76)">
+      <rect x="0" y="0" width="708" height="54" rx="8" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/>
+      <!-- Centered Alert Triangle -->
+      <path d="M 22 13 L 16 23 H 28 L 22 13 Z" fill="none" stroke="#991b1b" stroke-width="1.3" stroke-linejoin="round"/>
+      <line x1="22" y1="16" x2="22" y2="19" stroke="#991b1b" stroke-width="1.3" stroke-linecap="round"/>
+      <circle cx="22" cy="21" r="0.6" fill="#991b1b"/>
+      
+      <text x="34" y="21" fill="#991b1b" font-size="11" font-weight="700">Student Reported Issue:</text>
+      <text x="16" y="40" fill="#7f1d1d" font-size="11">
+        "I passed Test 1 and 2, but Test 3 crashes with IndexOutOfBoundsException when wrap-around occurs."
+      </text>
+    </g>
+
+    <!-- Live Synchronized Code Diff Viewer -->
+    <g transform="translate(24, 142)">
+      <text x="0" y="0" fill="#0f172a" font-size="12" font-weight="700">Code Diff: Student Working Copy vs Expected Invariants</text>
+
+      <g transform="translate(0, 12)">
+        <rect x="0" y="0" width="708" height="230" rx="8" fill="#0f172a"/>
+        <rect x="0" y="0" width="708" height="28" rx="8" fill="#1e293b"/>
+        <text x="16" y="18" fill="#94a3b8" font-size="10" font-family="monospace">CircularQueue.java — Lines 18-28</text>
+
+        <!-- Code Content -->
+        <g transform="translate(16, 46)" font-family="monospace" font-size="11">
+          <text x="0" y="0" fill="#64748b">19</text>
+          <text x="32" y="0" fill="#f8fafc">public boolean enqueue(int value) {</text>
+
+          <text x="0" y="20" fill="#64748b">20</text>
+          <text x="32" y="20" fill="#f8fafc">    if (isFull()) return false;</text>
+
+          <!-- Buggy Line in Red -->
+          <rect x="24" y="26" width="668" height="20" fill="#7f1d1d" opacity="0.4"/>
+          <text x="0" y="40" fill="#f87171">21 -</text>
+          <text x="32" y="40" fill="#fca5a5">    elements[tail] = value; tail = tail + 1; // BUG: Missing modulo wrapping!</text>
+
+          <!-- Mentor Expected Diff in Green -->
+          <rect x="24" y="46" width="668" height="20" fill="#064e3b" opacity="0.4"/>
+          <text x="0" y="60" fill="#4ade80">22 +</text>
+          <text x="32" y="60" fill="#86efac">    elements[tail] = value; tail = (tail + 1) % capacity; count++;</text>
+
+          <text x="0" y="80" fill="#64748b">23</text>
+          <text x="32" y="80" fill="#f8fafc">    return true;</text>
+
+          <text x="0" y="100" fill="#64748b">24</text>
+          <text x="32" y="100" fill="#f8fafc">}</text>
+        </g>
+      </g>
+    </g>
+
+    <!-- Mentor Feedback Dispatch Editor -->
+    <g transform="translate(24, 400)">
+      <text x="0" y="0" fill="#0f172a" font-size="12" font-weight="700">Mentor Socratic Feedback &amp; Direct Instruction</text>
+      
+      <rect x="0" y="10" width="708" height="74" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+      <text x="14" y="30" fill="#334155" font-size="11">Alex, inspect line 21: You write to <tspan font-family="monospace">elements[tail]</tspan> and do <tspan font-family="monospace">tail = tail + 1</tspan>.</text>
+      <text x="14" y="46" fill="#334155" font-size="11">When tail reaches index 4 in a capacity 5 buffer, the next insertion tries to write to index 5!</text>
+      <text x="14" y="62" fill="#334155" font-size="11">Use <tspan font-family="monospace">(tail + 1) % capacity</tspan> so it loops back to slot 0 like the luggage carousel.</text>
+
+      <!-- Resolution Action Bar with Vector Icons -->
+      <g transform="translate(0, 96)">
+        <!-- Action 1: Dispatch Clue -->
+        <rect x="0" y="0" width="220" height="42" rx="8" fill="#2563eb"/>
+        <text x="110" y="26" fill="#ffffff" font-size="12" font-weight="700" text-anchor="middle">Dispatch Clue to Alex →</text>
+
+        <!-- Action 2: Schedule 5m Pairing Audio with Mic Vector -->
+        <rect x="235" y="0" width="200" height="42" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+        <rect x="250" y="15" width="6" height="10" rx="3" fill="none" stroke="#475569" stroke-width="1.3"/>
+        <path d="M 247 20 A 6 6 0 0 0 259 20 M 253 26 V 28" fill="none" stroke="#475569" stroke-width="1.3"/>
+        <text x="340" y="26" fill="#334155" font-size="11" font-weight="600" text-anchor="middle">Start 5m Voice Huddle</text>
+
+        <!-- Action 3: Mark Resolved & Verify Foothold with Checkmark Vector -->
+        <rect x="450" y="0" width="258" height="42" rx="8" fill="#059669"/>
+        <polyline points="472 26 476 29 482 22" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+        <text x="585" y="26" fill="#ffffff" font-size="12" font-weight="700" text-anchor="middle">Mark Resolved &amp; Unlock Foothold</text>
+      </g>
+    </g>
+  </g>
+</svg>

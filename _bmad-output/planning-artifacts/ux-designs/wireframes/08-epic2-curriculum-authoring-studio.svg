@@ -1,0 +1,240 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750" style="background:#f8fafc; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <defs>
+    <filter id="cardShadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.05"/>
+    </filter>
+  </defs>
+
+  <!-- Canvas Background -->
+  <rect width="1200" height="750" fill="#f8fafc"/>
+
+  <!-- ========================================================================= -->
+  <!-- TOP CONTEXT BAR (Curriculum Authoring Studio)                             -->
+  <!-- ========================================================================= -->
+  <rect x="0" y="0" width="1200" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="24" y="14" width="28" height="28" rx="6" fill="#4f46e5"/>
+  <!-- Book Vector Icon -->
+  <path d="M 33 22 H 43 V 34 H 33 C 31 34 30 33 30 31 V 24 C 30 23 31 22 33 22 Z" fill="none" stroke="#ffffff" stroke-width="1.4"/>
+  <line x1="34" y1="26" x2="40" y2="26" stroke="#ffffff" stroke-width="1.2"/>
+  <line x1="34" y1="30" x2="40" y2="30" stroke="#ffffff" stroke-width="1.2"/>
+
+  <text x="62" y="26" fill="#0f172a" font-size="14" font-weight="700">Curriculum Authoring &amp; Upload Studio</text>
+  <text x="62" y="42" fill="#64748b" font-size="11">Epic 2 (Story 2.3): Foothold Specification, Code Template &amp; Test Suite Publishing</text>
+
+  <!-- Top Action Right with Vector Icons -->
+  <g transform="translate(930, 12)">
+    <rect x="0" y="0" width="112" height="32" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+    <!-- Upload Vector -->
+    <path d="M 14 20 L 18 16 L 22 20 M 18 16 V 24" fill="none" stroke="#334155" stroke-width="1.4" stroke-linecap="round"/>
+    <text x="64" y="21" fill="#334155" font-size="11" font-weight="600" text-anchor="middle">Import YAML</text>
+
+    <!-- Publish Foothold Button with Clean Icon Offset (Zero Collisions) -->
+    <rect x="120" y="0" width="138" height="32" rx="6" fill="#4f46e5"/>
+    <polygon points="132 12 138 16 132 20" fill="#ffffff"/>
+    <text x="146" y="20" fill="#ffffff" font-size="11" font-weight="700">Publish Foothold</text>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- LEFT COLUMN: Curriculum Hierarchy & Drafts (Width: 320px)                 -->
+  <!-- ========================================================================= -->
+  <g transform="translate(24, 76)">
+    <rect x="0" y="0" width="320" height="650" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#cardShadow)"/>
+
+    <!-- Left Header -->
+    <rect x="0" y="0" width="320" height="50" rx="12" fill="#f8fafc"/>
+    <line x1="0" y1="50" x2="320" y2="50" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="16" y="31" fill="#0f172a" font-size="13" font-weight="700">Curriculum Tracks</text>
+    
+    <!-- + New Foothold Button -->
+    <rect x="200" y="12" width="104" height="26" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+    <text x="252" y="29" fill="#2563eb" font-size="10" font-weight="700" text-anchor="middle">+ New Foothold</text>
+
+    <!-- Track 1: Java 21 Models -->
+    <g transform="translate(16, 66)">
+      <text x="0" y="0" fill="#64748b" font-size="10.5" font-weight="700">TRACK 1: JAVA 21 MODELS (500m)</text>
+      <rect x="0" y="10" width="288" height="32" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+      <polyline points="14 26 17 29 22 23" fill="none" stroke="#059669" stroke-width="1.5" stroke-linecap="round"/>
+      <text x="28" y="30" fill="#334155" font-size="11">5 Footholds Published</text>
+    </g>
+
+    <!-- Track 2: Core Data Structures (Active Selection) -->
+    <g transform="translate(16, 130)">
+      <text x="0" y="0" fill="#4f46e5" font-size="10.5" font-weight="700">TRACK 2: DATA STRUCTURES (1,500m)</text>
+      
+      <!-- Foothold 2.1 -->
+      <g transform="translate(0, 10)">
+        <rect x="0" y="0" width="288" height="32" rx="6" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+        <text x="10" y="21" fill="#334155" font-size="11">2.1 Arrays: Mailbox Grid</text>
+        <rect x="208" y="6" width="70" height="20" rx="10" fill="#ecfdf5"/>
+        <text x="243" y="19" fill="#059669" font-size="9" font-weight="700" text-anchor="middle">PUBLISHED</text>
+      </g>
+
+      <!-- Foothold 2.2 -->
+      <g transform="translate(0, 48)">
+        <rect x="0" y="0" width="288" height="32" rx="6" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+        <text x="10" y="21" fill="#334155" font-size="11">2.2 Linked Nodes: Scavenger</text>
+        <rect x="208" y="6" width="70" height="20" rx="10" fill="#ecfdf5"/>
+        <text x="243" y="19" fill="#059669" font-size="9" font-weight="700" text-anchor="middle">PUBLISHED</text>
+      </g>
+
+      <!-- Foothold 2.3 -->
+      <g transform="translate(0, 86)">
+        <rect x="0" y="0" width="288" height="32" rx="6" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+        <text x="10" y="21" fill="#334155" font-size="11">2.3 Circular Queue: Carousel</text>
+        <rect x="208" y="6" width="70" height="20" rx="10" fill="#ecfdf5"/>
+        <text x="243" y="19" fill="#059669" font-size="9" font-weight="700" text-anchor="middle">PUBLISHED</text>
+      </g>
+
+      <!-- Foothold 2.4 (CURRENTLY BEING AUTHORED / DRAFT) -->
+      <g transform="translate(0, 124)">
+        <rect x="0" y="0" width="288" height="34" rx="6" fill="#eff6ff" stroke="#4f46e5" stroke-width="1.5"/>
+        <text x="10" y="22" fill="#1e3a8a" font-size="11" font-weight="700">2.4 Priority Queue: Min-Heap</text>
+        <rect x="212" y="7" width="66" height="20" rx="10" fill="#fffbeb" stroke="#fde68a" stroke-width="1"/>
+        <text x="245" y="20" fill="#b45309" font-size="9" font-weight="700" text-anchor="middle">DRAFT</text>
+      </g>
+    </g>
+
+    <!-- Track 3: Concurrency & Virtual Threads -->
+    <g transform="translate(16, 320)">
+      <text x="0" y="0" fill="#64748b" font-size="10.5" font-weight="700">TRACK 3: CONCURRENCY (2,800m)</text>
+      <rect x="0" y="10" width="288" height="32" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="12" y="31" fill="#334155" font-size="11">1 Published • 2 Drafts</text>
+    </g>
+
+    <!-- Import Batch Box -->
+    <g transform="translate(16, 490)">
+      <rect x="0" y="0" width="288" height="136" rx="8" fill="#f5f3ff" stroke="#ddd6fe" stroke-width="1"/>
+      <text x="14" y="24" fill="#5b21b6" font-size="12" font-weight="700">Bulk Curriculum Uploader</text>
+      <text x="14" y="38" fill="#6b21a8" font-size="10">Drag and drop Markdown or YAML files</text>
+      <text x="14" y="50" fill="#6b21a8" font-size="10">containing complete foothold modules.</text>
+      
+      <rect x="14" y="60" width="260" height="62" rx="6" fill="#ffffff" stroke="#c4b5fd" stroke-dasharray="4 3" stroke-width="1.5"/>
+      <text x="144" y="88" fill="#4f46e5" font-size="11" font-weight="600" text-anchor="middle">Drop .yaml or .md here</text>
+      <text x="144" y="106" fill="#8b5cf6" font-size="9" text-anchor="middle">or click to browse local files</text>
+    </g>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- RIGHT COLUMN: Foothold Authoring & Test Builder Canvas (Width: 820px)     -->
+  <!-- ========================================================================= -->
+  <g transform="translate(360, 76)">
+    <rect x="0" y="0" width="816" height="650" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#cardShadow)"/>
+
+    <!-- Canvas Header -->
+    <rect x="0" y="0" width="816" height="50" rx="12" fill="#f8fafc"/>
+    <line x1="0" y1="50" x2="816" y2="50" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="24" y="31" fill="#0f172a" font-size="13" font-weight="700">Authoring Foothold 2.4: Priority Queue Min-Heap</text>
+    <rect x="700" y="14" width="92" height="22" rx="11" fill="#fffbeb" stroke="#fde68a" stroke-width="1"/>
+    <text x="746" y="29" fill="#b45309" font-size="10" font-weight="700" text-anchor="middle">STATUS: DRAFT</text>
+
+    <!-- Form Section 1: Metadata Fields -->
+    <g transform="translate(24, 66)">
+      <!-- Track & Order -->
+      <g transform="translate(0, 0)">
+        <text x="0" y="10" fill="#334155" font-size="11" font-weight="600">Assign To Track</text>
+        <rect x="0" y="18" width="240" height="34" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+        <text x="12" y="40" fill="#0f172a" font-size="11">Track 2: Data Structures</text>
+        <path d="M 218 33 L 222 37 L 226 33" stroke="#64748b" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      </g>
+
+      <!-- Foothold Title -->
+      <g transform="translate(260, 0)">
+        <text x="0" y="10" fill="#334155" font-size="11" font-weight="600">Foothold Title</text>
+        <rect x="0" y="18" width="340" height="34" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+        <text x="12" y="40" fill="#0f172a" font-size="11">Priority Queue: Min-Heap Implementation</text>
+      </g>
+
+      <!-- Altitude Score -->
+      <g transform="translate(620, 0)">
+        <text x="0" y="10" fill="#334155" font-size="11" font-weight="600">Altitude (Meters)</text>
+        <rect x="0" y="18" width="148" height="34" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+        <text x="12" y="40" fill="#0f172a" font-size="11">1,600m</text>
+      </g>
+    </g>
+
+    <!-- Form Section 2: Conceptual Story & Real-World Analogy Builder -->
+    <g transform="translate(24, 134)">
+      <text x="0" y="10" fill="#0f172a" font-size="12" font-weight="700">Real-World Conceptual Story &amp; Mental Model</text>
+      <text x="315" y="10" fill="#64748b" font-size="10">(Mandatory: Every foothold must anchor to a physical mechanism)</text>
+
+      <!-- Story Title -->
+      <rect x="0" y="20" width="768" height="32" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+      <text x="12" y="41" fill="#334155" font-size="11">Story Analogy Title: The Hospital Emergency Room Triage Desk</text>
+
+      <!-- Story Markdown Body -->
+      <rect x="0" y="60" width="768" height="70" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+      <text x="12" y="80" fill="#475569" font-size="11">
+        In an ER, patients don't get treated strictly by arrival order (FIFO). A patient with a cardiac arrest has a higher
+      </text>
+      <text x="12" y="98" fill="#475569" font-size="11">
+        priority (lower priority number = 1) than a sprained wrist (priority = 10). The triage desk maintains a Min-Heap.
+      </text>
+      <!-- Story Attachment Pill with Vector Checkmark -->
+      <g transform="translate(12, 106)">
+        <rect x="0" y="0" width="260" height="20" rx="4" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+        <polyline points="10 10 13 13 18 7" fill="none" stroke="#2563eb" stroke-width="1.4" stroke-linecap="round"/>
+        <text x="24" y="14" fill="#1e40af" font-size="9.5" font-weight="600">Attached: er_triage_heap.svg</text>
+      </g>
+    </g>
+
+    <!-- Form Section 3: Java 21 Starter Code & Method Contract -->
+    <g transform="translate(24, 280)">
+      <text x="0" y="10" fill="#0f172a" font-size="12" font-weight="700">Java 21 Method Contract &amp; Starter Template</text>
+      
+      <rect x="0" y="20" width="768" height="110" rx="8" fill="#0f172a"/>
+      <rect x="0" y="20" width="768" height="24" rx="8" fill="#1e293b"/>
+      <text x="14" y="36" fill="#94a3b8" font-size="10" font-family="monospace">MinHeap.java (Java 21)</text>
+
+      <g transform="translate(14, 58)" font-family="monospace" font-size="11">
+        <text x="0" y="0" fill="#f8fafc">public class MinHeap {</text>
+        <text x="0" y="18" fill="#38bdf8">    public void insert(int priority, String task) { /* student implements */ }</text>
+        <text x="0" y="36" fill="#38bdf8">    public String pollMin() { /* student implements */ }</text>
+        <text x="0" y="54" fill="#38bdf8">    public int size() { /* student implements */ }</text>
+        <text x="0" y="72" fill="#f8fafc">}</text>
+      </g>
+    </g>
+
+    <!-- Form Section 4: Test Suite Builder (Visible vs Hidden Test Cases) -->
+    <g transform="translate(24, 430)">
+      <text x="0" y="10" fill="#0f172a" font-size="12" font-weight="700">Automated Test Case Suite (Visible &amp; Hidden)</text>
+      
+      <!-- Test Case 1 (Visible) -->
+      <g transform="translate(0, 20)">
+        <rect x="0" y="0" width="374" height="60" rx="6" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+        <text x="12" y="20" fill="#166534" font-size="11" font-weight="700">Visible Test 1: Basic Insert &amp; Poll</text>
+        <rect x="300" y="8" width="62" height="18" rx="9" fill="#ecfdf5"/>
+        <text x="331" y="20" fill="#059669" font-size="9" font-weight="700" text-anchor="middle">VISIBLE</text>
+        <text x="12" y="38" fill="#15803d" font-size="10" font-family="monospace">Input: insert(3), insert(1), pollMin()</text>
+        <text x="12" y="52" fill="#15803d" font-size="10" font-family="monospace">Expected: 1</text>
+      </g>
+
+      <!-- Test Case 2 (Hidden Load-Bearing) -->
+      <g transform="translate(394, 20)">
+        <rect x="0" y="0" width="374" height="60" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+        <text x="12" y="20" fill="#334155" font-size="11" font-weight="700">Hidden Test 2: 100k Heap Elements Stress</text>
+        <rect x="300" y="8" width="62" height="18" rx="9" fill="#f1f5f9"/>
+        <text x="331" y="20" fill="#475569" font-size="9" font-weight="700" text-anchor="middle">HIDDEN</text>
+        <text x="12" y="38" fill="#475569" font-size="10" font-family="monospace">Checks O(log N) runtime &amp; memory boundary</text>
+        <text x="12" y="52" fill="#475569" font-size="10" font-family="monospace">Expected: Max 450ms execution limit</text>
+      </g>
+    </g>
+
+    <!-- Bottom Actions Toolbar -->
+    <g transform="translate(24, 530)">
+      <rect x="0" y="0" width="768" height="52" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+      
+      <!-- Pre-flight Sandbox Run with Vector Play -->
+      <rect x="14" y="10" width="220" height="32" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+      <polygon points="30 20 36 26 30 32" fill="#334155"/>
+      <text x="134" y="30" fill="#334155" font-size="11" font-weight="600" text-anchor="middle">Pre-flight Test in Sandbox</text>
+
+      <!-- Save Draft -->
+      <rect x="490" y="10" width="120" height="32" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+      <text x="550" y="30" fill="#64748b" font-size="11" font-weight="600" text-anchor="middle">Save Draft</text>
+
+      <!-- Publish Foothold -->
+      <rect x="620" y="10" width="134" height="32" rx="6" fill="#4f46e5"/>
+      <text x="687" y="30" fill="#ffffff" font-size="11" font-weight="700" text-anchor="middle">Publish Foothold →</text>
+    </g>
+  </g>
+</svg>
