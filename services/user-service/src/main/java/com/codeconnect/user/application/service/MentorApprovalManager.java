@@ -27,6 +27,18 @@ public class MentorApprovalManager {
         return mentorApprovalRepository.findByStatus(MentorApprovalStatus.PENDING);
     }
 
+    public MentorApprovalRequest createPendingApplication(String userId, String email, String linkedInUrl, String bio) {
+        if (linkedInUrl == null || linkedInUrl.isBlank()) {
+            throw new IllegalArgumentException("LinkedIn URL is required for mentor registration");
+        }
+        if (bio == null || bio.isBlank()) {
+            throw new IllegalArgumentException("Professional bio is required for mentor registration");
+        }
+        MentorApprovalRequest request = MentorApprovalRequest.createPending(userId, email, linkedInUrl, bio);
+        log.debug("Recording pending mentor approval request for userId={} email={}", userId, email);
+        return mentorApprovalRepository.save(request);
+    }
+
     public MentorApprovalRequest findApplication(String applicationId) {
         return mentorApprovalRepository.findById(applicationId)
             .orElseThrow(() -> new ResourceNotFoundException("Mentor approval application not found for id: " + applicationId));
