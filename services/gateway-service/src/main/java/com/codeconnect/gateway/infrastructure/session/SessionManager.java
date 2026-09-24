@@ -27,7 +27,6 @@ public class SessionManager {
             webSession.getAttributes().put(ATTR_USER_ROLE, user.role().name());
             webSession.getAttributes().put(ATTR_USER_STATUS, user.status().name());
         })
-        .then(webSession.changeSessionId())
         .then(webSession.save());
     }
 
