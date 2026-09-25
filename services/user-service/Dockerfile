@@ -20,6 +20,6 @@ COPY --from=extractor --chown=spring:spring /builder/extracted/snapshot-dependen
 COPY --from=extractor --chown=spring:spring /builder/extracted/application/ ./
 
 ENV JAVA_OPTS="-XX:InitialRAMPercentage=50.0 -XX:MaxRAMPercentage=75.0 -XX:+UseG1GC -Djava.security.egd=file:/dev/./urandom"
-EXPOSE 8081
+EXPOSE 8080
 
 ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -jar /app/app.jar"]
