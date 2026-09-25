@@ -47,14 +47,17 @@ export interface AppNavRailProps {
  * - Mentor: Desk, Studio, Tracks (Admin strictly hidden)
  * - Admin: Govern, Desk, Tracks
  *
- * Eliminates disjointed back buttons by serving as the unified cross-module anchor.
+ * UX Improvements (Sally's Epic 1 pass):
+ * - Active state uses FILLED blue (bg-blue-600 text-white) for strong visual signal
+ * - Bottom shows user initials avatar instead of mountain icon
+ * - Hover tooltip via title attribute (browser-native, cross-platform)
  */
 export const AppNavRail: React.FC<AppNavRailProps> = ({
   className = "",
   explicitRole,
 }) => {
   const pathname = usePathname();
-  const { role: sessionRole } = useSessionController();
+  const { role: sessionRole, user } = useSessionController();
   const currentRole = explicitRole ?? sessionRole;
 
   const navItems =
@@ -89,13 +92,31 @@ export const AppNavRail: React.FC<AppNavRailProps> = ({
     return pathname === item.href || pathname.startsWith(item.href);
   };
 
+  // Derive user initials for avatar
+  const displayName = user?.displayName ?? (
+    currentRole === "ROLE_ADMIN" ? "Admin" : currentRole === "ROLE_MENTOR" ? "Mentor" : "Student"
+  );
+  const initials = displayName
+    .split(" ")
+    .map((p: string) => p[0])
+    .join("")
+    .substring(0, 2)
+    .toUpperCase();
+
+  const avatarBg =
+    currentRole === "ROLE_ADMIN"
+      ? "bg-rose-600"
+      : currentRole === "ROLE_MENTOR"
+      ? "bg-amber-600"
+      : "bg-blue-600";
+
   return (
     <aside
-      className={`w-18 shrink-0 bg-white border-r border-slate-200 flex flex-col items-center justify-between py-4 select-none z-30 ${className}`}
+      className={`w-[72px] shrink-0 bg-white border-r border-slate-200 flex flex-col items-center justify-between py-4 select-none z-30 ${className}`}
       aria-label="Platform Sidebar Navigation"
     >
       {/* Top Nav Items */}
-      <div className="flex flex-col items-center space-y-3 w-full px-2.5">
+      <div className="flex flex-col items-center space-y-2 w-full px-2.5">
         {navItems.map((item) => {
           const active = isItemActive(item);
 
@@ -105,8 +126,8 @@ export const AppNavRail: React.FC<AppNavRailProps> = ({
               href={item.href}
               className={`w-12 h-12 rounded-xl flex flex-col items-center justify-center transition-all relative group ${
                 active
-                  ? "bg-blue-50 border border-blue-200 text-blue-600 shadow-2xs font-bold"
-                  : "bg-white hover:bg-slate-50 text-slate-500 hover:text-slate-900 border border-transparent"
+                  ? "bg-blue-600 text-white shadow-md shadow-blue-500/25"
+                  : "bg-white hover:bg-slate-50 text-slate-500 hover:text-slate-900 border border-transparent hover:border-slate-200"
               }`}
               title={item.label}
               id={`nav-item-${item.id}`}
@@ -118,10 +139,14 @@ export const AppNavRail: React.FC<AppNavRailProps> = ({
               <VectorIcon
                 name={item.icon}
                 size={18}
-                strokeWidth={active ? 2.2 : 1.8}
-                className={active ? "text-blue-600" : "text-slate-500 group-hover:text-slate-900"}
+                strokeWidth={active ? 2.4 : 1.8}
+                className={active ? "text-white" : "text-slate-500 group-hover:text-slate-900"}
               />
-              <span className="text-[9px] mt-0.5 tracking-tight font-bold">
+              <span
+                className={`text-[9px] mt-0.5 tracking-tight font-bold leading-none ${
+                  active ? "text-white" : "text-slate-400 group-hover:text-slate-700"
+                }`}
+              >
                 {item.label}
               </span>
             </Link>
@@ -129,15 +154,17 @@ export const AppNavRail: React.FC<AppNavRailProps> = ({
         })}
       </div>
 
-      {/* Bottom Rail: Subtle Brand Crest & Status (Zero awkward back buttons) */}
-      <div className="flex flex-col items-center space-y-1.5 w-full px-2.5 pt-3">
+      {/* Bottom: User Initials Avatar */}
+      <div className="flex flex-col items-center space-y-2 w-full px-2.5 pt-3">
         <div className="w-8 h-[1px] bg-slate-100 mb-1" />
+        {/* User avatar with initials — links to profile/home */}
         <Link
           href="/"
-          className="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-400 hover:text-blue-600 flex items-center justify-center transition-colors"
-          title="CodeConnect Mountain Portal"
+          className={`w-10 h-10 rounded-full ${avatarBg} text-white flex items-center justify-center font-bold text-xs ring-2 ring-offset-1 ring-offset-white ring-blue-100 hover:ring-blue-300 transition-all`}
+          title={`${displayName} — Back to Home`}
+          id="nav-user-avatar"
         >
-          <VectorIcon name="mountain" size={16} strokeWidth={1.7} />
+          {initials}
         </Link>
       </div>
     </aside>

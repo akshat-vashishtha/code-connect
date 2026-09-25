@@ -61,8 +61,14 @@ export function useLoginController(): LoginControllerResult {
   };
 
   const handleLoginSuccess = (user: UserResponse): void => {
-    if (user.role === "ROLE_MENTOR" && user.status === "PENDING_APPROVAL") {
-      router.push("/pending-approval");
+    if (user.role === "ROLE_ADMIN") {
+      router.push("/admin/mentors");
+    } else if (user.role === "ROLE_MENTOR") {
+      if (user.status === "PENDING_APPROVAL") {
+        router.push("/pending-approval");
+      } else {
+        router.push("/mentor/desk");
+      }
     } else {
       router.push("/?authenticated=true");
     }

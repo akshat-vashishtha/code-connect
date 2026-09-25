@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { authService } from "@/service/AuthService";
 import { SignupValidator } from "@/validator/SignupValidator";
 import { ApiError } from "@/client/HttpClient";
@@ -41,7 +41,13 @@ export interface SignupControllerResult {
  */
 export function useSignupController(): SignupControllerResult {
   const router = useRouter();
-  const [formData, setFormDataState] = useState<SignupFormData>(INITIAL_SIGNUP_FORM_DATA);
+  const searchParams = useSearchParams();
+  const defaultRole: UserRole = searchParams.get("role") === "mentor" ? "ROLE_MENTOR" : "ROLE_STUDENT";
+
+  const [formData, setFormDataState] = useState<SignupFormData>({
+    ...INITIAL_SIGNUP_FORM_DATA,
+    role: defaultRole,
+  });
 
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);

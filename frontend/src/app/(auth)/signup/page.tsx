@@ -1,15 +1,23 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import { useSignupController } from "@/controller/useSignupController";
 import { SignupFormView } from "@/presentation/views/SignupFormView";
 
-/**
- * Route controller for /signup.
- * Acts as the Spring @Controller shell, injecting the useSignupController
- * and binding it to the SignupFormView presentation component.
- */
-export default function SignupPage() {
+function SignupContent() {
   const controller = useSignupController();
   return <SignupFormView controller={controller} />;
+}
+
+/**
+ * Route controller for /signup.
+ * Acts as the Spring @Controller shell, injecting useSignupController
+ * inside Suspense boundary and binding to SignupFormView.
+ */
+export default function SignupPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#f8fafc]" />}>
+      <SignupContent />
+    </Suspense>
+  );
 }

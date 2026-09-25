@@ -36,11 +36,12 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   explicitRole,
   activeLanguage = "EN",
   onToggleLanguage,
-  isAuthenticated = true,
+  isAuthenticated,
   className = "",
 }) => {
-  const { user, role: sessionRole, logout } = useSessionController();
+  const { user, role: sessionRole, logout, isAuthenticated: sessionIsAuthenticated } = useSessionController();
   const currentRole = explicitRole ?? sessionRole;
+  const isAuth = isAuthenticated !== undefined ? isAuthenticated : sessionIsAuthenticated;
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -111,25 +112,37 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
           </div>
         </Link>
 
-        {/* Context Divider */}
-        <div className="h-6 w-[1px] bg-slate-200 hidden md:block" />
-
-        {/* Clean Context Breadcrumb (No back buttons: navigation driven by universal sidebar) */}
-        {trackTitle && footholdTitle && (
-          <div className="hidden md:block">
-            <BreadcrumbBar
-              trackTitle={trackTitle}
-              trackHref={trackHref}
-              footholdTitle={footholdTitle}
-              status="ACTIVE"
-            />
-          </div>
-        )}
+        {/* Context Divider & Breadcrumb (Only when authenticated) */}
+        {isAuth && trackTitle && footholdTitle ? (
+          <>
+            <div className="h-6 w-[1px] bg-slate-200 hidden md:block" />
+            <div className="hidden md:block">
+              <BreadcrumbBar
+                trackTitle={trackTitle}
+                trackHref={trackHref}
+                footholdTitle={footholdTitle}
+                status="ACTIVE"
+              />
+            </div>
+          </>
+        ) : !isAuth ? (
+          <nav className="hidden md:flex items-center gap-6 pl-4 text-xs font-semibold text-slate-500">
+            <Link href="/#pedagogy" className="hover:text-blue-600 transition-colors">
+              Physical Models
+            </Link>
+            <Link href="/#tracks" className="hover:text-blue-600 transition-colors">
+              Mountain Tracks
+            </Link>
+            <Link href="/#resolution" className="hover:text-blue-600 transition-colors">
+              3-Tier Resolution
+            </Link>
+          </nav>
+        ) : null}
       </div>
 
       {/* Header Right Utilities (Altitude, Streak, Language, Profile) */}
       <div className="flex items-center gap-2.5 sm:gap-3">
-        {isAuthenticated && currentRole === "ROLE_STUDENT" && (
+        {isAuth && currentRole === "ROLE_STUDENT" && (
           <>
             <div className="hidden sm:block">
               <AltitudeBadge currentAltitude={currentAltitude} maxAltitude={4000} />
@@ -152,8 +165,8 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
           <span>{currentLang === "HINGLISH" ? "Hinglish" : "English"}</span>
         </button>
 
-        {/* User Profile Dropdown */}
-        {isAuthenticated ? (
+        {/* User Profile Dropdown or Guest Sign In */}
+        {isAuth ? (
           <div className="relative" ref={dropdownRef}>
             <button
               type="button"

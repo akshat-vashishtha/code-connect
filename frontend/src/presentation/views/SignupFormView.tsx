@@ -81,10 +81,12 @@ export const SignupFormView: React.FC<SignupFormViewProps> = ({ controller }) =>
 
           <div className="mb-5">
             <h1 className="text-xl font-extrabold text-slate-900 tracking-tight">
-              Begin Your Ascent
+              {isMentor ? "Apply as Faculty Mentor" : "Begin Your Ascent"}
             </h1>
             <p className="text-xs text-slate-500 mt-1">
-              Select your platform role to configure your dedicated workspace.
+              {isMentor
+                ? "Share your engineering background for staff review. Access granted within 24hrs."
+                : "Create your free student account and start your first foothold today."}
             </p>
           </div>
 
@@ -141,7 +143,7 @@ export const SignupFormView: React.FC<SignupFormViewProps> = ({ controller }) =>
               onClick={() => setFormData({ role: "ROLE_MENTOR" })}
               className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
                 isMentor
-                  ? "border-blue-600 bg-blue-50/40 ring-1 ring-blue-500/30"
+                  ? "border-amber-500 bg-amber-50/50 ring-1 ring-amber-400/30"
                   : "border-slate-200 hover:border-slate-300 bg-white"
               }`}
             >
@@ -155,7 +157,7 @@ export const SignupFormView: React.FC<SignupFormViewProps> = ({ controller }) =>
                 <div
                   className={`w-4 h-4 rounded-full border flex items-center justify-center ${
                     isMentor
-                      ? "border-blue-600 bg-blue-600"
+                      ? "border-amber-500 bg-amber-500"
                       : "border-slate-300 bg-white"
                   }`}
                 >
@@ -336,17 +338,20 @@ export const SignupFormView: React.FC<SignupFormViewProps> = ({ controller }) =>
             <button
               type="submit"
               disabled={isLoading || !termsAccepted}
-              className="w-full h-11 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md shadow-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+              className={`w-full h-11 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed ${
+                isMentor
+                  ? "bg-amber-600 hover:bg-amber-700 active:bg-amber-800 shadow-amber-500/20"
+                  : "bg-blue-600 hover:bg-blue-700 active:bg-blue-800 shadow-blue-500/20"
+              }`}
             >
               {isLoading ? (
                 <>
                   <VectorIcon name="refresh" size={14} className="animate-spin text-white" />
-                  <span>Creating Account...</span>
+                  <span>{isMentor ? "Submitting Application..." : "Creating Account..."}</span>
                 </>
               ) : (
                 <>
-                  <span>{isMentor ? "Submit Mentor Application" : "Create Student Account"}</span>
-                  <VectorIcon name="arrow-right" size={14} className="text-white" />
+                  <span>{isMentor ? "Submit Mentor Application →" : "Create Student Account →"}</span>
                 </>
               )}
             </button>

@@ -48,3 +48,120 @@ body {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
 }
+
+/* ============================================================ */
+/* MICRO-ANIMATION KEYFRAMES (Sally's UX spec)                   */
+/* ============================================================ */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60%  { transform: translateX(-5px); }
+  40%, 80%  { transform: translateX(5px); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.25); }
+  50%       { box-shadow: 0 0 0 6px rgba(37, 99, 235, 0); }
+}
+
+@keyframes altitudeCountUp {
+  from { transform: translateY(6px); opacity: 0; }
+  to   { transform: translateY(0);  opacity: 1; }
+}
+
+@keyframes successBounce {
+  0%, 100% { transform: scale(1); }
+  30%      { transform: scale(1.08); }
+  60%      { transform: scale(0.97); }
+}
+
+/* ============================================================ */
+/* ANIMATION UTILITY CLASSES                                     */
+/* ============================================================ */
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.38s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-out both;
+}
+
+/* Used by dropdown popover in AppHeader */
+.animate-fadeIn {
+  animation: fadeIn 0.18s ease-out both;
+}
+
+.animate-shake {
+  animation: shake 0.4s ease-out;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+.animate-altitude {
+  animation: altitudeCountUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-success-bounce {
+  animation: successBounce 0.5s ease-out;
+}
+
+/* Staggered entrance helpers - fill-mode:both holds opacity:0 before animation fires */
+.animate-delay-100 { animation-delay: 0.1s; animation-fill-mode: both; }
+.animate-delay-200 { animation-delay: 0.2s; animation-fill-mode: both; }
+.animate-delay-300 { animation-delay: 0.3s; animation-fill-mode: both; }
+.animate-delay-400 { animation-delay: 0.4s; animation-fill-mode: both; }
+
+/* ============================================================ */
+/* TRACK CARD VISUAL STATE HELPERS                               */
+/* ============================================================ */
+
+.track-conquered {
+  border-left: 3px solid #059669 !important;
+}
+
+.track-active {
+  border-left: 3px solid #2563eb !important;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.12), 0 4px 16px rgba(37, 99, 235, 0.08) !important;
+}
+
+.track-locked {
+  opacity: 0.62;
+}
+
+/* ============================================================ */
+/* GLOBAL INTERACTIVE STATES                                     */
+/* ============================================================ */
+
+/* Clickable cards get subtle lift */
+.card-interactive {
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.card-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
