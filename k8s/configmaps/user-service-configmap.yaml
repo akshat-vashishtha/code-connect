@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: user-service-config
+  name: user-service-config # ConfigMap name; injected via configMapRef in user-service-deployment.yaml
   namespace: codeconnect-dev
   labels:
     app: user-service
 data:
-  SERVER_PORT: "8080"
-  MONGODB_URI: "mongodb://mongodb:27017/codeconnect_db"
-  REDIS_HOST: "redis"
-  REDIS_PORT: "6379"
+  SERVER_PORT: "8080"                              # User service port; maps to application.yml SERVER_PORT
+  MONGODB_URI: "mongodb://mongodb:27017/codeconnect_db" # Maps to Service metadata.name: mongodb in mongodb-service.yaml
+  REDIS_HOST: "redis"                              # Maps to Service metadata.name: redis in redis-service.yaml
+  REDIS_PORT: "6379"                               # Maps to Service port: 6379 in redis-service.yaml

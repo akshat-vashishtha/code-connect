@@ -1,39 +1,39 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: mongodb
+  name: mongodb # [STATEFULSET NAME]: Admin stateful controller name; creates pod mongodb-0
   namespace: codeconnect-dev
   labels:
-    app: mongodb
+    app: mongodb # [OBJECT LABEL]: Metadata label for grouping this StatefulSet object
 spec:
-  serviceName: "mongodb"
+  serviceName: "mongodb" # [HEADLESS SERVICE LINK]: Binds StatefulSet to Service name in mongodb-service.yaml
   replicas: 1
   selector:
     matchLabels:
-      app: mongodb
+      app: mongodb # [STATEFULSET SELECTOR]: Must match spec.template.metadata.labels.app below
   template:
     metadata:
       labels:
-        app: mongodb
+        app: mongodb # [POD LABEL STICKER]: Attached to created Pod mongodb-0; matched by Service spec.selector.app in mongodb-service.yaml
     spec:
       containers:
-        - name: mongodb
+        - name: mongodb # [CONTAINER PROCESS NAME]: Docker container process name inside Pod
           image: mongo:7.0
           ports:
-            - containerPort: 27017
+            - containerPort: 27017 # [CONTAINER PORT]: Must match Service spec.ports.targetPort in mongodb-service.yaml
           envFrom:
             - configMapRef:
-                name: mongodb-config
+                name: mongodb-config # [CONFIGMAP LINK]: Injects env vars from mongodb-configmap.yaml
             - secretRef:
-                name: codeconnect-secrets
+                name: codeconnect-secrets # [SECRET LINK]: Injects secret keys from secrets/secret.yaml
           readinessProbe:
             tcpSocket:
-              port: 27017
+              port: 27017 # Verifies TCP port 27017 is open before routing traffic
             initialDelaySeconds: 10
             periodSeconds: 10
           livenessProbe:
             tcpSocket:
-              port: 27017
+              port: 27017 # Restarts container if MongoDB process hangs
             initialDelaySeconds: 15
             periodSeconds: 15
           resources:
@@ -44,11 +44,11 @@ spec:
               memory: "512Mi"
               cpu: "500m"
           volumeMounts:
-            - name: mongodb-data
-              mountPath: /data/db
+            - name: mongodb-data # [VOLUME NAME LINK]: Must match volumeClaimTemplates.metadata.name below
+              mountPath: /data/db # [CONTAINER MOUNT PATH]: Path inside container where database files are written
   volumeClaimTemplates:
     - metadata:
-        name: mongodb-data
+        name: mongodb-data # [PVC NAME]: Provisions 100MB persistent volume disk per pod replica
       spec:
         accessModes: [ "ReadWriteOnce" ]
         resources:

@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: codeconnect-ingress
+  name: codeconnect-ingress # Outer HTTP/HTTPS entry point routing traffic into cluster
   namespace: codeconnect-dev
 spec:
   rules:
@@ -11,6 +11,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: gateway-service
+                name: gateway-service # Routes to Service metadata.name in services/gateway-service.yaml
                 port:
-                  number: 8080
+                  number: 8080        # Routes to Service port 8080 in services/gateway-service.yaml

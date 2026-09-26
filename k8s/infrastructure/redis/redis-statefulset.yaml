@@ -1,38 +1,38 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: redis
+  name: redis # [STATEFULSET NAME]: Admin stateful controller name; creates pod redis-0
   namespace: codeconnect-dev
   labels:
-    app: redis
+    app: redis # [OBJECT LABEL]: Metadata label for grouping this StatefulSet object
 spec:
-  serviceName: "redis"
+  serviceName: "redis" # [HEADLESS SERVICE LINK]: Binds StatefulSet to Service name in redis-service.yaml
   replicas: 1
   selector:
     matchLabels:
-      app: redis
+      app: redis # [STATEFULSET SELECTOR]: Must match spec.template.metadata.labels.app below
   template:
     metadata:
       labels:
-        app: redis
+        app: redis # [POD LABEL STICKER]: Attached to created Pod redis-0; matched by Service spec.selector.app in redis-service.yaml
     spec:
       containers:
-        - name: redis
+        - name: redis # [CONTAINER PROCESS NAME]: Docker container process name inside Pod
           image: redis:7.2-alpine
           command: ["redis-server", "--appendonly", "yes"]
           ports:
-            - containerPort: 6379
+            - containerPort: 6379 # [CONTAINER PORT]: Must match Service spec.ports.targetPort in redis-service.yaml
           envFrom:
             - secretRef:
-                name: codeconnect-secrets
+                name: codeconnect-secrets # [SECRET LINK]: Injects secret keys from secrets/secret.yaml
           readinessProbe:
             tcpSocket:
-              port: 6379
+              port: 6379 # Verifies TCP port 6379 is open before routing traffic
             initialDelaySeconds: 10
             periodSeconds: 10
           livenessProbe:
             tcpSocket:
-              port: 6379
+              port: 6379 # Restarts container if Redis process hangs
             initialDelaySeconds: 15
             periodSeconds: 15
           resources:
@@ -43,11 +43,11 @@ spec:
               memory: "256Mi"
               cpu: "250m"
           volumeMounts:
-            - name: redis-data
-              mountPath: /data
+            - name: redis-data # [VOLUME NAME LINK]: Must match volumeClaimTemplates.metadata.name below
+              mountPath: /data # [CONTAINER MOUNT PATH]: Path inside container where Redis writes AOF files
   volumeClaimTemplates:
     - metadata:
-        name: redis-data
+        name: redis-data # [PVC NAME]: Provisions 100MB persistent volume disk per pod replica
       spec:
         accessModes: [ "ReadWriteOnce" ]
         resources:

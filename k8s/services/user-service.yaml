@@ -1,15 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: user-service
+  name: user-service # [SERVICE NAME / DNS HOSTNAME]: Creates http://user-service:8080 (Referenced in gateway-configmap.yaml)
   namespace: codeconnect-dev
   labels:
-    app: user-service
+    app: user-service # [OBJECT LABEL]: Metadata label for grouping this Service object
 spec:
   type: ClusterIP
   ports:
-    - port: 8080
-      targetPort: 8080
+    - port: 8080       # [SERVICE PORT]: Exposed port inside cluster
+      targetPort: 8080 # [TARGET PORT LINK]: Must match spec.containers.ports.containerPort in user-service-deployment.yaml
       name: http
   selector:
-    app: user-service
+    app: user-service # [TRAFFIC ROUTER SELECTOR]: Must match spec.template.metadata.labels.app in user-service-deployment.yaml

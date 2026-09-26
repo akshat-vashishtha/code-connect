@@ -1,40 +1,40 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: gateway-service
+  name: gateway-service # [DEPLOYMENT NAME]: Admin deployment controller name
   namespace: codeconnect-dev
   labels:
-    app: gateway-service
+    app: gateway-service # [OBJECT LABEL]: Metadata label for grouping this Deployment object
 spec:
-  replicas: 1
+  replicas: 1 # [REPLICA COUNT]: Desired pod count; autoscaled dynamically by hpa-gateway.yaml
   selector:
     matchLabels:
-      app: gateway-service
+      app: gateway-service # [DEPLOYMENT SELECTOR]: Must match spec.template.metadata.labels.app below to supervise pods
   template:
     metadata:
       labels:
-        app: gateway-service
+        app: gateway-service # [POD LABEL STICKER]: Attached to created Pods; matched by Service spec.selector.app in gateway-service.yaml
     spec:
       containers:
-        - name: gateway-service
+        - name: gateway-service # [CONTAINER PROCESS NAME]: Docker container process name inside the Pod
           image: codeconnect/gateway-service:latest
           imagePullPolicy: Never
           ports:
-            - containerPort: 8080
+            - containerPort: 8080 # [CONTAINER PORT]: Must match Service spec.ports.targetPort in gateway-service.yaml
           envFrom:
             - configMapRef:
-                name: gateway-config
+                name: gateway-config # [CONFIGMAP LINK]: Injects env vars from configmaps/gateway-configmap.yaml
             - secretRef:
-                name: codeconnect-secrets
+                name: codeconnect-secrets # [SECRET LINK]: Injects secret keys from secrets/secret.yaml
           readinessProbe:
             httpGet:
-              path: /actuator/health/readiness
+              path: /actuator/health/readiness # Hits Spring Boot Actuator readiness endpoint
               port: 8080
             initialDelaySeconds: 15
             periodSeconds: 10
           livenessProbe:
             httpGet:
-              path: /actuator/health/liveness
+              path: /actuator/health/liveness # Hits Spring Boot Actuator liveness endpoint
               port: 8080
             initialDelaySeconds: 20
             periodSeconds: 15
