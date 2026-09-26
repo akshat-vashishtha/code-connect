@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: user-service-config
+  namespace: codeconnect-dev
+  labels:
+    app: user-service
+data:
+  SERVER_PORT: "8080"
+  MONGODB_URI: "mongodb://mongodb:27017/codeconnect_db"
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
