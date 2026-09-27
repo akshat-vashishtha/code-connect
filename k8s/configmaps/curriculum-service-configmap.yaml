@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: curriculum-service-config # ConfigMap name; injected via configMapRef in curriculum-service-deployment.yaml
+  namespace: codeconnect-dev
+  labels:
+    app: curriculum-service
+data:
+  SERVER_PORT: "8082"                              # Curriculum service port; maps to application.yml SERVER_PORT
+  MONGODB_URI: "mongodb://mongodb:27017/codeconnect_db" # Maps to Service metadata.name: mongodb in mongodb-service.yaml
+  DEFAULT_LANGUAGE: "ENGLISH"                       # Default bilingual narrative language mode
+  MAX_LESSONS_PER_MODULE: "50"                      # Operational upper limit for lessons per module

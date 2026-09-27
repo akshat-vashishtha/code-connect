@@ -32,6 +32,12 @@ All development in this repository must strictly adhere to the standards codifie
 
 2. **Next.js 14 & TypeScript**:
    - **100% Strict TypeScript**: No JavaScript; `strict: true`; no `any`.
-   - **Type Parity**: TypeScript interfaces in `src/types/` matching Java DTO records 1:1.
-   - **Clean Layering**: Route pages are thin shells; business state and side effects live in custom hooks (`src/hooks/`); API calls live in `src/lib/api/`.
-   - **Server Components by Default**: Client components (`'use client'`) only at interactive leaves.
+   - **Type & DTO Parity**: TypeScript interfaces in `src/dto/` and `src/types/` matching Java DTO records 1:1.
+   - **Strict Segregation of Structure / Logic vs. UI / Presentation**:
+     - **Structural Layer** (`controller/`, `service/`, `domain/`, `validator/`, `client/`): Pure custom hooks, state, API facades, input validators, and domain rules. Zero JSX / UI styling!
+     - **UI Presentation Layer** (`app/`, `presentation/`, `components/`): Thin route shells, feature UI assemblies, and atomic primitives. Zero business logic or raw `fetch` calls!
+   - **SOLID & GoF Design Patterns**: Controller Hook pattern (`src/controller/`), Service Facades (`src/service/`), Mapper Adapters (`src/lib/mappers/`), Validation Chains (`src/validator/`), and Strategy runners.
+3. **Anti-Shortcutting & Production Integrity Mandate**:
+   - **Zero Dummy / Mock Logic**: Never write dummy fallback branches, fake mock data, stubbed return values, or commented-out checks to pass unit tests or bypass errors.
+   - **Zero Hardcoded Domain Literals**: Never hardcode domain URLs (`codeconnect.dev`), error URIs, JWT secret strings, or topic names in Java/TypeScript code. Externalize all values to `application.yml` / `.env`.
+   - **Pure Data Holders**: `@ConfigurationProperties` classes MUST remain pure data holders without logic or fallback code.

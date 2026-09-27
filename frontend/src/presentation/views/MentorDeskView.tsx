@@ -8,7 +8,7 @@ import { AppShell } from "@/presentation/organisms/AppShell";
  */
 export const MentorDeskView: React.FC = () => {
   return (
-    <AppShell trackTitle="Mentor Desk" trackHref="/mentor/desk" footholdTitle="Desk">
+    <AppShell trackTitle="Mentor Desk" trackHref="/mentor/desk" lessonTitle="Desk">
       <main className="flex-1 p-8 max-w-4xl mx-auto w-full">
         <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-xs min-h-[400px]" />
       </main>

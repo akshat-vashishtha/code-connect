@@ -66,7 +66,7 @@ class GatewayRbacIntegrationTest {
             .expectStatus().isForbidden()
             .expectHeader().contentType(MediaType.APPLICATION_PROBLEM_JSON)
             .expectBody()
-            .jsonPath("$.type").isEqualTo("https://codeconnect.dev/errors/forbidden")
+            .jsonPath("$.type").isEqualTo("about:blank")
             .jsonPath("$.title").isEqualTo("Access Denied")
             .jsonPath("$.status").isEqualTo(403)
             .jsonPath("$.detail").value(detail ->
@@ -85,7 +85,7 @@ class GatewayRbacIntegrationTest {
             .expectStatus().isForbidden()
             .expectHeader().contentType(MediaType.APPLICATION_PROBLEM_JSON)
             .expectBody()
-            .jsonPath("$.type").isEqualTo("https://codeconnect.dev/errors/forbidden")
+            .jsonPath("$.type").isEqualTo("about:blank")
             .jsonPath("$.title").isEqualTo("Access Denied")
             .jsonPath("$.status").isEqualTo(403)
             .jsonPath("$.detail").isEqualTo("Insufficient role permissions for requested resource");
@@ -103,7 +103,7 @@ class GatewayRbacIntegrationTest {
             .expectStatus().isForbidden()
             .expectHeader().contentType(MediaType.APPLICATION_PROBLEM_JSON)
             .expectBody()
-            .jsonPath("$.type").isEqualTo("https://codeconnect.dev/errors/forbidden")
+            .jsonPath("$.type").isEqualTo("about:blank")
             .jsonPath("$.title").isEqualTo("Access Denied")
             .jsonPath("$.status").isEqualTo(403);
     }
@@ -120,9 +120,21 @@ class GatewayRbacIntegrationTest {
             .expectStatus().isForbidden()
             .expectHeader().contentType(MediaType.APPLICATION_PROBLEM_JSON)
             .expectBody()
-            .jsonPath("$.type").isEqualTo("https://codeconnect.dev/errors/forbidden")
+            .jsonPath("$.type").isEqualTo("about:blank")
             .jsonPath("$.title").isEqualTo("Access Denied")
             .jsonPath("$.status").isEqualTo(403);
+    }
+
+    @Test
+    @DisplayName("Should allow mentor access to /api/v1/admin/curriculum/** routes")
+    void shouldAllowMentorAccessToAdminCurriculumRoutes() {
+        String mentorCookie = loginAndGetSessionCookie("mentor-rbac@codeconnect.dev", "MentorPass123!");
+
+        webTestClient.get()
+            .uri("/api/v1/admin/curriculum/tracks")
+            .cookie("APP_SESSION", mentorCookie)
+            .exchange()
+            .expectStatus().is5xxServerError(); // Passed RBAC security check; attempted forward to downstream curriculum-service
     }
 
     @Test

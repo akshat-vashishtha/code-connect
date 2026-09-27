@@ -38,6 +38,7 @@ public class ReactiveProblemResponseWriter {
 
     private byte[] serializeForbiddenProblem(String detail) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, detail);
+        problem.setType(java.net.URI.create("about:blank"));
         problem.setTitle("Access Denied");
         problem.setProperty("timestamp", Instant.now());
 

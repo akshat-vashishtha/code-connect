@@ -34,12 +34,16 @@ public class RbacAccessDecisionManager {
         if (role == null) {
             return false;
         }
+        if (isMentorPath(path) || isMentorAdminPath(path)) {
+            return UserRole.ROLE_MENTOR.name().equals(role) || UserRole.ROLE_ADMIN.name().equals(role);
+        }
         if (isAdminPath(path)) {
             return UserRole.ROLE_ADMIN.name().equals(role);
         }
-        if (isMentorPath(path)) {
-            return UserRole.ROLE_MENTOR.name().equals(role) || UserRole.ROLE_ADMIN.name().equals(role);
-        }
         return true;
+    }
+
+    public boolean isMentorAdminPath(String path) {
+        return pathMatcher.match("/api/v1/admin/curriculum/**", path);
     }
 }

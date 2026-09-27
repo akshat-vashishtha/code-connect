@@ -9,7 +9,7 @@ export interface AppShellProps {
   readonly children: React.ReactNode;
   readonly trackTitle?: string;
   readonly trackHref?: string;
-  readonly footholdTitle?: string;
+  readonly lessonTitle?: string;
   readonly explicitRole?: UserRole;
   readonly hideRail?: boolean;
 }
@@ -26,7 +26,7 @@ export const AppShell: React.FC<AppShellProps> = ({
   children,
   trackTitle = "Track 2: Data Structures",
   trackHref = "/curriculum",
-  footholdTitle = "Foothold 3: Circular Queue",
+  lessonTitle = "Lesson 3: Circular Queue",
   explicitRole,
   hideRail = false,
 }) => {
@@ -36,7 +36,7 @@ export const AppShell: React.FC<AppShellProps> = ({
       <AppHeader
         trackTitle={trackTitle}
         trackHref={trackHref}
-        footholdTitle={footholdTitle}
+        lessonTitle={lessonTitle}
         explicitRole={explicitRole}
       />
 

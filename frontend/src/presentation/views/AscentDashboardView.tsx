@@ -13,7 +13,7 @@ export const AscentDashboardView: React.FC = () => {
   const displayName = user?.displayName ?? "User";
 
   return (
-    <AppShell trackTitle="Dashboard" trackHref="/dashboard" footholdTitle="Overview">
+    <AppShell trackTitle="Dashboard" trackHref="/dashboard" lessonTitle="Overview">
       <main className="flex-1 p-8 max-w-4xl mx-auto w-full">
         <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-xs">
           <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">

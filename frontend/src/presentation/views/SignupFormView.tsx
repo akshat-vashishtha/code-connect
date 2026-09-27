@@ -5,6 +5,7 @@ import Link from "next/link";
 import { SignupControllerResult } from "@/controller/useSignupController";
 import { VectorIcon } from "@/presentation/atoms/VectorIcon";
 import { AlertBanner } from "@/presentation/atoms/AlertBanner";
+import { UserRole } from "@/domain/enums/UserRole";
 
 export interface SignupFormViewProps {
   readonly controller: SignupControllerResult;
@@ -26,7 +27,7 @@ export const SignupFormView: React.FC<SignupFormViewProps> = ({ controller }) =>
   } = controller;
 
   const [termsAccepted, setTermsAccepted] = useState(true);
-  const isMentor = formData.role === "ROLE_MENTOR";
+  const isMentor = formData.role === UserRole.MENTOR;
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col justify-between p-4 sm:p-6 font-sans">
@@ -86,7 +87,7 @@ export const SignupFormView: React.FC<SignupFormViewProps> = ({ controller }) =>
             <p className="text-xs text-slate-500 mt-1">
               {isMentor
                 ? "Share your engineering background for staff review. Access granted within 24hrs."
-                : "Create your free student account and start your first foothold today."}
+                : "Create your free student account and start your first lesson today."}
             </p>
           </div>
 
@@ -108,7 +109,7 @@ export const SignupFormView: React.FC<SignupFormViewProps> = ({ controller }) =>
 
             {/* Student Role Card */}
             <div
-              onClick={() => setFormData({ role: "ROLE_STUDENT" })}
+              onClick={() => setFormData({ role: UserRole.STUDENT })}
               className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
                 !isMentor
                   ? "border-blue-600 bg-blue-50/40 ring-1 ring-blue-500/30"
@@ -140,7 +141,7 @@ export const SignupFormView: React.FC<SignupFormViewProps> = ({ controller }) =>
 
             {/* Mentor Role Card */}
             <div
-              onClick={() => setFormData({ role: "ROLE_MENTOR" })}
+              onClick={() => setFormData({ role: UserRole.MENTOR })}
               className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
                 isMentor
                   ? "border-amber-500 bg-amber-50/50 ring-1 ring-amber-400/30"

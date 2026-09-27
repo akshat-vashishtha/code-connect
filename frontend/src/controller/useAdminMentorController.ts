@@ -5,6 +5,7 @@ import { authService } from "@/service/AuthService";
 import { mentorApprovalService } from "@/service/MentorApprovalService";
 import { UserResponse } from "@/dto/response/UserResponse";
 import { MentorApprovalResponse } from "@/dto/response/MentorApprovalResponse";
+import { UserRole } from "@/domain/enums/UserRole";
 
 export interface FeedbackMessage {
   readonly type: "success" | "error";
@@ -46,7 +47,7 @@ export function useAdminMentorController(): AdminMentorControllerResult {
     async function init() {
       const user = await authService.getCurrentUser();
       if (!isMounted) return;
-      if (user && user.role === "ROLE_ADMIN") {
+      if (user && user.role === UserRole.ADMIN) {
         setCurrentUser(user);
         loadPendingApplications();
       } else {

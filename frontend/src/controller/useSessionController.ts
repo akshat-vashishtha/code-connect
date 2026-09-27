@@ -60,13 +60,13 @@ export function useSessionController(): SessionControllerResult {
   };
 
   // Resolve role: prefer verified session role, else infer from route domain
-  let resolvedRole: UserRole = "ROLE_STUDENT";
+  let resolvedRole: UserRole = UserRole.STUDENT;
   if (user?.role) {
     resolvedRole = user.role;
   } else if (pathname.startsWith("/admin")) {
-    resolvedRole = "ROLE_ADMIN";
+    resolvedRole = UserRole.ADMIN;
   } else if (pathname.startsWith("/mentor")) {
-    resolvedRole = "ROLE_MENTOR";
+    resolvedRole = UserRole.MENTOR;
   }
 
   return {

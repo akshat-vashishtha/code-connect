@@ -16,6 +16,10 @@ spring:
   cloud:
     gateway:
       routes:
+        - id: admin-curriculum-service-route
+          uri: ${CURRICULUM_SERVICE_URI:http://localhost:8082}
+          predicates:
+            - Path=/api/v1/admin/curriculum/**
         - id: admin-service-route
           uri: ${USER_SERVICE_URI:http://localhost:8081}
           predicates:

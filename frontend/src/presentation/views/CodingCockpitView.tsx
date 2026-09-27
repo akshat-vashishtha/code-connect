@@ -8,7 +8,7 @@ import { AppShell } from "@/presentation/organisms/AppShell";
  */
 export const CodingCockpitView: React.FC = () => {
   return (
-    <AppShell trackTitle="Code Cockpit" trackHref="/cockpit" footholdTitle="Sandbox">
+    <AppShell trackTitle="Code Cockpit" trackHref="/cockpit" lessonTitle="Sandbox">
       <main className="flex-1 p-8 max-w-4xl mx-auto w-full">
         <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-xs min-h-[400px]" />
       </main>

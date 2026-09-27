@@ -12,7 +12,7 @@ import { UserRole } from "@/domain/enums/UserRole";
 export interface AppHeaderProps {
   readonly trackTitle?: string;
   readonly trackHref?: string;
-  readonly footholdTitle?: string;
+  readonly lessonTitle?: string;
   readonly currentAltitude?: number;
   readonly streakDays?: number;
   readonly explicitRole?: UserRole;
@@ -30,7 +30,7 @@ export interface AppHeaderProps {
 export const AppHeader: React.FC<AppHeaderProps> = ({
   trackTitle = "Track 2: Data Structures",
   trackHref = "/curriculum",
-  footholdTitle = "Foothold 3: Circular Queue",
+  lessonTitle = "Lesson 3: Circular Queue",
   currentAltitude = 1420,
   streakDays = 5,
   explicitRole,
@@ -113,14 +113,14 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
         </Link>
 
         {/* Context Divider & Breadcrumb (Only when authenticated) */}
-        {isAuth && trackTitle && footholdTitle ? (
+        {isAuth && trackTitle && lessonTitle ? (
           <>
             <div className="h-6 w-[1px] bg-slate-200 hidden md:block" />
             <div className="hidden md:block">
               <BreadcrumbBar
                 trackTitle={trackTitle}
                 trackHref={trackHref}
-                footholdTitle={footholdTitle}
+                lessonTitle={lessonTitle}
                 status="ACTIVE"
               />
             </div>

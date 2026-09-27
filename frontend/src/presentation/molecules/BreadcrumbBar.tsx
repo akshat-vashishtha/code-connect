@@ -6,7 +6,8 @@ import { StatusPill, StatusPillType } from "@/presentation/atoms/StatusPill";
 export interface BreadcrumbBarProps {
   readonly trackTitle: string;
   readonly trackHref?: string;
-  readonly footholdTitle: string;
+  readonly lessonTitle?: string;
+  readonly footholdTitle?: string;
   readonly status?: StatusPillType;
   readonly backHref?: string;
   readonly backLabel?: string;
@@ -15,17 +16,20 @@ export interface BreadcrumbBarProps {
 
 /**
  * Context Breadcrumb Bar matching Wireframe 00 and 03.
- * Cleanly separates track route, foothold name, and live status pill with optional back navigation.
+ * Cleanly separates track route, lesson name, and live status pill with optional back navigation.
  */
 export const BreadcrumbBar: React.FC<BreadcrumbBarProps> = ({
   trackTitle,
   trackHref = "/curriculum",
+  lessonTitle,
   footholdTitle,
   status = "ACTIVE",
   backHref,
   backLabel = "Back",
   className = "",
 }) => {
+  const displayTitle = lessonTitle || footholdTitle || "Lesson";
+
   return (
     <div className={`inline-flex items-center gap-3 text-xs select-none ${className}`}>
       {backHref && (
@@ -52,7 +56,7 @@ export const BreadcrumbBar: React.FC<BreadcrumbBarProps> = ({
 
       <span className="text-slate-300 font-light">/</span>
 
-      <span className="font-semibold text-slate-900">{footholdTitle}</span>
+      <span className="font-semibold text-slate-900">{displayTitle}</span>
 
       {status && <StatusPill status={status} size="sm" className="ml-1" />}
     </div>

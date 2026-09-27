@@ -9,6 +9,8 @@ import { StatMetricCard } from "@/presentation/molecules/StatMetricCard";
 import { StatusPill } from "@/presentation/atoms/StatusPill";
 import { AppNavRail } from "@/presentation/organisms/AppNavRail";
 
+import { UserRole } from "@/domain/enums/UserRole";
+
 export interface MentorApprovalTableViewProps {
   readonly controller: AdminMentorControllerResult;
   readonly detectorSlot?: React.ReactNode;
@@ -189,7 +191,7 @@ export const MentorApprovalTableView: React.FC<MentorApprovalTableViewProps> = (
       </header>
 
       <div className="flex-1 flex overflow-hidden">
-        <AppNavRail explicitRole="ROLE_ADMIN" />
+        <AppNavRail explicitRole={UserRole.ADMIN} />
 
         <div className="flex-1 overflow-y-auto pb-16">
           <main className="max-w-[1152px] mx-auto px-4 sm:px-6 pt-6 space-y-6">
@@ -415,7 +417,7 @@ export const MentorApprovalTableView: React.FC<MentorApprovalTableViewProps> = (
                     </span>
                   </td>
                   <td className="py-3 px-4 font-medium text-slate-600">
-                    1,420m &bull; 9 Footholds Mastered
+                    1,420m &bull; 9 Lessons Mastered
                   </td>
                   <td className="py-3 px-4">
                     <StatusPill status="ACTIVE" size="sm" />

@@ -17,7 +17,7 @@ export interface SignupFormData {
 }
 
 export const INITIAL_SIGNUP_FORM_DATA: SignupFormData = {
-  role: "ROLE_STUDENT",
+  role: UserRole.STUDENT,
   displayName: "",
   email: "",
   password: "",
@@ -42,7 +42,7 @@ export interface SignupControllerResult {
 export function useSignupController(): SignupControllerResult {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const defaultRole: UserRole = searchParams.get("role") === "mentor" ? "ROLE_MENTOR" : "ROLE_STUDENT";
+  const defaultRole: UserRole = searchParams.get("role") === "mentor" ? UserRole.MENTOR : UserRole.STUDENT;
 
   const [formData, setFormDataState] = useState<SignupFormData>({
     ...INITIAL_SIGNUP_FORM_DATA,
@@ -74,8 +74,8 @@ export function useSignupController(): SignupControllerResult {
         email: formData.email.trim(),
         password: formData.password,
         role: formData.role,
-        linkedInUrl: formData.role === "ROLE_MENTOR" ? formData.linkedInUrl.trim() : undefined,
-        bio: formData.role === "ROLE_MENTOR" ? formData.bio.trim() : undefined,
+        linkedInUrl: formData.role === UserRole.MENTOR ? formData.linkedInUrl.trim() : undefined,
+        bio: formData.role === UserRole.MENTOR ? formData.bio.trim() : undefined,
       });
       handleSignupSuccess(formData.role);
     } catch (err: unknown) {
@@ -86,7 +86,7 @@ export function useSignupController(): SignupControllerResult {
   };
 
   const handleSignupSuccess = (selectedRole: UserRole): void => {
-    if (selectedRole === "ROLE_MENTOR") {
+    if (selectedRole === UserRole.MENTOR) {
       router.push("/pending-approval");
     } else {
       router.push("/?registered=true");

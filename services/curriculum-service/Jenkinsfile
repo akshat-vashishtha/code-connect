@@ -1,0 +1,56 @@
+pipeline {
+    agent any
+
+    environment {
+        SERVICE_NAME    = 'curriculum-service'
+        IMAGE_TAG       = 'codeconnect/curriculum-service:latest'
+        CLUSTER_NAME    = 'codeconnect-local'
+        K8S_SERVER      = 'https://k3d-codeconnect-local-serverlb:6443'
+        KUBECONFIG      = '/var/jenkins_home/.kube/config'
+        DOCKER_BUILDKIT = '0'
+    }
+
+    stages {
+        stage('1. Maven Build & Test') {
+            steps {
+                dir("services/${env.SERVICE_NAME}") {
+                    echo "Building ${env.SERVICE_NAME} JAR with Maven..."
+                    sh 'mvn clean package -DskipTests'
+                }
+            }
+        }
+
+        stage('2. Build Docker Image') {
+            steps {
+                dir("services/${env.SERVICE_NAME}") {
+                    echo "Packaging Docker Image: ${env.IMAGE_TAG}..."
+                    sh "docker build -t ${env.IMAGE_TAG} ."
+                }
+            }
+        }
+
+        stage('3. Import Image into Local Cluster') {
+            steps {
+                echo "Loading ${env.IMAGE_TAG} into k3d cluster (${env.CLUSTER_NAME})..."
+                sh "docker save ${env.IMAGE_TAG} | docker exec -i k3d-codeconnect-local-server-0 ctr -a /run/k3s/containerd/containerd.sock -n k8s.io images import - 2>/dev/null || true"
+            }
+        }
+
+        stage('4. Deploy & Rollout to Kubernetes') {
+            steps {
+                echo "Applying Deployment & Restarting Pods..."
+                sh "kubectl apply -f k8s/deployments/curriculum-service-deployment.yaml --server=${env.K8S_SERVER} --insecure-skip-tls-verify=true"
+                sh "kubectl rollout restart deployment/curriculum-service -n codeconnect-dev --server=${env.K8S_SERVER} --insecure-skip-tls-verify=true"
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "SUCCESS: ${env.SERVICE_NAME} pipeline completed successfully!"
+        }
+        failure {
+            echo "FAILURE: ${env.SERVICE_NAME} pipeline failed during execution."
+        }
+    }
+}
