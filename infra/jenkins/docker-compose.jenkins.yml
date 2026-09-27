@@ -1,0 +1,21 @@
+services:
+  jenkins:
+    image: jenkins/jenkins:lts-jdk21
+    container_name: codeconnect-jenkins
+    user: root
+    ports:
+      - "8085:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_data:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ~/.kube:/var/jenkins_home/.kube:ro
+      - /Users/Akshat.x.Vashishtha/Machine/Learnings/projects/git/code-connect:/var/jenkins_home/workspace/user-service-pipeline:rw
+    environment:
+      - JENKINS_UC=http://updates.jenkins.io/update-center.json
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=true -Dhudson.model.DownloadSettings.useBrowser=true
+    restart: unless-stopped
+
+volumes:
+  jenkins_data:
+    name: codeconnect_jenkins_data
