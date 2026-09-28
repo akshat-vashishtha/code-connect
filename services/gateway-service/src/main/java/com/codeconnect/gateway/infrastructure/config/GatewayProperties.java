@@ -13,5 +13,6 @@ public record GatewayProperties(
     String submissionServiceUri,
     String collabServiceUri,
     String adminPathPattern,
-    String mentorPathPattern
+    String mentorPathPattern,
+    String internalSecret
 ) {}

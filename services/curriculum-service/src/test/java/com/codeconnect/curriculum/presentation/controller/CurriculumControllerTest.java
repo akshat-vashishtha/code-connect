@@ -20,6 +20,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.springframework.security.test.context.support.WithMockUser;
+
 @WebMvcTest(CurriculumController.class)
 class CurriculumControllerTest {
 
@@ -29,7 +31,11 @@ class CurriculumControllerTest {
     @MockBean
     private CurriculumService curriculumService;
 
+    @MockBean
+    private com.codeconnect.curriculum.infrastructure.config.InternalSecurityProperties internalSecurityProperties;
+
     @Test
+    @WithMockUser(username = "user-1", roles = {"STUDENT"})
     @DisplayName("GET /api/v1/curriculum/tracks returns 200 OK with track list")
     void getPublishedTracks_ShouldReturn200OK() throws Exception {
         TrackResponse track = new TrackResponse(

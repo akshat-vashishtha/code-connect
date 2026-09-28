@@ -53,6 +53,7 @@ codeconnect:
     collab-service-uri: ${COLLAB_SERVICE_URI:http://localhost:8084}
     admin-path-pattern: ${ADMIN_PATH_PATTERN:/api/v1/admin/**}
     mentor-path-pattern: ${MENTOR_PATH_PATTERN:/api/v1/mentor/**}
+    internal-secret: ${INTERNAL_SECURITY_SECRET:codeconnect-internal-security-secret-key-32bytes-min!}
   session:
     cookie-name: ${SESSION_COOKIE_NAME:APP_SESSION}
     cookie-secure: ${SESSION_COOKIE_SECURE:false}

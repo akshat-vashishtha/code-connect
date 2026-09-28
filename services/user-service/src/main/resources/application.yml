@@ -4,6 +4,9 @@ server:
 spring:
   application:
     name: user-service
+  threads:
+    virtual:
+      enabled: true
   data:
     mongodb:
       uri: ${MONGODB_URI:mongodb://localhost:27017/codeconnect_db}
@@ -15,20 +18,11 @@ spring:
     store-type: redis
     redis:
       namespace: spring:session
-  kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
-    consumer:
-      group-id: user-service-group
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring.json.trusted.packages: "com.codeconnect.*"
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 codeconnect:
+  security:
+    internal-secret: ${INTERNAL_SECURITY_SECRET:default-dev-internal-secret-change-in-production-32bytes!}
+    max-clock-skew-seconds: ${MAX_CLOCK_SKEW_SECONDS:30}
   user:
     default-reviewer: ${DEFAULT_REVIEWER:SYSTEM}
 

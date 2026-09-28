@@ -73,6 +73,15 @@ public class CurriculumServiceImpl implements CurriculumService {
 
     @Override
     public StudentProgressResponse getStudentProgress(String userId, String trackId) {
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymous")) {
+            boolean isStaff = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN") || a.getAuthority().equals("ROLE_MENTOR"));
+            if (!isStaff && !auth.getName().equals(userId)) {
+                throw new com.codeconnect.curriculum.domain.exception.CurriculumValidationException("Access Denied: Cannot access progress records of another user");
+            }
+        }
+
         StudentProgressDocument progress = progressRepository.findByUserIdAndTrackId(userId, trackId)
             .orElseGet(() -> StudentProgressDocument.builder()
                 .userId(userId)

@@ -32,8 +32,24 @@
   - High-level policy modules must never depend on low-level infrastructure details. Both depend on abstractions (interfaces).
 * **Favor Composition Over Inheritance**:
   - Do not create deep, fragile inheritance hierarchies. Compose behavior through interfaces and injected collaborators.
-* **Law of Demeter (Principle of Least Knowledge)**:
-  - A method should only call methods on its own class, its parameters, objects it creates, or its direct dependencies. Never write "train-wrecks" (e.g., `submission.getStudent().getProfile().getAddress().getCity()`).
+### 1.3 Anti-Shortcutting, Anti-Dummy Code & Hardcoding Mandate
+
+> **Strict Rule**: AI Agents and Engineers MUST NEVER write quick-and-dirty procedural hacks, dummy fallback checks, stubbed mock responses, or hardcoded literal assumptions to pass unit tests or bypass compiler errors.
+
+1. **Zero Dummy / Mock Logic in Production Code**:
+   - Production classes (`src/main/java/` and `frontend/src/`) MUST NOT contain dummy `if (true)` checks, stubbed fallback return values, commented-out validation rules, or fake mock data.
+   - All feature logic (e.g. User Ban verification, JWT signature parsing, Role Authorization, Session Elevation) MUST be fully implemented using production-grade domain entities, repositories, and collaborators.
+
+2. **Zero Hardcoded URLs, URIs, Domains, Secrets & Magic Literals**:
+   - **Absolute Ban on Hardcoded Literals**: Domain names (e.g. `codeconnect.dev`, `http://localhost:8080`), error URIs, gateway route patterns, JWT secret strings, Kafka topics, timeouts, and fallback credentials MUST NEVER be hardcoded as string constants or literals in Java or TypeScript source code.
+   - **Pure `@ConfigurationProperties` Externalization**: Every configurable value MUST live exclusively in `application.yml` using standard Spring property placeholders: `${ENVIRONMENT_VARIABLE:defaultValue}` (e.g. `jwt-secret: ${JWT_SECRET:defaultSecret32BytesLongMinRequirement}`).
+   - **Pure Data Holders Only**: `@ConfigurationProperties` Java classes/records MUST NOT contain compact constructor fallback logic, ternary expressions, or default assignments in Java code.
+
+3. **Automated Enforcement via ArchUnit & Static Linters**:
+   - All backend microservices execute automated **ArchUnit** tests in `src/test/java/.../arch/` that scan package boundaries and fail `mvn test` if:
+     - Hardcoded HTTP/HTTPS domain string literals exist in production Java classes.
+     - Controllers contain business logic or DB calls.
+     - `@ConfigurationProperties` classes contain logic methods.
 
 ---
 
@@ -175,36 +191,92 @@ com.codeconnect.<servicename>/
     - The `@ConfigurationProperties` class/record must remain a completely pure, dumb data container.
 * **Centralized Global Exception Handling**:
   - Throw domain-specific exceptions. Centralized `@RestControllerAdvice` catches them and produces standardized RFC 7807 `ProblemDetail` or `ApiResponse<T>` with HTTP error codes, constructing error type URIs dynamically from injected `@ConfigurationProperties`.
-* **Mandatory Enums in Dedicated `domain/enums/` Package (Zero Magic Strings & Segregation from Models)**:
-  - Whenever domain values, lifecycle statuses, account states, roles, or discrete categories are known (e.g., `PENDING`, `APPROVED`, `REJECTED`, `ACTIVE`, `BANNED`, `ROLE_STUDENT`, `ROLE_MENTOR`, `ROLE_ADMIN`, `HINGLISH`, `ENGLISH`), they **MUST** be modeled as type-safe Java `enum`s.
-  - **Dedicated Package Location**: All enums MUST reside in the dedicated `com.codeconnect.<service>.domain.enums` package. They must NEVER be placed in `domain.model`.
-    - Models (`domain.model`) represent data schemas and MongoDB `@Document` entities.
-    - Enums (`domain.enums`) represent finite domain value sets and lifecycle vocabularies.
-  - **Zero Hardcoded Strings**: Never use magic string literals in entities, repositories, services, or DTO records (e.g., forbidding `setStatus("APPROVED")`, `findByStatus("PENDING")`, `status.equals("REJECTED")`).
+* **Mandatory Enums in Dedicated Package (Zero Magic Strings in Backend & Frontend)**:
+  - Whenever domain values, lifecycle statuses, account states, roles, or discrete categories are known (e.g., `PENDING`, `APPROVED`, `REJECTED`, `ACTIVE`, `BANNED`, `ROLE_STUDENT`, `ROLE_MENTOR`, `ROLE_ADMIN`, `HINGLISH`, `ENGLISH`), they **MUST** be modeled as type-safe Enums in both Backend (`com.codeconnect.<service>.domain.enums`) and Frontend (`frontend/src/domain/enums/`).
+  - **Zero Hardcoded String Literals**: Never write magic string literals in entities, repositories, services, DTO records, or React UI components/event handlers (e.g., forbidding `setStatus("APPROVED")`, `setFormData({ role: "ROLE_STUDENT" })`, `findByStatus("PENDING")`, `status === "REJECTED"`).
+  - Use `UserRole.STUDENT`, `UserRole.MENTOR`, `MentorApprovalStatus.PENDING` enums directly across both backend services and frontend React UI handlers.
   - Enums provide compile-time type safety, IDE refactoring support, exhaustive `switch` pattern matching, and self-documenting domain models.
-  - DTO records, MongoDB `@Document` models, and repository query methods must declare the `enum` type directly (e.g., `List<MentorApprovalRequest> findByStatus(MentorApprovalStatus status)`), allowing Jackson and Spring Data to handle serialization and persistence reliably.
 
 ---
 
-## 4. Next.js 14 (Strict TypeScript) Frontend Standards
+## 4. Next.js 14 & Strict TypeScript Frontend Standards
 
-### 4.1 Strict Type System (Tailored for Java Engineers)
+### 4.1 Strict Type System & Java Backend Parity
 * **Zero JavaScript / 100% Strict TypeScript**:
-  - All files in `apps/web/src/` must be `.ts` or `.tsx`.
+  - All files under `frontend/src/` must be `.ts` or `.tsx`.
   - `strict: true`, `noImplicitAny: true`, `strictNullChecks: true`.
-  - The `any` type is completely banned. Use generics, unions, or `unknown` with type guards.
+  - The `any` type is completely banned. Use generics, discriminated unions, or `unknown` with narrowing type guards.
 * **1:1 Type Parity with Java Backend Records**:
-  - Every Java Request/Response record in backend services must have an exact TypeScript `interface` counterpart in `src/types/`.
+  - Every Java Request/Response record in backend microservices MUST have an exact TypeScript `interface` counterpart in `src/dto/` or `src/types/`.
+  - Enums in backend `domain.enums` must be mirrored as TypeScript `enum`s or string literal union types in `src/types/`.
 
-### 4.2 Component & Layering Separation
-* **Thin Route Pages**: Next.js App Router files (`page.tsx`) act as layout orchestrators only.
-* **UI Primitives vs. Feature Components**:
-  - `components/ui/`: Atomic, reusable design system components (Button, Modal, Drawer, Card).
-  - `components/<feature>/`: Feature-specific domain assemblies.
-* **Custom Hooks for State & Side-Effects**:
-  - Never clutter components with 50-line `useEffect` or WebSocket connection logic. Extract into custom hooks (`hooks/useSubmissionRunner.ts`, `hooks/useSocraticChat.ts`).
-* **Typed API Client Layer**:
-  - Network requests are encapsulated in `lib/api/`, returning typed promises `Promise<ApiResponse<T>>`.
+### 4.2 Clean Layered Frontend Architecture & Segregation
+The frontend directory structure under `frontend/src/` strictly mirrors Clean Architecture principles, enforcing complete segregation between **Structure / Logic** and **UI / Presentation**:
+
+```
+frontend/src/
+├── app/                  # Next.js App Router (Thin Page Shells & Layout Orchestrators)
+├── client/               # HTTP / WebSocket API Clients (Fetch, Axios, STOMP infrastructure)
+├── components/           # UI Atomic Primitives (Button, Modal, Card, Input) & Shared Layouts
+├── controller/           # Custom React Hooks & View Models (UI Logic, State, Side-Effects)
+├── domain/               # Frontend Domain Models, Entities & Value Objects (Pure Business Logic)
+├── dto/                  # TypeScript Interfaces matching Backend DTO Records 1:1 (Request/Response)
+├── lib/                  # Utilities, Formatters, Constants, Helper Mappers
+├── presentation/         # Feature-Specific Presentational Assemblies (Pure UI Views, Zero API Calls)
+├── service/              # Frontend Application Services / Facades (Orchestrate Client, DTOs & Storage)
+├── types/                # Core TypeScript Contracts, Generic Enums & App Types
+└── validator/            # Client-Side Form & Input Schema Validators (Yup, Zod, Custom Pipeline)
+```
+
+### 4.3 Strict Segregation: Structure / Logic vs. UI / Presentation
+
+1. **Structural Layer (`controller/`, `service/`, `domain/`, `validator/`, `client/`)**:
+   - **Zero JSX / Zero UI Code**: Structural files MUST NOT contain JSX elements (`<div>`, `<button>`), CSS class names, or presentation logic.
+   - **Responsibilities**:
+     - `controller/`: Custom React hooks handling state, `useEffect` hooks, event callbacks, and loading/error states.
+     - `service/`: High-level frontend facades orchestrating API client calls, local storage/session tokens, and data mapping.
+     - `domain/`: Pure domain entities and immutable business logic (e.g. calculating ascent streak, checking prerequisite eligibility).
+     - `validator/`: Client-side input validation pipelines (e.g. email format, password strength, role validation).
+     - `client/`: HTTP fetch adapters, header injection, and network error handling.
+
+2. **UI / Presentation Layer (`app/`, `presentation/`, `components/`)**:
+   - **Zero Business Logic & Zero Direct Fetch Calls**: Presentational components MUST NOT execute raw `fetch` calls, complex business algorithms, or direct API endpoint interactions.
+   - **Responsibilities**:
+     - `app/`: Next.js App Router pages act as ultra-thin shells that instantiate the appropriate `controller` hook and pass state/callbacks to the `presentation` view component.
+     - `presentation/`: Feature-specific UI component assemblies receiving props from controllers.
+     - `components/`: Atomic, reusable design system UI primitives (Buttons, Modals, Drawers, Cards).
+
+### 4.4 SOLID & OOAD Principles in Frontend Development
+
+* **Single Responsibility Principle (SRP)**:
+  - `page.tsx`: Thin shell layout only.
+  - `useSignupController.ts`: State management and event handlers only.
+  - `SignupView.tsx`: JSX rendering and styling only.
+  - `UserService.ts`: API call orchestration only.
+  - `SignupValidator.ts`: Form validation rules only.
+* **Open/Closed Principle (OCP)**:
+  - Design UI primitives and presentation components to accept variant props, composition slots (`children`, `renderItem`), or theme tokens without editing component source code.
+* **Liskov Substitution Principle (LSP)**:
+  - Polymorphic component props must extend native HTML element attributes cleanly (e.g. `ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>`). Subclasses or wrapper components must be 100% substitutable for their underlying base components.
+* **Interface Segregation Principle (ISP)**:
+  - Presentational components should take minimal, focused prop interfaces (e.g. `AvatarProps { imageUrl: string; name: string }`) instead of requiring the entire `UserResponse` DTO record.
+* **Dependency Inversion Principle (DIP)**:
+  - Controllers and Presentation components depend on abstract service interfaces or injected context providers (`AuthContext`, `ThemeContext`), never hardcoded fetch functions.
+
+### 4.5 GoF & React Design Patterns in Frontend
+
+* **Controller / Custom Hook Pattern**:
+  - Encapsulates all React hooks (`useState`, `useReducer`, `useEffect`, `useCallback`) into dedicated controller files under `src/controller/`.
+* **Facade Pattern (Frontend Service Layer)**:
+  - `src/service/` classes act as unified facades for complex multi-step frontend workflows (e.g. `AuthService.login()` orchestrates calling `AuthClient.login()`, storing token in `SessionStore`, and populating `UserDomainModel`).
+* **Adapter / Mapper Pattern**:
+  - `src/lib/mappers/` transforms backend `ApiResponse<T>` DTO records (`src/dto/`) into frontend domain view models (`src/domain/`).
+* **Strategy Pattern**:
+  - Swappable UI strategies (e.g. `EditorExecutionStrategy` for Monaco Editor code execution by language, or `SocraticHintStrategy` for rendering different tutor prompt layouts).
+* **Chain of Responsibility Pattern**:
+  - Sequential client validation pipelines in `src/validator/` (e.g. `SanitizeInputStep` -> `ValidateEmailStep` -> `CheckPasswordStrengthStep`).
+* **Observer / Event Pattern**:
+  - Event listeners, WebSockets, STOMP subscriptions, and React Context providers notifying presentational subscribers of real-time state changes.
 
 ---
 
@@ -424,8 +496,12 @@ Before any story implementation is submitted for review, verify all applicable g
 - [ ] **OpenAPI Spec Present**: Is the API contract documented in OpenAPI 3.x before or alongside the implementation?
 - [ ] **Secrets Not in Code**: Are all credentials sourced from environment, not hardcoded or in `application.yml`?
 
-### Frontend (Next.js + TypeScript)
-- [ ] **Strict TypeScript**: Is the frontend 100% strict TypeScript with zero `any` types?
-- [ ] **State Encapsulation**: Are complex UI side-effects encapsulated in custom React hooks?
-- [ ] **Type Parity**: Does every backend DTO record have a matching TypeScript interface in `src/types/`?
-- [ ] **Server Components Default**: Are Client Components (`'use client'`) used only at interactive leaves?
+### Frontend (Next.js 14 + Strict TypeScript)
+- [ ] **100% Strict TypeScript**: Is the frontend 100% strict TypeScript with zero `any` types?
+- [ ] **Strict Layering & Segregation**: Is structural logic (`controller/`, `service/`, `domain/`, `validator/`, `client/`) completely separated from presentation JSX (`app/`, `presentation/`, `components/`)?
+- [ ] **Zero Business Logic in UI**: Are presentational components pure functions free of raw `fetch` calls or direct business algorithms?
+- [ ] **Controller Hooks**: Are React hooks and View Models encapsulated inside `src/controller/` custom hooks?
+- [ ] **DTO & Type Parity**: Does every backend Java DTO record have a 1:1 matching TypeScript interface in `src/dto/` or `src/types/`?
+- [ ] **SOLID Principles**: Are SRP, OCP, LSP, ISP, and DIP strictly respected in frontend components and services?
+- [ ] **Server Components Default**: Are Next.js Client Components (`'use client'`) used exclusively at interactive leaf components?
+

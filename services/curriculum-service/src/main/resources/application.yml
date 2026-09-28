@@ -4,6 +4,9 @@ server:
 spring:
   application:
     name: curriculum-service
+  threads:
+    virtual:
+      enabled: true
   data:
     mongodb:
       uri: ${MONGODB_URI:mongodb://localhost:27017/codeconnect_db}
@@ -13,6 +16,9 @@ codeconnect:
   curriculum:
     default-language: ${DEFAULT_LANGUAGE:ENGLISH}
     max-lessons-per-module: ${MAX_LESSONS_PER_MODULE:50}
+  security:
+    internal-secret: ${INTERNAL_SECURITY_SECRET:codeconnect-internal-security-secret-key-32bytes-min!}
+    max-clock-skew-seconds: 30
 
 management:
   endpoints:

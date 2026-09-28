@@ -19,7 +19,7 @@ COPY --from=extractor --chown=spring:spring /builder/extracted/spring-boot-loade
 COPY --from=extractor --chown=spring:spring /builder/extracted/snapshot-dependencies/ ./
 COPY --from=extractor --chown=spring:spring /builder/extracted/application/ ./
 
-ENV JAVA_OPTS="-XX:InitialRAMPercentage=50.0 -XX:MaxRAMPercentage=75.0 -XX:+UseG1GC -Djava.security.egd=file:/dev/./urandom"
+ENV JAVA_OPTS="-XX:InitialRAMPercentage=50.0 -XX:MaxRAMPercentage=75.0 -XX:+UseZGC -XX:+ZGenerational -Djava.security.egd=file:/dev/./urandom"
 EXPOSE 8080
 
-ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -jar /app/app.jar"]
+ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS org.springframework.boot.loader.launch.JarLauncher"]
