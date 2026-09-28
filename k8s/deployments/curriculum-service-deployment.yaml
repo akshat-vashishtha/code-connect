@@ -20,7 +20,7 @@ spec:
           image: codeconnect/curriculum-service:latest
           imagePullPolicy: Never
           ports:
-            - containerPort: 8082 # [CONTAINER PORT]: Must match Service spec.ports.targetPort in curriculum-service.yaml
+            - containerPort: 8080 # [CONTAINER PORT]: Must match Service spec.ports.targetPort in curriculum-service.yaml
           envFrom:
             - configMapRef:
                 name: curriculum-service-config # [CONFIGMAP LINK]: Injects env vars from configmaps/curriculum-service-configmap.yaml
@@ -29,13 +29,13 @@ spec:
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness # Hits Spring Boot Actuator readiness endpoint
-              port: 8082
+              port: 8080
             initialDelaySeconds: 15
             periodSeconds: 10
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness # Hits Spring Boot Actuator liveness endpoint
-              port: 8082
+              port: 8080
             initialDelaySeconds: 20
             periodSeconds: 15
           resources:
