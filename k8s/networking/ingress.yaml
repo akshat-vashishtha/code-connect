@@ -3,14 +3,18 @@ kind: Ingress
 metadata:
   name: codeconnect-ingress # Outer HTTP/HTTPS entry point routing traffic into cluster
   namespace: codeconnect-dev
+  annotations:
+    kubernetes.io/ingress.class: "nginx"                  # Uses NGINX Ingress Controller as the Layer 7 Load Balancer & Reverse Proxy
+    nginx.ingress.kubernetes.io/enable-modsecurity: "true"   # Enables ModSecurity Web Application Firewall (WAF) engine inside NGINX
+    nginx.ingress.kubernetes.io/enable-owasp-core-rules: "true" # Enables OWASP Core Rule Set to block SQLi, XSS, and malicious requests at boundary
 spec:
   rules:
     - http:
         paths:
-          - path: /api/v1
-            pathType: Prefix
+          - path: /api/v1       # Matches all incoming API requests starting with /api/v1
+            pathType: Prefix    # Prefix matching routes all sub-paths (e.g., /api/v1/users, /api/v1/curriculum)
             backend:
               service:
-                name: gateway-service # Routes to Service metadata.name in services/gateway-service.yaml
+                name: gateway-service # Forwards traffic to Service metadata.name in services/gateway-service.yaml
                 port:
-                  number: 8080        # Routes to Service port 8080 in services/gateway-service.yaml
+                  number: 8080        # Connects to gateway-service target port 8080
