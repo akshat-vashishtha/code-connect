@@ -16,34 +16,80 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: admin-curriculum-service-route
-          uri: ${CURRICULUM_SERVICE_URI:http://localhost:8082}
-          predicates:
-            - Path=/api/v1/admin/curriculum/**
+        # User Service Routes (Port 8081)
         - id: admin-service-route
           uri: ${USER_SERVICE_URI:http://localhost:8081}
           predicates:
             - Path=/api/v1/admin/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: userServiceCircuitBreaker
+                fallbackUri: forward:/fallback/user-service
+
         - id: mentor-service-route
           uri: ${USER_SERVICE_URI:http://localhost:8081}
           predicates:
             - Path=/api/v1/mentor/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: userServiceCircuitBreaker
+                fallbackUri: forward:/fallback/user-service
+
         - id: user-service-route
           uri: ${USER_SERVICE_URI:http://localhost:8081}
           predicates:
             - Path=/api/v1/users/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: userServiceCircuitBreaker
+                fallbackUri: forward:/fallback/user-service
+
+        # Curriculum Service Routes (Port 8082)
+        - id: admin-curriculum-service-route
+          order: -1
+          uri: ${CURRICULUM_SERVICE_URI:http://localhost:8082}
+          predicates:
+            - Path=/api/v1/admin/curriculum/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: curriculumServiceCircuitBreaker
+                fallbackUri: forward:/fallback/curriculum-service
+
         - id: curriculum-service-route
           uri: ${CURRICULUM_SERVICE_URI:http://localhost:8082}
           predicates:
             - Path=/api/v1/curriculum/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: curriculumServiceCircuitBreaker
+                fallbackUri: forward:/fallback/curriculum-service
+
+        # Submission Service Routes (Port 8083)
         - id: submission-service-route
           uri: ${SUBMISSION_SERVICE_URI:http://localhost:8083}
           predicates:
             - Path=/api/v1/submissions/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: submissionServiceCircuitBreaker
+                fallbackUri: forward:/fallback/submission-service
+
+        # Collaboration Service Routes (Port 8084)
         - id: collab-service-route
           uri: ${COLLAB_SERVICE_URI:http://localhost:8084}
           predicates:
             - Path=/api/v1/collab/**, /ws-connect/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: collabServiceCircuitBreaker
+                fallbackUri: forward:/fallback/collab-service
 
 codeconnect:
   gateway:
@@ -83,3 +129,16 @@ management:
         http:
           server:
             requests: true
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 5
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 3s
