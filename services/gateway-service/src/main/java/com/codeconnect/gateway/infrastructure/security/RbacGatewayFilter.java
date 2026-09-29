@@ -38,7 +38,7 @@ public class RbacGatewayFilter implements WebFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         String path = exchange.getRequest().getPath().value();
-        if (!accessDecisionManager.isProtected(path)) {
+        if (accessDecisionManager.isPublicPath(path)) {
             return chain.filter(exchange);
         }
 

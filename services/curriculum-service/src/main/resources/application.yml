@@ -1,5 +1,5 @@
 server:
-  port: ${SERVER_PORT:8080}
+  port: ${SERVER_PORT:8082}
 
 spring:
   application:
@@ -17,7 +17,7 @@ codeconnect:
     default-language: ${DEFAULT_LANGUAGE:ENGLISH}
     max-lessons-per-module: ${MAX_LESSONS_PER_MODULE:50}
   security:
-    internal-secret: ${INTERNAL_SECURITY_SECRET:codeconnect-internal-security-secret-key-32bytes-min!}
+    internal-secret: ${INTERNAL_SECURITY_SECRET:c0d3c0nn3ct-1nt3rn4l-s3cur1ty-h256-s3cr3t-k3y-m1n32byt3s!}
     max-clock-skew-seconds: 30
 
 management:

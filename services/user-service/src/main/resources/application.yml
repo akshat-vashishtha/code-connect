@@ -21,7 +21,7 @@ spring:
 
 codeconnect:
   security:
-    internal-secret: ${INTERNAL_SECURITY_SECRET:default-dev-internal-secret-change-in-production-32bytes!}
+    internal-secret: ${INTERNAL_SECURITY_SECRET:c0d3c0nn3ct-1nt3rn4l-s3cur1ty-h256-s3cr3t-k3y-m1n32byt3s!}
     max-clock-skew-seconds: ${MAX_CLOCK_SKEW_SECONDS:30}
   user:
     default-reviewer: ${DEFAULT_REVIEWER:SYSTEM}

@@ -18,6 +18,10 @@ public class RbacAccessDecisionManager {
     private final GatewayProperties gatewayProperties;
     private final PathMatcher pathMatcher = new AntPathMatcher();
 
+    public boolean isPublicPath(String path) {
+        return !isProtected(path);
+    }
+
     public boolean isProtected(String path) {
         return isAdminPath(path) || isMentorPath(path);
     }
