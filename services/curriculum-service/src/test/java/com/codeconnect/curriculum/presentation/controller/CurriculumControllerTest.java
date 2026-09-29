@@ -34,6 +34,10 @@ class CurriculumControllerTest {
     @MockBean
     private com.codeconnect.curriculum.infrastructure.config.InternalSecurityProperties internalSecurityProperties;
 
+    @MockBean
+    private com.codeconnect.curriculum.infrastructure.security.InternalSecurityValidator internalSecurityValidator;
+
+
     @Test
     @WithMockUser(username = "user-1", roles = {"STUDENT"})
     @DisplayName("GET /api/v1/curriculum/tracks returns 200 OK with track list")

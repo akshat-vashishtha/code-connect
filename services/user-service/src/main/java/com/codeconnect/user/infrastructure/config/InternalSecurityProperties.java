@@ -10,13 +10,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public record InternalSecurityProperties(
     String internalSecret,
     long maxClockSkewSeconds
-) {
-    public InternalSecurityProperties {
-        if (internalSecret == null || internalSecret.isBlank()) {
-            internalSecret = "default-dev-internal-secret-change-in-production-32bytes!";
-        }
-        if (maxClockSkewSeconds <= 0) {
-            maxClockSkewSeconds = 30L;
-        }
-    }
-}
+) {}
+

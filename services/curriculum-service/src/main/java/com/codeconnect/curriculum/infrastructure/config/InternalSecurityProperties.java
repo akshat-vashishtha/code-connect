@@ -10,10 +10,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public record InternalSecurityProperties(
     String internalSecret,
     long maxClockSkewSeconds
-) {
-    public InternalSecurityProperties {
-        if (maxClockSkewSeconds <= 0) {
-            maxClockSkewSeconds = 30; // Default 30 seconds anti-replay window
-        }
-    }
-}
+) {}
+
