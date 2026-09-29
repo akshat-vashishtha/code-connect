@@ -10,6 +10,8 @@ import com.codeconnect.gateway.domain.exception.UnauthorizedException;
 import com.codeconnect.gateway.infrastructure.client.UserServiceClient;
 import com.codeconnect.gateway.infrastructure.config.GatewayProperties;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreakerFactory;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -19,15 +21,21 @@ import reactor.core.publisher.Mono;
 
 /**
  * Reactive WebClient implementation communicating with user-service endpoints.
+ * Wrapped with Resilience4j ReactiveCircuitBreaker to prevent cascading failures.
  */
 @Slf4j
 @Component
 public class WebClientUserServiceClient implements UserServiceClient {
 
     private final WebClient webClient;
+    private final ReactiveCircuitBreaker circuitBreaker;
 
-    public WebClientUserServiceClient(WebClient.Builder webClientBuilder, GatewayProperties gatewayProperties) {
+    public WebClientUserServiceClient(
+            WebClient.Builder webClientBuilder,
+            GatewayProperties gatewayProperties,
+            ReactiveCircuitBreakerFactory<?, ?> circuitBreakerFactory) {
         this.webClient = webClientBuilder.baseUrl(gatewayProperties.userServiceUri()).build();
+        this.circuitBreaker = circuitBreakerFactory.create("userServiceCircuitBreaker");
     }
 
     @Override
@@ -39,7 +47,8 @@ public class WebClientUserServiceClient implements UserServiceClient {
             .onStatus(status -> status.equals(HttpStatus.CONFLICT), response ->
                 Mono.error(new EmailAlreadyExistsException(request.email())))
             .bodyToMono(new ParameterizedTypeReference<ApiResponse<UserResponse>>() {})
-            .map(ApiResponse::data);
+            .map(ApiResponse::data)
+            .transform(circuitBreaker::run);
     }
 
     @Override
@@ -51,7 +60,8 @@ public class WebClientUserServiceClient implements UserServiceClient {
             .onStatus(status -> status.equals(HttpStatus.UNAUTHORIZED), response ->
                 Mono.error(new InvalidCredentialsException()))
             .bodyToMono(new ParameterizedTypeReference<ApiResponse<UserResponse>>() {})
-            .map(ApiResponse::data);
+            .map(ApiResponse::data)
+            .transform(circuitBreaker::run);
     }
 
     @Override
@@ -62,6 +72,7 @@ public class WebClientUserServiceClient implements UserServiceClient {
             .onStatus(HttpStatusCode::is4xxClientError, response ->
                 Mono.error(new UnauthorizedException("User profile not found")))
             .bodyToMono(new ParameterizedTypeReference<ApiResponse<UserResponse>>() {})
-            .map(ApiResponse::data);
+            .map(ApiResponse::data)
+            .transform(circuitBreaker::run);
     }
 }
