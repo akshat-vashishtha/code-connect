@@ -1,6 +1,6 @@
 package com.codeconnect.curriculum.presentation.controller;
 
-import com.codeconnect.curriculum.application.dto.TrackResponse;
+import com.codeconnect.curriculum.application.dto.response.TrackResponse;
 import com.codeconnect.curriculum.application.service.CurriculumService;
 import com.codeconnect.curriculum.domain.enums.TrackStatus;
 import org.junit.jupiter.api.DisplayName;
@@ -32,7 +32,7 @@ class CurriculumControllerTest {
     private CurriculumService curriculumService;
 
     @MockBean
-    private com.codeconnect.curriculum.infrastructure.config.InternalSecurityProperties internalSecurityProperties;
+    private com.codeconnect.curriculum.infrastructure.config.properties.InternalSecurityProperties internalSecurityProperties;
 
     @MockBean
     private com.codeconnect.curriculum.infrastructure.security.InternalSecurityValidator internalSecurityValidator;

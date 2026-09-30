@@ -27,8 +27,10 @@ echo "[2/7] Checking & pre-loading base infrastructure images..."
 INFRA_IMAGES=(
   "rancher/mirrored-pause:3.6"
   "rancher/mirrored-library-busybox:1.37.0"
+  "rancher/klipper-lb:v0.4.17"
   "mongo:7.0"
   "redis:7.2-alpine"
+  "apache/kafka:3.7.0"
 )
 
 for image in "${INFRA_IMAGES[@]}"; do
@@ -77,10 +79,30 @@ echo "  Building gateway-service JAR & Docker image..."
 mvn clean package -DskipTests -f services/gateway-service/pom.xml
 docker build -t codeconnect/gateway-service:latest ./services/gateway-service
 
+echo "  Building curriculum-service JAR & Docker image..."
+mvn clean package -DskipTests -f services/curriculum-service/pom.xml
+docker build -t codeconnect/curriculum-service:latest ./services/curriculum-service
+
+echo "  Building submission-service JAR & Docker image..."
+mvn clean package -DskipTests -f services/submission-service/pom.xml
+docker build -t codeconnect/submission-service:latest ./services/submission-service
+
+echo "  Building sandbox-runner-service JAR & Docker image..."
+mvn clean package -DskipTests -f services/sandbox-runner-service/pom.xml
+docker build -t codeconnect/sandbox-runner-service:latest ./services/sandbox-runner-service
+
+echo "  Building collab-service JAR & Docker image..."
+mvn clean package -DskipTests -f services/collab-service/pom.xml
+docker build -t codeconnect/collab-service:latest ./services/collab-service
+
 echo "  Loading microservice images into k3d cluster..."
 SERVICE_IMAGES=(
   "codeconnect/user-service:latest"
   "codeconnect/gateway-service:latest"
+  "codeconnect/curriculum-service:latest"
+  "codeconnect/submission-service:latest"
+  "codeconnect/sandbox-runner-service:latest"
+  "codeconnect/collab-service:latest"
 )
 for image in "${SERVICE_IMAGES[@]}"; do
   docker save "$image" | docker exec -i k3d-codeconnect-local-server-0 ctr -a /run/k3s/containerd/containerd.sock -n k8s.io images import - 2>/dev/null || k3d image import "$image" -c codeconnect-local || true
@@ -94,7 +116,16 @@ kubectl apply -f k8s/services/
 kubectl apply -f k8s/deployments/
 kubectl apply -f k8s/autoscaling/
 kubectl apply -f k8s/networking/
-kubectl rollout restart deployment/gateway-service deployment/user-service -n codeconnect-dev 2>/dev/null || true
+kubectl rollout restart deployment/gateway-service deployment/user-service deployment/curriculum-service deployment/submission-service deployment/sandbox-runner-service deployment/collab-service -n codeconnect-dev 2>/dev/null || true
+
+echo "  Waiting for deployments to roll out..."
+kubectl rollout status deployment/user-service -n codeconnect-dev --timeout=120s || true
+kubectl rollout status deployment/curriculum-service -n codeconnect-dev --timeout=120s || true
+kubectl rollout status deployment/submission-service -n codeconnect-dev --timeout=120s || true
+kubectl rollout status deployment/sandbox-runner-service -n codeconnect-dev --timeout=120s || true
+kubectl rollout status deployment/collab-service -n codeconnect-dev --timeout=120s || true
+kubectl rollout status deployment/gateway-service -n codeconnect-dev --timeout=120s || true
 
 echo "Cluster setup complete! Current status in codeconnect-dev:"
-kubectl get pods,pvc -n codeconnect-dev
+kubectl get pods,pvc,svc -n codeconnect-dev
+

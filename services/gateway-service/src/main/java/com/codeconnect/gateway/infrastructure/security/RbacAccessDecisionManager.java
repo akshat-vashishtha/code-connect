@@ -1,53 +1,49 @@
 package com.codeconnect.gateway.infrastructure.security;
 
 import com.codeconnect.gateway.domain.enums.UserRole;
-import com.codeconnect.gateway.infrastructure.config.GatewayProperties;
+import com.codeconnect.gateway.infrastructure.security.specification.RouteAccessSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.util.AntPathMatcher;
-import org.springframework.util.PathMatcher;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
- * Evaluates route protection criteria and RBAC authorization policies.
- * Strictly adheres to Single Responsibility Principle (SRP).
+ * Evaluates route protection and RBAC authorization policies by delegating
+ * to the registered chain of {@link RouteAccessSpecification} implementations.
+ * Follows the Specification Pattern (GoF) and Open/Closed Principle:
+ * new route boundaries are registered as Spring beans with zero edits to this class.
  */
 @Component
 @RequiredArgsConstructor
 public class RbacAccessDecisionManager {
 
-    private final GatewayProperties gatewayProperties;
-    private final PathMatcher pathMatcher = new AntPathMatcher();
+    private final List<RouteAccessSpecification> specifications;
 
     public boolean isPublicPath(String path) {
-        return !isProtected(path);
+        return specifications.stream()
+            .filter(spec -> spec.matches(path))
+            .noneMatch(RouteAccessSpecification::isProtected);
     }
 
-    public boolean isProtected(String path) {
-        return isAdminPath(path) || isMentorPath(path);
+    public boolean isAuthorized(String path, String roleStr) {
+        UserRole role = resolveRole(roleStr).orElse(null);
+
+        return specifications.stream()
+            .filter(spec -> spec.matches(path))
+            .findFirst()
+            .map(spec -> spec.isAuthorized(role))
+            .orElse(true);
     }
 
-    public boolean isAdminPath(String path) {
-        return pathMatcher.match(gatewayProperties.adminPathPattern(), path);
-    }
-
-    public boolean isMentorPath(String path) {
-        return pathMatcher.match(gatewayProperties.mentorPathPattern(), path);
-    }
-
-    public boolean isAuthorized(String path, String role) {
-        if (role == null) {
-            return false;
+    private Optional<UserRole> resolveRole(String roleStr) {
+        if (roleStr == null || roleStr.isBlank()) {
+            return Optional.empty();
         }
-        if (isMentorPath(path) || isMentorAdminPath(path)) {
-            return UserRole.ROLE_MENTOR.name().equals(role) || UserRole.ROLE_ADMIN.name().equals(role);
+        try {
+            return Optional.of(UserRole.valueOf(roleStr));
+        } catch (IllegalArgumentException e) {
+            return Optional.empty();
         }
-        if (isAdminPath(path)) {
-            return UserRole.ROLE_ADMIN.name().equals(role);
-        }
-        return true;
-    }
-
-    public boolean isMentorAdminPath(String path) {
-        return pathMatcher.match("/api/v1/admin/curriculum/**", path);
     }
 }

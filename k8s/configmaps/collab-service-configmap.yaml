@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: collab-service-config
+  namespace: codeconnect-dev
+  labels:
+    app: collab-service
+data:
+  SERVER_PORT: "8080"
+  KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
+  KAFKA_CONSUMER_GROUP_ID: "collab-group"
+  KAFKA_ENV: "dev"
+  ACTIVEMQ_STOMP_HOST: "activemq-artemis"
+  ACTIVEMQ_STOMP_PORT: "61613"
+  ACTIVEMQ_SYSTEM_USER: "admin"
+  ACTIVEMQ_SYSTEM_PASSWORD: "changeit"
+  STOMP_ENDPOINT: "/ws-connect"
+  ALLOWED_ORIGIN_PATTERNS: "*"

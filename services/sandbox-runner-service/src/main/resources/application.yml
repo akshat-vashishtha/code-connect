@@ -1,0 +1,84 @@
+server:
+  port: ${SERVER_PORT:8085}
+
+spring:
+  application:
+    name: sandbox-runner-service
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: ${KAFKA_CONSUMER_GROUP:sandbox-runner-group}
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      max-poll-records: 10
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        session.timeout.ms: 45000
+        heartbeat.interval.ms: 15000
+        max.poll.interval.ms: 600000
+        connections.max.idle.ms: 540000
+        metadata.max.age.ms: 300000
+        socket.connection.setup.timeout.ms: 10000
+        socket.connection.setup.timeout.max.ms: 30000
+        fetch.min.bytes: 1024
+        fetch.max.wait.ms: 500
+        receive.buffer.bytes: 131072
+        spring.json.trusted.packages: "com.codeconnect.*"
+        spring.json.use.type.headers: true
+        enable.jmx: true
+        metrics.recording.level: INFO
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      retries: 2147483647
+      batch-size: 16384
+      buffer-memory: 33554432
+      compression-type: snappy
+      properties:
+        enable.idempotence: true
+        max.in.flight.requests.per.connection: 5
+        delivery.timeout.ms: 180000
+        request.timeout.ms: 120000
+        max.block.ms: 60000
+        linger.ms: 10
+        max.request.size: 1048576
+        connections.max.idle.ms: 540000
+        metadata.max.age.ms: 300000
+        socket.connection.setup.timeout.ms: 10000
+        socket.connection.setup.timeout.max.ms: 30000
+        retry.backoff.ms: 100
+        retry.backoff.max.ms: 1000
+        metadata.recovery.strategy: rebootstrap
+        send.buffer.bytes: 131072
+        receive.buffer.bytes: 131072
+        enable.jmx: true
+        metrics.recording.level: INFO
+        metrics.sample.window.ms: 30000
+        metrics.num.samples: 2
+        spring.json.add.type.headers: true
+    listener:
+      ack-mode: RECORD
+      concurrency: 3
+
+codeconnect:
+  kafka:
+    env: ${KAFKA_ENV:dev}
+    topics:
+      submission-requested: ${codeconnect.kafka.env}.codeconnect.submission.code-execution.requested.v1
+      execution-completed: ${codeconnect.kafka.env}.codeconnect.sandbox.code-execution.completed.v1
+      submission-dlq: ${codeconnect.kafka.env}.codeconnect.submission.code-execution.dlq.v1
+      execution-dlq: ${codeconnect.kafka.env}.codeconnect.sandbox.code-execution.dlq.v1
+  sandbox:
+    timeout-ms: ${EXECUTION_TIMEOUT_MS:3000}
+    max-memory-mb: ${MAX_MEMORY_MB:128}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: always

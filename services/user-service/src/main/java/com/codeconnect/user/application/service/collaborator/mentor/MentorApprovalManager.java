@@ -2,9 +2,9 @@ package com.codeconnect.user.application.service.collaborator.mentor;
 
 import com.codeconnect.user.domain.enums.MentorApprovalStatus;
 import com.codeconnect.user.domain.exception.ResourceNotFoundException;
-import com.codeconnect.user.domain.model.MentorApprovalRequest;
+import com.codeconnect.user.domain.model.MentorApprovalDocument;
 import com.codeconnect.user.domain.repository.MentorApprovalRepository;
-import com.codeconnect.user.infrastructure.config.UserProperties;
+import com.codeconnect.user.infrastructure.config.properties.UserProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * Collaborator responsible for querying, creating, and mutating MentorApprovalRequest lifecycle state.
+ * Collaborator responsible for querying, creating, and mutating MentorApprovalDocument lifecycle state.
  */
 @Slf4j
 @Component
@@ -22,41 +22,41 @@ public class MentorApprovalManager {
     private final MentorApprovalRepository mentorApprovalRepository;
     private final UserProperties userProperties;
 
-    public List<MentorApprovalRequest> findPendingApplications() {
+    public List<MentorApprovalDocument> findPendingApplications() {
         return mentorApprovalRepository.findByStatus(MentorApprovalStatus.PENDING);
     }
 
-    public MentorApprovalRequest createPendingApplication(String userId, String email, String linkedInUrl, String bio) {
+    public MentorApprovalDocument createPendingApplication(String userId, String email, String linkedInUrl, String bio) {
         if (linkedInUrl == null || linkedInUrl.isBlank()) {
             throw new IllegalArgumentException("LinkedIn URL is required for mentor registration");
         }
         if (bio == null || bio.isBlank()) {
             throw new IllegalArgumentException("Professional bio is required for mentor registration");
         }
-        MentorApprovalRequest request = MentorApprovalRequest.createPending(userId, email, linkedInUrl, bio);
-        log.debug("Recording pending mentor approval request for userId={} email={}", userId, email);
-        return mentorApprovalRepository.save(request);
+        MentorApprovalDocument document = MentorApprovalDocument.createPending(userId, email, linkedInUrl, bio);
+        log.debug("Recording pending mentor approval document for userId={} email={}", userId, email);
+        return mentorApprovalRepository.save(document);
     }
 
-    public MentorApprovalRequest findApplication(String applicationId) {
+    public MentorApprovalDocument findApplication(String applicationId) {
         return mentorApprovalRepository.findById(applicationId)
             .orElseThrow(() -> new ResourceNotFoundException("Mentor approval application not found for id: " + applicationId));
     }
 
-    public void validateAdjudicable(MentorApprovalRequest request) {
-        request.validatePending();
+    public void validateAdjudicable(MentorApprovalDocument document) {
+        document.validatePending();
     }
 
-    public MentorApprovalRequest markApproved(MentorApprovalRequest request, String reviewerAdminEmail) {
-        request.approve(resolveReviewer(reviewerAdminEmail));
-        log.debug("Marked application id={} as APPROVED by reviewer={}", request.getId(), request.getReviewedBy());
-        return mentorApprovalRepository.save(request);
+    public MentorApprovalDocument markApproved(MentorApprovalDocument document, String reviewerAdminEmail) {
+        document.approve(resolveReviewer(reviewerAdminEmail));
+        log.debug("Marked application id={} as APPROVED by reviewer={}", document.getId(), document.getReviewedBy());
+        return mentorApprovalRepository.save(document);
     }
 
-    public MentorApprovalRequest markRejected(MentorApprovalRequest request, String reviewerAdminEmail) {
-        request.reject(resolveReviewer(reviewerAdminEmail));
-        log.debug("Marked application id={} as REJECTED by reviewer={}", request.getId(), request.getReviewedBy());
-        return mentorApprovalRepository.save(request);
+    public MentorApprovalDocument markRejected(MentorApprovalDocument document, String reviewerAdminEmail) {
+        document.reject(resolveReviewer(reviewerAdminEmail));
+        log.debug("Marked application id={} as REJECTED by reviewer={}", document.getId(), document.getReviewedBy());
+        return mentorApprovalRepository.save(document);
     }
 
     private String resolveReviewer(String reviewerAdminEmail) {

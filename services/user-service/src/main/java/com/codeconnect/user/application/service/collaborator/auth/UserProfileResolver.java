@@ -1,7 +1,7 @@
 package com.codeconnect.user.application.service.collaborator.auth;
 
 import com.codeconnect.user.domain.exception.ResourceNotFoundException;
-import com.codeconnect.user.domain.model.User;
+import com.codeconnect.user.domain.model.UserDocument;
 import com.codeconnect.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ public class UserProfileResolver {
 
     private final UserRepository userRepository;
 
-    public User resolveById(String userId) {
+    public UserDocument resolveById(String userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> {
                 log.warn("User profile resolution failed: user not found for userId={}", userId);

@@ -8,6 +8,17 @@ spring:
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: ${REDIS_COMMAND_TIMEOUT_MS:1500}
+      connect-timeout: ${REDIS_CONNECT_TIMEOUT_MS:2000}
+      client-name: gateway-service
+      lettuce:
+        pool:
+          min-idle: ${REDIS_POOL_MIN_IDLE:16}
+          max-idle: ${REDIS_POOL_MAX_IDLE:32}
+          max-active: ${REDIS_POOL_MAX_ACTIVE:64}
+          max-wait: ${REDIS_POOL_MAX_WAIT_MS:1500}
+          time-between-eviction-runs: ${REDIS_POOL_EVICTION_MS:30000}
   session:
     store-type: redis
     timeout: ${SESSION_TIMEOUT:7d}
@@ -105,6 +116,15 @@ codeconnect:
     cookie-secure: ${SESSION_COOKIE_SECURE:false}
     cookie-same-site: ${SESSION_COOKIE_SAME_SITE:Strict}
     cookie-max-age: ${SESSION_COOKIE_MAX_AGE:7d}
+  redis:
+    min-idle: ${REDIS_POOL_MIN_IDLE:16}
+    max-idle: ${REDIS_POOL_MAX_IDLE:32}
+    max-active: ${REDIS_POOL_MAX_ACTIVE:64}
+    max-wait-ms: ${REDIS_POOL_MAX_WAIT_MS:1500}
+    connect-timeout-ms: ${REDIS_CONNECT_TIMEOUT_MS:2000}
+    command-timeout-ms: ${REDIS_COMMAND_TIMEOUT_MS:1500}
+    keep-alive: true
+    tcp-no-delay: true
 
 management:
   endpoints:

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: submission-service-config
+  namespace: codeconnect-dev
+  labels:
+    app: submission-service
+data:
+  SERVER_PORT: "8080"
+  MONGODB_URI: "mongodb://mongodb:27017/codeconnect_submissions"
+  KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
+  SUBMISSION_KAFKA_TOPIC: "code.submissions"
+  MAX_CODE_SIZE_BYTES: "65536"

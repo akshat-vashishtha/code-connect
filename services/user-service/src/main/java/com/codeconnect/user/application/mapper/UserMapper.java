@@ -1,17 +1,17 @@
 package com.codeconnect.user.application.mapper;
 
 import com.codeconnect.user.application.dto.response.UserResponse;
-import com.codeconnect.user.domain.model.User;
+import com.codeconnect.user.domain.model.UserDocument;
 import org.springframework.stereotype.Component;
 
 /**
- * Pure data mapper translating between User domain entities and response DTOs.
+ * Pure data mapper translating between UserDocument domain entities and response DTOs.
  * Free of security hashing concerns (satisfies Point B / SRP).
  */
 @Component
 public class UserMapper {
 
-    public UserResponse toResponse(User user) {
+    public UserResponse toResponse(UserDocument user) {
         return new UserResponse(
             user.getId(),
             user.getEmail(),

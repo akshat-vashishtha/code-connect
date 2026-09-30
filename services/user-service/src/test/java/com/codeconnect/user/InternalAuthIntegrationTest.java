@@ -5,8 +5,8 @@ import com.codeconnect.user.application.dto.request.UserRegistrationRequest;
 import com.codeconnect.user.domain.enums.MentorApprovalStatus;
 import com.codeconnect.user.domain.enums.UserRole;
 import com.codeconnect.user.domain.enums.UserStatus;
-import com.codeconnect.user.domain.model.MentorApprovalRequest;
-import com.codeconnect.user.domain.model.User;
+import com.codeconnect.user.domain.model.MentorApprovalDocument;
+import com.codeconnect.user.domain.model.UserDocument;
 import com.codeconnect.user.domain.repository.MentorApprovalRepository;
 import com.codeconnect.user.domain.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,8 +48,13 @@ class InternalAuthIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @org.springframework.boot.test.mock.mockito.MockBean
+    private org.springframework.kafka.core.KafkaTemplate<String, Object> kafkaTemplate;
+
     @BeforeEach
     void setUp() {
+        org.mockito.Mockito.lenient().when(kafkaTemplate.send(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any()))
+            .thenReturn(java.util.concurrent.CompletableFuture.completedFuture(null));
         userRepository.deleteAll();
         mentorApprovalRepository.deleteAll();
     }
@@ -75,12 +80,12 @@ class InternalAuthIntegrationTest {
             .andExpect(jsonPath("$.data.role").value("ROLE_STUDENT"))
             .andExpect(jsonPath("$.data.status").value("ACTIVE"));
 
-        User savedUser = userRepository.findByEmail("student@codeconnect.dev").orElseThrow();
+        UserDocument savedUser = userRepository.findByEmail("student@codeconnect.dev").orElseThrow();
         assertThat(passwordEncoder.matches("SecurePass123!", savedUser.getPasswordHash())).isTrue();
     }
 
     @Test
-    @DisplayName("Should register Mentor with PENDING_APPROVAL status and persist MentorApprovalRequest")
+    @DisplayName("Should register Mentor with PENDING_APPROVAL status and persist MentorApprovalDocument")
     void shouldRegisterMentorAndCreateApprovalRequest() throws Exception {
         UserRegistrationRequest req = new UserRegistrationRequest(
             "priya.mentor@codeconnect.dev",
@@ -99,10 +104,10 @@ class InternalAuthIntegrationTest {
             .andExpect(jsonPath("$.data.role").value("ROLE_MENTOR"))
             .andExpect(jsonPath("$.data.status").value("PENDING_APPROVAL"));
 
-        User savedUser = userRepository.findByEmail("priya.mentor@codeconnect.dev").orElseThrow();
+        UserDocument savedUser = userRepository.findByEmail("priya.mentor@codeconnect.dev").orElseThrow();
         assertThat(savedUser.getStatus()).isEqualTo(UserStatus.PENDING_APPROVAL);
 
-        List<MentorApprovalRequest> approvals = mentorApprovalRepository.findByStatus(MentorApprovalStatus.PENDING);
+        List<MentorApprovalDocument> approvals = mentorApprovalRepository.findByStatus(MentorApprovalStatus.PENDING);
         assertThat(approvals).hasSize(1);
         assertThat(approvals.get(0).getUserId()).isEqualTo(savedUser.getId());
         assertThat(approvals.get(0).getLinkedInUrl()).isEqualTo("https://linkedin.com/in/priyapatel");
@@ -111,7 +116,7 @@ class InternalAuthIntegrationTest {
     @Test
     @DisplayName("Should reject duplicate registration with HTTP 409 Conflict")
     void shouldRejectDuplicateRegistration() throws Exception {
-        User existing = User.createStudent("duplicate@codeconnect.dev", "hash", "Existing User");
+        UserDocument existing = UserDocument.createStudent("duplicate@codeconnect.dev", "hash", "Existing User");
         userRepository.save(existing);
 
         UserRegistrationRequest req = new UserRegistrationRequest(
@@ -134,7 +139,7 @@ class InternalAuthIntegrationTest {
     @DisplayName("Should authenticate user with valid credentials")
     void shouldAuthenticateValidUser() throws Exception {
         String hash = passwordEncoder.encode("SecretPassword123!");
-        User user = User.createStudent("auth.user@codeconnect.dev", hash, "Auth User");
+        UserDocument user = UserDocument.createStudent("auth.user@codeconnect.dev", hash, "Auth User");
         userRepository.save(user);
 
         UserAuthenticationRequest authReq = new UserAuthenticationRequest("auth.user@codeconnect.dev", "SecretPassword123!");
@@ -151,7 +156,7 @@ class InternalAuthIntegrationTest {
     @DisplayName("Should reject authentication with invalid password (401 Unauthorized)")
     void shouldRejectInvalidPassword() throws Exception {
         String hash = passwordEncoder.encode("CorrectPassword!");
-        User user = User.createStudent("auth.wrong@codeconnect.dev", hash, "User");
+        UserDocument user = UserDocument.createStudent("auth.wrong@codeconnect.dev", hash, "User");
         userRepository.save(user);
 
         UserAuthenticationRequest authReq = new UserAuthenticationRequest("auth.wrong@codeconnect.dev", "WrongPassword!");
@@ -179,8 +184,8 @@ class InternalAuthIntegrationTest {
     @Test
     @DisplayName("Should retrieve user profile by ID")
     void shouldGetUserById() throws Exception {
-        User user = User.createStudent("lookup@codeconnect.dev", "hash", "Lookup User");
-        User saved = userRepository.save(user);
+        UserDocument user = UserDocument.createStudent("lookup@codeconnect.dev", "hash", "Lookup User");
+        UserDocument saved = userRepository.save(user);
 
         mockMvc.perform(get("/api/v1/internal/users/{id}", saved.getId()))
             .andExpect(status().isOk())

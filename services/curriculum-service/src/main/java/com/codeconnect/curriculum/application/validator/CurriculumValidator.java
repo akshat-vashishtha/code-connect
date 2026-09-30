@@ -1,8 +1,8 @@
 package com.codeconnect.curriculum.application.validator;
 
-import com.codeconnect.curriculum.application.dto.CreateLessonRequest;
-import com.codeconnect.curriculum.application.dto.CreateModuleRequest;
-import com.codeconnect.curriculum.application.dto.CreateTrackRequest;
+import com.codeconnect.curriculum.application.dto.request.CreateLessonRequest;
+import com.codeconnect.curriculum.application.dto.request.CreateModuleRequest;
+import com.codeconnect.curriculum.application.dto.request.CreateTrackRequest;
 import com.codeconnect.curriculum.domain.exception.CurriculumValidationException;
 import com.codeconnect.curriculum.domain.repository.ModuleRepository;
 import com.codeconnect.curriculum.domain.repository.TrackRepository;

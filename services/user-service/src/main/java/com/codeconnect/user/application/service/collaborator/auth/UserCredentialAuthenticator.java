@@ -2,7 +2,7 @@ package com.codeconnect.user.application.service.collaborator.auth;
 
 import com.codeconnect.user.application.dto.request.UserAuthenticationRequest;
 import com.codeconnect.user.domain.exception.InvalidCredentialsException;
-import com.codeconnect.user.domain.model.User;
+import com.codeconnect.user.domain.model.UserDocument;
 import com.codeconnect.user.domain.repository.UserRepository;
 import com.codeconnect.user.domain.valueobject.Email;
 import lombok.RequiredArgsConstructor;
@@ -22,10 +22,10 @@ public class UserCredentialAuthenticator {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public User authenticate(UserAuthenticationRequest request) {
+    public UserDocument authenticate(UserAuthenticationRequest request) {
         String normalizedEmail = new Email(request.email()).value();
 
-        User user = userRepository.findByEmail(normalizedEmail)
+        UserDocument user = userRepository.findByEmail(normalizedEmail)
             .orElseThrow(() -> {
                 log.warn("Authentication failed: email not found for email={}", normalizedEmail);
                 return new InvalidCredentialsException();

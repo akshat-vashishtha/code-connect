@@ -1,6 +1,6 @@
 package com.codeconnect.curriculum.presentation.controller;
 
-import com.codeconnect.curriculum.application.dto.*;
+import com.codeconnect.curriculum.application.dto.response.*;
 import com.codeconnect.curriculum.application.service.CurriculumService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

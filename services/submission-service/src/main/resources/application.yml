@@ -1,0 +1,77 @@
+server:
+  port: ${SERVER_PORT:8083}
+
+spring:
+  application:
+    name: submission-service
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/codeconnect_submissions}
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      retries: 2147483647
+      batch-size: 16384
+      buffer-memory: 33554432
+      compression-type: snappy
+      properties:
+        enable.idempotence: true
+        max.in.flight.requests.per.connection: 5
+        delivery.timeout.ms: 180000
+        request.timeout.ms: 120000
+        max.block.ms: 60000
+        linger.ms: 10
+        max.request.size: 1048576
+        connections.max.idle.ms: 540000
+        metadata.max.age.ms: 300000
+        socket.connection.setup.timeout.ms: 10000
+        socket.connection.setup.timeout.max.ms: 30000
+        retry.backoff.ms: 100
+        retry.backoff.max.ms: 1000
+        metadata.recovery.strategy: rebootstrap
+        send.buffer.bytes: 131072
+        receive.buffer.bytes: 131072
+        enable.jmx: true
+        metrics.recording.level: INFO
+        metrics.sample.window.ms: 30000
+        metrics.num.samples: 2
+        spring.json.add.type.headers: true
+
+codeconnect:
+  kafka:
+    env: ${KAFKA_ENV:dev}
+    topics:
+      submission-requested: ${codeconnect.kafka.env}.codeconnect.submission.code-execution.requested.v1
+      submission-dlq: ${codeconnect.kafka.env}.codeconnect.submission.code-execution.dlq.v1
+  mongodb:
+    min-pool-size: ${MONGO_MIN_POOL_SIZE:20}
+    max-pool-size: ${MONGO_MAX_POOL_SIZE:150}
+    max-wait-time-ms: ${MONGO_MAX_WAIT_TIME_MS:3000}
+    max-idle-time-ms: ${MONGO_MAX_IDLE_TIME_MS:60000}
+    max-life-time-ms: ${MONGO_MAX_LIFE_TIME_MS:1800000}
+    maintenance-frequency-ms: ${MONGO_MAINTENANCE_MS:10000}
+    connect-timeout-ms: ${MONGO_CONNECT_TIMEOUT_MS:3000}
+    read-timeout-ms: ${MONGO_READ_TIMEOUT_MS:5000}
+    server-selection-timeout-ms: ${MONGO_SERVER_SELECTION_TIMEOUT_MS:3000}
+    compressors: ${MONGO_COMPRESSORS:snappy,zstd}
+    write-concern: ${MONGO_WRITE_CONCERN:majority}
+    read-preference: ${MONGO_READ_PREFERENCE:primaryPreferred}
+  submission:
+    hmac-secret: ${HMAC_SECRET:codeconnect-internal-hmac-secret-key-32bytes-min}
+    max-code-size-bytes: ${MAX_CODE_SIZE_BYTES:65536}
+  outbox:
+    relay-interval-ms: ${OUTBOX_RELAY_INTERVAL_MS:5000}
+    initial-delay-ms: ${OUTBOX_INITIAL_DELAY_MS:10000}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: always
+

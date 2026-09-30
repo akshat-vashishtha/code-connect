@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sandbox-runner-service-config
+  namespace: codeconnect-dev
+  labels:
+    app: sandbox-runner-service
+data:
+  KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
+  KAFKA_CONSUMER_GROUP: "sandbox-runner-group"
+  SUBMISSION_KAFKA_TOPIC: "code.submissions"
+  RESULTS_KAFKA_TOPIC: "code.results"
+  EXECUTION_TIMEOUT_MS: "3000"
+  MAX_MEMORY_MB: "128"

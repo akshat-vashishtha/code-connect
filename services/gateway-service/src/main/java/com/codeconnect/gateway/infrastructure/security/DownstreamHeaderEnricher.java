@@ -1,6 +1,6 @@
 package com.codeconnect.gateway.infrastructure.security;
 
-import com.codeconnect.gateway.infrastructure.config.GatewayProperties;
+import com.codeconnect.gateway.infrastructure.config.properties.GatewayProperties;
 import com.codeconnect.gateway.infrastructure.session.SessionManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -45,7 +45,10 @@ public class DownstreamHeaderEnricher {
             : "req-" + java.util.UUID.randomUUID().toString().substring(0, 8);
         String spanId = "span-gw-" + java.util.UUID.randomUUID().toString().substring(0, 8);
 
-        String signature = calculateHmac(safeUserId, safeRole, safeEmail, timestamp, gatewayProperties.internalSecret());
+        String method = request.getMethod() != null ? request.getMethod().name().toUpperCase() : "GET";
+        String path = request.getPath().value();
+
+        String signature = calculateHmac(method, path, safeUserId, safeRole, safeEmail, timestamp, gatewayProperties.internalSecret());
 
         return request.mutate()
             .header(HEADER_USER_ID, safeUserId)
@@ -58,9 +61,11 @@ public class DownstreamHeaderEnricher {
             .build();
     }
 
-    public static String calculateHmac(String userId, String role, String email, String timestamp, String secret) {
+    public static String calculateHmac(String method, String path, String userId, String role, String email, String timestamp, String secret) {
         try {
-            String payload = userId + ":" + role + ":" + email + ":" + timestamp;
+            String safeMethod = method != null ? method.toUpperCase() : "GET";
+            String safePath = path != null ? path : "";
+            String payload = safeMethod + ":" + safePath + ":" + userId + ":" + role + ":" + email + ":" + timestamp;
             Mac mac = Mac.getInstance("HmacSHA256");
             SecretKeySpec keySpec = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
             mac.init(keySpec);

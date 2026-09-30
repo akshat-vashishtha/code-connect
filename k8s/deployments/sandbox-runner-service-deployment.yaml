@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sandbox-runner-service
+  namespace: codeconnect-dev
+  labels:
+    app: sandbox-runner-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sandbox-runner-service
+  template:
+    metadata:
+      labels:
+        app: sandbox-runner-service
+    spec:
+      containers:
+        - name: sandbox-runner-service
+          image: codeconnect/sandbox-runner-service:latest
+          imagePullPolicy: Never
+          envFrom:
+            - configMapRef:
+                name: sandbox-runner-service-config
+            - secretRef:
+                name: codeconnect-secrets
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "1000m"

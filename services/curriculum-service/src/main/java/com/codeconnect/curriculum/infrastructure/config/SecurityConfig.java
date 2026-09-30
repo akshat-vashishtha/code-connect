@@ -1,5 +1,6 @@
 package com.codeconnect.curriculum.infrastructure.config;
 
+import com.codeconnect.curriculum.infrastructure.config.properties.InternalSecurityProperties;
 import com.codeconnect.curriculum.infrastructure.security.InternalAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -33,7 +34,6 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/actuator/health/**", "/actuator/info").permitAll()
                 .requestMatchers("/api/v1/admin/curriculum/**").hasAnyRole("ADMIN", "MENTOR")
-                .requestMatchers("/api/v1/curriculum/**").authenticated()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(internalAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

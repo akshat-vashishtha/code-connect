@@ -2,9 +2,9 @@ package com.codeconnect.user;
 
 import com.codeconnect.user.application.dto.request.LanguageDetectionRequest;
 import com.codeconnect.user.domain.enums.LanguagePreference;
-import com.codeconnect.user.domain.model.MentorApprovalRequest;
+import com.codeconnect.user.domain.model.MentorApprovalDocument;
 import com.codeconnect.user.domain.enums.MentorApprovalStatus;
-import com.codeconnect.user.domain.model.User;
+import com.codeconnect.user.domain.model.UserDocument;
 import com.codeconnect.user.domain.enums.UserRole;
 import com.codeconnect.user.domain.enums.UserStatus;
 import com.codeconnect.user.domain.repository.MentorApprovalRepository;
@@ -51,8 +51,13 @@ class AdminMentorVerificationIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @org.springframework.boot.test.mock.mockito.MockBean
+    private org.springframework.kafka.core.KafkaTemplate<String, Object> kafkaTemplate;
+
     @BeforeEach
     void setUp() {
+        org.mockito.Mockito.lenient().when(kafkaTemplate.send(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any()))
+            .thenReturn(java.util.concurrent.CompletableFuture.completedFuture(null));
         userRepository.deleteAll();
         mentorApprovalRepository.deleteAll();
     }
@@ -60,7 +65,7 @@ class AdminMentorVerificationIntegrationTest {
     @Test
     @DisplayName("Should list all pending mentor applications")
     void shouldListPendingMentorApplications() throws Exception {
-        MentorApprovalRequest pendingReq = MentorApprovalRequest.builder()
+        MentorApprovalDocument pendingReq = MentorApprovalDocument.builder()
             .userId("user-123")
             .email("mentor.pending@codeconnect.dev")
             .linkedInUrl("https://linkedin.com/in/mentor-pending")
@@ -70,7 +75,7 @@ class AdminMentorVerificationIntegrationTest {
             .build();
         mentorApprovalRepository.save(pendingReq);
 
-        MentorApprovalRequest approvedReq = MentorApprovalRequest.builder()
+        MentorApprovalDocument approvedReq = MentorApprovalDocument.builder()
             .userId("user-456")
             .email("mentor.approved@codeconnect.dev")
             .linkedInUrl("https://linkedin.com/in/mentor-approved")
@@ -92,7 +97,7 @@ class AdminMentorVerificationIntegrationTest {
     @DisplayName("Should approve pending mentor, update MongoDB status/role, and mutate Redis session in O(1) time")
     void shouldApproveMentorAndUpdateMongoAndRedisSession() throws Exception {
         // 1. Seed user in MongoDB with PENDING_APPROVAL status
-        User user = User.builder()
+        UserDocument user = UserDocument.builder()
             .id(UUID.randomUUID().toString())
             .email("priya.mentor@codeconnect.dev")
             .displayName("Priya Patel")
@@ -105,7 +110,7 @@ class AdminMentorVerificationIntegrationTest {
         userRepository.save(user);
 
         // 2. Seed mentor approval request
-        MentorApprovalRequest approvalReq = MentorApprovalRequest.builder()
+        MentorApprovalDocument approvalReq = MentorApprovalDocument.builder()
             .userId(user.getId())
             .email(user.getEmail())
             .linkedInUrl("https://linkedin.com/in/priyapatel")
@@ -113,7 +118,7 @@ class AdminMentorVerificationIntegrationTest {
             .status(MentorApprovalStatus.PENDING)
             .submittedAt(Instant.now())
             .build();
-        MentorApprovalRequest savedReq = mentorApprovalRepository.save(approvalReq);
+        MentorApprovalDocument savedReq = mentorApprovalRepository.save(approvalReq);
 
         // 3. Seed active Redis session for this user
         String sessionKey = "spring:session:sessions:" + UUID.randomUUID();
@@ -131,12 +136,12 @@ class AdminMentorVerificationIntegrationTest {
             .andExpect(jsonPath("$.data.reviewedBy").value("admin@codeconnect.dev"));
 
         // 5. Verify MongoDB User State Elevated
-        User updatedUser = userRepository.findById(user.getId()).orElseThrow();
+        UserDocument updatedUser = userRepository.findById(user.getId()).orElseThrow();
         assertThat(updatedUser.getStatus()).isEqualTo(UserStatus.ACTIVE);
         assertThat(updatedUser.getRole()).isEqualTo(UserRole.ROLE_MENTOR);
 
         // 6. Verify MongoDB Approval Request Status
-        MentorApprovalRequest updatedReq = mentorApprovalRepository.findById(savedReq.getId()).orElseThrow();
+        MentorApprovalDocument updatedReq = mentorApprovalRepository.findById(savedReq.getId()).orElseThrow();
         assertThat(updatedReq.getStatus()).isEqualTo(MentorApprovalStatus.APPROVED);
 
         // 7. Verify Redis Session Attributes Mutated
@@ -152,7 +157,7 @@ class AdminMentorVerificationIntegrationTest {
     @Test
     @DisplayName("Should reject pending mentor and update status to REJECTED")
     void shouldRejectMentorApplication() throws Exception {
-        MentorApprovalRequest req = MentorApprovalRequest.builder()
+        MentorApprovalDocument req = MentorApprovalDocument.builder()
             .userId("user-reject-1")
             .email("unqualified@codeconnect.dev")
             .linkedInUrl("https://linkedin.com/in/unqualified")
@@ -160,7 +165,7 @@ class AdminMentorVerificationIntegrationTest {
             .status(MentorApprovalStatus.PENDING)
             .submittedAt(Instant.now())
             .build();
-        MentorApprovalRequest savedReq = mentorApprovalRepository.save(req);
+        MentorApprovalDocument savedReq = mentorApprovalRepository.save(req);
 
         mockMvc.perform(post("/api/v1/admin/mentors/{id}/reject", savedReq.getId())
                 .header("X-User-Email", "admin@codeconnect.dev"))
@@ -168,14 +173,14 @@ class AdminMentorVerificationIntegrationTest {
             .andExpect(jsonPath("$.success").value(true))
             .andExpect(jsonPath("$.data.status").value("REJECTED"));
 
-        MentorApprovalRequest updatedReq = mentorApprovalRepository.findById(savedReq.getId()).orElseThrow();
+        MentorApprovalDocument updatedReq = mentorApprovalRepository.findById(savedReq.getId()).orElseThrow();
         assertThat(updatedReq.getStatus()).isEqualTo(MentorApprovalStatus.REJECTED);
     }
 
     @Test
     @DisplayName("Should return HTTP 409 Conflict when attempting to adjudicate an already processed application")
     void shouldRejectReAdjudicationOfAlreadyProcessedApplication() throws Exception {
-        MentorApprovalRequest req = MentorApprovalRequest.builder()
+        MentorApprovalDocument req = MentorApprovalDocument.builder()
             .userId("user-already-processed")
             .email("processed@codeconnect.dev")
             .linkedInUrl("https://linkedin.com/in/processed")
@@ -183,7 +188,7 @@ class AdminMentorVerificationIntegrationTest {
             .status(MentorApprovalStatus.APPROVED)
             .submittedAt(Instant.now())
             .build();
-        MentorApprovalRequest savedReq = mentorApprovalRepository.save(req);
+        MentorApprovalDocument savedReq = mentorApprovalRepository.save(req);
 
         mockMvc.perform(post("/api/v1/admin/mentors/{id}/approve", savedReq.getId())
                 .header("X-User-Email", "admin@codeconnect.dev"))

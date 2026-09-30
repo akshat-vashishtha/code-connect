@@ -8,9 +8,10 @@ import com.codeconnect.user.application.service.UserAuthenticationService;
 import com.codeconnect.user.application.service.collaborator.auth.UserCredentialAuthenticator;
 import com.codeconnect.user.application.service.collaborator.auth.UserProfileResolver;
 import com.codeconnect.user.application.service.collaborator.auth.UserRegistrationManager;
-import com.codeconnect.user.domain.model.User;
+import com.codeconnect.user.domain.model.UserDocument;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -32,21 +33,22 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
     @Override
     public UserResponse register(UserRegistrationRequest request) {
         log.info("Processing user registration for email={} role={}", request.email(), request.role());
-        User user = userRegistrationManager.register(request);
+        UserDocument user = userRegistrationManager.register(request);
         return userMapper.toResponse(user);
     }
 
     @Override
     public UserResponse authenticate(UserAuthenticationRequest request) {
         log.info("Processing user authentication for email={}", request.email());
-        User user = userCredentialAuthenticator.authenticate(request);
+        UserDocument user = userCredentialAuthenticator.authenticate(request);
         return userMapper.toResponse(user);
     }
 
     @Override
+    @Cacheable(value = "users", key = "#userId", sync = true)
     public UserResponse getUserById(String userId) {
         log.debug("Processing user lookup for userId={}", userId);
-        User user = userProfileResolver.resolveById(userId);
+        UserDocument user = userProfileResolver.resolveById(userId);
         return userMapper.toResponse(user);
     }
 }

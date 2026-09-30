@@ -1,5 +1,6 @@
 package com.codeconnect.user.infrastructure.config;
 
+import com.codeconnect.user.infrastructure.config.properties.InternalSecurityProperties;
 import com.codeconnect.user.infrastructure.security.InternalAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

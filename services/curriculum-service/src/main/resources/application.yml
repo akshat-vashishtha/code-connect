@@ -11,14 +11,82 @@ spring:
     mongodb:
       uri: ${MONGODB_URI:mongodb://localhost:27017/codeconnect_db}
       auto-index-creation: true
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: ${REDIS_COMMAND_TIMEOUT_MS:1500}
+      connect-timeout: ${REDIS_CONNECT_TIMEOUT_MS:2000}
+      client-name: curriculum-service
+      lettuce:
+        pool:
+          min-idle: ${REDIS_POOL_MIN_IDLE:8}
+          max-idle: ${REDIS_POOL_MAX_IDLE:16}
+          max-active: ${REDIS_POOL_MAX_ACTIVE:32}
+          max-wait: ${REDIS_POOL_MAX_WAIT_MS:1500}
+          time-between-eviction-runs: ${REDIS_POOL_EVICTION_MS:30000}
+  cache:
+    type: redis
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      retries: 2147483647
+      batch-size: 16384
+      buffer-memory: 33554432
+      compression-type: snappy
+      properties:
+        enable.idempotence: true
+        max.in.flight.requests.per.connection: 5
+        delivery.timeout.ms: 180000
+        request.timeout.ms: 120000
+        max.block.ms: 60000
+        linger.ms: 10
+        spring.json.add.type.headers: true
 
 codeconnect:
+  kafka:
+    env: ${KAFKA_ENV:dev}
+    topics:
+      track-created: ${codeconnect.kafka.env}.codeconnect.curriculum.track.created.v1
+      lesson-created: ${codeconnect.kafka.env}.codeconnect.curriculum.lesson.created.v1
+  redis:
+    min-idle: ${REDIS_POOL_MIN_IDLE:8}
+    max-idle: ${REDIS_POOL_MAX_IDLE:16}
+    max-active: ${REDIS_POOL_MAX_ACTIVE:32}
+    max-wait-ms: ${REDIS_POOL_MAX_WAIT_MS:1500}
+    connect-timeout-ms: ${REDIS_CONNECT_TIMEOUT_MS:2000}
+    command-timeout-ms: ${REDIS_COMMAND_TIMEOUT_MS:1500}
+    keep-alive: true
+    tcp-no-delay: true
+  cache:
+    ttl:
+      default-ttl-ms: ${CACHE_DEFAULT_TTL_MS:3600000}
+      tracks-ttl-ms: ${CACHE_TRACKS_TTL_MS:7200000}
+      modules-ttl-ms: ${CACHE_MODULES_TTL_MS:3600000}
+      lessons-ttl-ms: ${CACHE_LESSONS_TTL_MS:3600000}
+      progress-ttl-ms: ${CACHE_PROGRESS_TTL_MS:300000}
+  mongodb:
+    min-pool-size: ${MONGO_MIN_POOL_SIZE:10}
+    max-pool-size: ${MONGO_MAX_POOL_SIZE:100}
+    max-wait-time-ms: ${MONGO_MAX_WAIT_TIME_MS:3000}
+    max-idle-time-ms: ${MONGO_MAX_IDLE_TIME_MS:60000}
+    max-life-time-ms: ${MONGO_MAX_LIFE_TIME_MS:1800000}
+    maintenance-frequency-ms: ${MONGO_MAINTENANCE_MS:10000}
+    connect-timeout-ms: ${MONGO_CONNECT_TIMEOUT_MS:3000}
+    read-timeout-ms: ${MONGO_READ_TIMEOUT_MS:5000}
+    server-selection-timeout-ms: ${MONGO_SERVER_SELECTION_TIMEOUT_MS:3000}
+    compressors: ${MONGO_COMPRESSORS:snappy,zstd}
+    write-concern: ${MONGO_WRITE_CONCERN:majority}
+    read-preference: ${MONGO_READ_PREFERENCE:primaryPreferred}
   curriculum:
     default-language: ${DEFAULT_LANGUAGE:ENGLISH}
     max-lessons-per-module: ${MAX_LESSONS_PER_MODULE:50}
   security:
     internal-secret: ${INTERNAL_SECURITY_SECRET:c0d3c0nn3ct-1nt3rn4l-s3cur1ty-h256-s3cr3t-k3y-m1n32byt3s!}
-    max-clock-skew-seconds: 30
+    max-clock-skew-seconds: ${MAX_CLOCK_SKEW_SECONDS:30}
 
 management:
   endpoints:

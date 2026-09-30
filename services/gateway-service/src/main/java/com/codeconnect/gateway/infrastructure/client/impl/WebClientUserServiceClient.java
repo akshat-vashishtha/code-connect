@@ -8,7 +8,7 @@ import com.codeconnect.gateway.domain.exception.EmailAlreadyExistsException;
 import com.codeconnect.gateway.domain.exception.InvalidCredentialsException;
 import com.codeconnect.gateway.domain.exception.UnauthorizedException;
 import com.codeconnect.gateway.infrastructure.client.UserServiceClient;
-import com.codeconnect.gateway.infrastructure.config.GatewayProperties;
+import com.codeconnect.gateway.infrastructure.config.properties.GatewayProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreaker;
 import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreakerFactory;

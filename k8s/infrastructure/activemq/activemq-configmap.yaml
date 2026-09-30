@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: activemq-config
+  namespace: codeconnect-dev
+  labels:
+    app: activemq-artemis
+data:
+  ARTEMIS_USER: "admin"
+  ARTEMIS_PASSWORD: "changeit"
+  EXTRA_ARGS: "--http-host 0.0.0.0 --relax-jolokia"
+  JAVA_ARGS: "-Djava.net.preferIPv4Stack=true -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent -Xms256m -Xmx512m"

@@ -1,6 +1,7 @@
 package com.codeconnect.curriculum.presentation.controller;
 
-import com.codeconnect.curriculum.application.dto.*;
+import com.codeconnect.curriculum.application.dto.request.*;
+import com.codeconnect.curriculum.application.dto.response.*;
 import com.codeconnect.curriculum.application.service.AdminCurriculumService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

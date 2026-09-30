@@ -1,5 +1,6 @@
 package com.codeconnect.curriculum.infrastructure.security;
 
+import com.codeconnect.curriculum.infrastructure.security.chain.header.InternalSecurityHeaders;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,13 +22,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class InternalAuthenticationFilter extends OncePerRequestFilter {
 
-    public static final String HEADER_USER_ID = InternalSecurityValidator.HEADER_USER_ID;
-    public static final String HEADER_USER_ROLE = InternalSecurityValidator.HEADER_USER_ROLE;
-    public static final String HEADER_USER_EMAIL = InternalSecurityValidator.HEADER_USER_EMAIL;
-    public static final String HEADER_TIMESTAMP = InternalSecurityValidator.HEADER_TIMESTAMP;
-    public static final String HEADER_INTERNAL_SIGNATURE = InternalSecurityValidator.HEADER_INTERNAL_SIGNATURE;
-    public static final String HEADER_CORRELATION_ID = "X-Correlation-ID";
-    public static final String HEADER_SPAN_ID = "X-Span-Id";
+    public static final String HEADER_USER_ID           = InternalSecurityHeaders.USER_ID;
+    public static final String HEADER_USER_ROLE          = InternalSecurityHeaders.USER_ROLE;
+    public static final String HEADER_USER_EMAIL         = InternalSecurityHeaders.USER_EMAIL;
+    public static final String HEADER_TIMESTAMP          = InternalSecurityHeaders.TIMESTAMP;
+    public static final String HEADER_INTERNAL_SIGNATURE = InternalSecurityHeaders.SIGNATURE;
+    public static final String HEADER_CORRELATION_ID     = "X-Correlation-ID";
+    public static final String HEADER_SPAN_ID            = "X-Span-Id";
 
     private final InternalSecurityValidator securityValidator;
 

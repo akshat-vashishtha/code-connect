@@ -11,3 +11,5 @@ data:
   REDIS_PORT: "6379"                          # Maps to Service port: 6379 in redis-service.yaml
   USER_SERVICE_URI: "http://user-service:8080" # Maps to Service metadata.name: user-service in user-service.yaml
   CURRICULUM_SERVICE_URI: "http://curriculum-service:8080" # Maps to Service metadata.name: curriculum-service in curriculum-service.yaml
+  SUBMISSION_SERVICE_URI: "http://submission-service:8080" # Maps to Service metadata.name: submission-service in submission-service.yaml
+

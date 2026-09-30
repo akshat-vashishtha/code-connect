@@ -9,7 +9,7 @@ import com.codeconnect.user.application.service.collaborator.auth.UserProfileRes
 import com.codeconnect.user.application.service.collaborator.auth.UserRegistrationManager;
 import com.codeconnect.user.domain.enums.UserRole;
 import com.codeconnect.user.domain.enums.UserStatus;
-import com.codeconnect.user.domain.model.User;
+import com.codeconnect.user.domain.model.UserDocument;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,7 +53,7 @@ class UserAuthenticationServiceImplTest {
             null
         );
 
-        User mockUser = User.createStudent("student@codeconnect.dev", "hash", "Student");
+        UserDocument mockUser = UserDocument.createStudent("student@codeconnect.dev", "hash", "Student");
         UserResponse expectedResponse = new UserResponse(
             "id-1",
             "student@codeconnect.dev",
@@ -81,7 +81,7 @@ class UserAuthenticationServiceImplTest {
             "Pass123!"
         );
 
-        User mockUser = User.createStudent("student@codeconnect.dev", "hash", "Student");
+        UserDocument mockUser = UserDocument.createStudent("student@codeconnect.dev", "hash", "Student");
         UserResponse expectedResponse = new UserResponse(
             "id-1",
             "student@codeconnect.dev",
@@ -104,7 +104,7 @@ class UserAuthenticationServiceImplTest {
     @Test
     @DisplayName("Should orchestrate user profile lookup by delegating to UserProfileResolver and UserMapper")
     void shouldOrchestrateUserLookup() {
-        User mockUser = User.createStudent("student@codeconnect.dev", "hash", "Student");
+        UserDocument mockUser = UserDocument.createStudent("student@codeconnect.dev", "hash", "Student");
         UserResponse expectedResponse = new UserResponse(
             "user-1",
             "student@codeconnect.dev",

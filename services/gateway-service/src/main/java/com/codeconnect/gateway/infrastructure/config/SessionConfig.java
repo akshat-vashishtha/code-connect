@@ -1,5 +1,6 @@
 package com.codeconnect.gateway.infrastructure.config;
 
+import com.codeconnect.gateway.infrastructure.config.properties.SessionProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

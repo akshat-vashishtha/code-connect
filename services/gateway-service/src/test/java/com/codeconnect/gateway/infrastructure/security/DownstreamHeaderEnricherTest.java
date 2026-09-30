@@ -9,7 +9,7 @@ import org.springframework.mock.web.server.MockWebSession;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.codeconnect.gateway.infrastructure.config.GatewayProperties;
+import com.codeconnect.gateway.infrastructure.config.properties.GatewayProperties;
 
 class DownstreamHeaderEnricherTest {
 

@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface LessonRepository extends MongoRepository<LessonDocument, String> {
     List<LessonDocument> findByModuleIdOrderBySequenceAsc(String moduleId);
     List<LessonDocument> findByTrackIdOrderBySequenceAsc(String trackId);
+    List<LessonDocument> findByModuleIdIn(java.util.Collection<String> moduleIds);
     Optional<LessonDocument> findByModuleIdAndSlug(String moduleId, String slug);
     long countByModuleId(String moduleId);
 }

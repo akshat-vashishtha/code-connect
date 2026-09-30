@@ -1,7 +1,7 @@
 package com.codeconnect.user.application.service.collaborator.mentor;
 
 import com.codeconnect.user.domain.exception.ResourceNotFoundException;
-import com.codeconnect.user.domain.model.User;
+import com.codeconnect.user.domain.model.UserDocument;
 import com.codeconnect.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,8 +17,8 @@ public class UserAccountElevator {
 
     private final UserRepository userRepository;
 
-    public User elevateToMentor(String userId, String email) {
-        User user = userRepository.findById(userId)
+    public UserDocument elevateToMentor(String userId, String email) {
+        UserDocument user = userRepository.findById(userId)
             .or(() -> userRepository.findByEmail(email))
             .orElseThrow(() -> new ResourceNotFoundException("User associated with application not found"));
 

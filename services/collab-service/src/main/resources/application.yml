@@ -1,0 +1,80 @@
+server:
+  port: ${SERVER_PORT:8084}
+
+spring:
+  application:
+    name: collab-service
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: ${KAFKA_CONSUMER_GROUP_ID:collab-group}
+      auto-offset-reset: ${KAFKA_AUTO_OFFSET_RESET:earliest}
+      enable-auto-commit: false
+      max-poll-records: 50
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        session.timeout.ms: 45000
+        heartbeat.interval.ms: 15000
+        max.poll.interval.ms: 300000
+        connections.max.idle.ms: 540000
+        metadata.max.age.ms: 300000
+        socket.connection.setup.timeout.ms: 10000
+        socket.connection.setup.timeout.max.ms: 30000
+        fetch.min.bytes: 1024
+        fetch.max.wait.ms: 500
+        receive.buffer.bytes: 131072
+        spring.json.trusted.packages: "com.codeconnect.*"
+        spring.json.use.type.headers: true
+        enable.jmx: true
+        metrics.recording.level: INFO
+    listener:
+      ack-mode: RECORD
+      concurrency: 3
+
+codeconnect:
+  kafka:
+    env: ${KAFKA_ENV:dev}
+    topics:
+      execution-completed: ${codeconnect.kafka.env}.codeconnect.sandbox.code-execution.completed.v1
+  activemq:
+    stomp:
+      enabled: ${ACTIVEMQ_STOMP_ENABLED:false}
+      host: ${ACTIVEMQ_STOMP_HOST:localhost}
+      port: ${ACTIVEMQ_STOMP_PORT:61613}
+      system-login: ${ACTIVEMQ_SYSTEM_USER:admin}
+      system-passcode: ${ACTIVEMQ_SYSTEM_PASSWORD:changeit}
+      client-login: ${ACTIVEMQ_CLIENT_USER:admin}
+      client-passcode: ${ACTIVEMQ_CLIENT_PASSWORD:changeit}
+      topic-prefix: ${STOMP_TOPIC_PREFIX:/topic}
+      queue-prefix: ${STOMP_QUEUE_PREFIX:/queue}
+      system-heartbeat-send-interval-ms: ${ACTIVEMQ_HEARTBEAT_SEND_MS:10000}
+      system-heartbeat-receive-interval-ms: ${ACTIVEMQ_HEARTBEAT_RECEIVE_MS:10000}
+      user-destination-broadcast: ${ACTIVEMQ_USER_DEST_BROADCAST:/topic/unresolved-user-destinations}
+      user-registry-broadcast: ${ACTIVEMQ_USER_REG_BROADCAST:/topic/simp-user-registry}
+      auto-startup: true
+  collab:
+    stomp-endpoint: ${STOMP_ENDPOINT:/ws-connect}
+    allowed-origin-patterns: ${ALLOWED_ORIGIN_PATTERNS:*}
+    topic-prefix: ${STOMP_TOPIC_PREFIX:/topic}
+    app-prefix: ${STOMP_APP_PREFIX:/app}
+    internal-secret: ${INTERNAL_SECURITY_SECRET:c0d3c0nn3ct-1nt3rn4l-s3cur1ty-h256-s3cr3t-k3y-m1n32byt3s!}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+    prometheus:
+      access: read_only
+  health:
+    probes:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}

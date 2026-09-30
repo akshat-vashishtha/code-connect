@@ -1,0 +1,12 @@
+package com.codeconnect.user.infrastructure.config.properties;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+/**
+ * Type-safe configuration properties for User Service.
+ * Pure data holder — zero logic. Defaults are defined in application.yml.
+ */
+@ConfigurationProperties(prefix = "codeconnect.user")
+public record UserProperties(
+    String defaultReviewer
+) {}

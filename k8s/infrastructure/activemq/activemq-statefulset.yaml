@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: activemq-artemis
+  namespace: codeconnect-dev
+  labels:
+    app: activemq-artemis
+spec:
+  serviceName: "activemq-artemis"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: activemq-artemis
+  template:
+    metadata:
+      labels:
+        app: activemq-artemis
+    spec:
+      containers:
+        - name: activemq-artemis
+          image: apache/activemq-artemis:2.35.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: stomp
+              containerPort: 61613
+              protocol: TCP
+            - name: core
+              containerPort: 61616
+              protocol: TCP
+            - name: web-console
+              containerPort: 8161
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: activemq-config
+          readinessProbe:
+            tcpSocket:
+              port: 61613
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 61613
+            initialDelaySeconds: 25
+            periodSeconds: 15
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "150m"
+            limits:
+              memory: "768Mi"
+              cpu: "800m"
+          volumeMounts:
+            - name: artemis-data
+              mountPath: /var/lib/artemis-instance/data
+  volumeClaimTemplates:
+    - metadata:
+        name: artemis-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 500Mi

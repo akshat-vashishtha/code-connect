@@ -53,54 +53,111 @@
 
 ---
 
-## 2. Mandatory GoF Design Patterns Catalog
+## 2. Mandatory GoF & OOAD Design Patterns Catalog
 
-When implementing features, AI agents and engineers MUST leverage the appropriate design patterns rather than writing naive procedural code:
+When authoring new microservices or implementing features, AI agents and engineers MUST leverage the appropriate design patterns from the start, rather than writing procedural scripts that require later refactoring.
 
-### 2.1 The Strategy Pattern
-* **When to use**: When an algorithm or business process has multiple variations that can be swapped at runtime.
-* **In CodeConnect**:
-  - Code execution engines in `sandbox-runner-service` (e.g., `ExecutionStrategy` implemented by `Java21ExecutionStrategy`, future `PythonExecutionStrategy`).
-  - Socratic coaching prompts (e.g., `SocraticPromptStrategy` implemented by `SyntaxErrorStrategy`, `RuntimeErrorStrategy`, `ConceptualHintStrategy`).
-* **Implementation Standard**:
-  Define a clean interface. Register implementations as Spring beans. Inject a `Map<StrategyKey, StrategyInterface>` or use a resolver registry.
+### 2.1 The Command Pattern & Command Factory
+* **When to use**: For transactional state mutations, business actions, adjudications, and multi-step state transitions.
+* **Architecture Standard**:
+  - Define a generic `DomainCommand<R>` interface:
+    ```java
+    public interface DomainCommand<R> {
+        R execute();
+    }
+    ```
+  - Implement concrete commands encapsulating all collaborators required to perform the action:
+    - Example: `ApproveMentorApplicationCommand`, `RejectMentorApplicationCommand`, `UpdateLessonProgressCommand`.
+  - Use a **Command Factory** (`*CommandFactory`) to inject Spring singleton dependencies (repositories, managers, publishers, mappers) and instantiate lightweight command instances with request-scoped parameters:
+    ```java
+    @Component
+    @RequiredArgsConstructor
+    public class MentorAdjudicationCommandFactory {
+        private final MentorApprovalManager approvalManager;
+        private final UserAccountElevator accountElevator;
+        private final SessionElevationManager sessionElevationManager;
+        private final MentorApprovalMapper mapper;
+        private final ApplicationEventPublisher eventPublisher;
 
-### 2.2 The Facade Pattern
-* **When to use**: To provide a unified, high-level interface to a complex set of subsystem operations.
-* **In CodeConnect**:
-  - `SubmissionFacade`: Orchestrates checking user session state, verifying prerequisite completion, persisting the pending submission to MongoDB, and dispatching the event to Apache Kafka.
-  - Keeps controllers thin and shields presentation layers from internal microservice coordination.
+        public DomainCommand<MentorApprovalResponse> createApprovalCommand(String applicationId, String reviewerAdminEmail) {
+            return new ApproveMentorApplicationCommand(
+                applicationId, reviewerAdminEmail, approvalManager, accountElevator, sessionElevationManager, mapper, eventPublisher
+            );
+        }
+    }
+    ```
+  - The Service facade simply invokes: `return commandFactory.createApprovalCommand(id, reviewer).execute();`.
 
-### 2.3 The Factory / Registry Pattern
-* **When to use**: When object creation involves complex business rules, type inspection, or dynamic polymorphic resolution.
-* **In CodeConnect**:
-  - `SandboxContainerFactory`: Instantiates ephemeral Docker container specifications with strictly locked down limits.
-  - `KafkaEventConsumerRegistry`: Dynamically resolves consumer handlers for varying Kafka message types.
+### 2.2 The Strategy Pattern & Strategy Registry
+* **When to use**: When an algorithm, evaluation logic, or business rule has multiple variations that must be selected dynamically at runtime without `if-else` or `switch` sprawl (Open-Closed Principle).
+* **Architecture Standard**:
+  - Define a clean strategy interface (e.g. `PrerequisiteEvaluationStrategy`, `ExecutionStrategy`, `SocraticPromptStrategy`):
+    ```java
+    public interface PrerequisiteEvaluationStrategy {
+        PrerequisiteType getSupportedType();
+        boolean isPrerequisiteSatisfied(String studentId, Lesson targetLesson, Track track, List<UserLessonProgress> studentProgress);
+    }
+    ```
+  - Implement concrete strategy beans (e.g. `CompletedPrerequisiteStrategy`, `AlwaysUnlockedStrategy`, `LinearSequentialPrerequisiteStrategy`).
+  - Use a **Strategy Registry** (or map injection) to dynamically resolve strategies in $O(1)$ time:
+    ```java
+    @Component
+    public class PrerequisiteStrategyRegistry {
+        private final Map<PrerequisiteType, PrerequisiteEvaluationStrategy> strategyMap;
 
-### 2.4 The Chain of Responsibility (CoR) Pattern
-* **When to use**: When a request must pass through a sequential series of checks, sanitizations, or transformations before execution.
-* **In CodeConnect**:
-  - **Code Safety & Sanitization Pipeline**: Before submitting student code to Docker:
-    1. `SourceCodeSizeFilter` (rejects payloads > 64KB)
-    2. `MaliciousImportFilter` (rejects prohibited packages)
-    3. `SyntaxSanityFilter` (validates package/class structure)
-  - Each handler handles its validation or delegates down the chain (`filterChain.filter(context)`).
+        public PrerequisiteStrategyRegistry(List<PrerequisiteEvaluationStrategy> strategies) {
+            this.strategyMap = strategies.stream()
+                .collect(Collectors.toUnmodifiableMap(
+                    PrerequisiteEvaluationStrategy::getSupportedType,
+                    Function.identity()
+                ));
+        }
 
-### 2.5 The Command Pattern
-* **When to use**: To encapsulate an action or transactional operation as a first-class object, enabling queuing, logging, retries, and undo operations.
-* **In CodeConnect**:
-  - `VerifyPrerequisiteCommand`: Encapsulates checking student submission history, calculating streak ascent, and locking/unlocking progressive footholds.
+        public PrerequisiteEvaluationStrategy resolve(PrerequisiteType type) {
+            return Optional.ofNullable(strategyMap.get(type))
+                .orElseThrow(() -> new IllegalArgumentException("Unsupported prerequisite type: " + type));
+        }
+    }
+    ```
 
-### 2.6 The Builder Pattern
-* **When to use**: For instantiating complex domain entities, aggregate roots, or test fixtures with multiple required and optional fields.
-* **In CodeConnect**:
-  - Use Lombok `@Builder` or explicit builder classes on complex domain entities.
+### 2.3 The Facade Pattern & Single Level of Abstraction (SLAP)
+* **When to use**: For high-level Service interfaces (`*Service`, `*ServiceImpl`) orchestrating complex workflows.
+* **Architecture Standard**:
+  - Service classes must be clean, readable orchestrators (SLAP).
+  - Never accumulate database queries, entity mappings, input validation, or Redis session manipulation inside the Service class.
+  - Delegate to dedicated single-responsibility collaborators:
+    - `collaborator/*Manager` or `collaborator/*Service`: Focused business domain logic (e.g. `LessonProgressManager`, `UserAccountElevator`).
+    - `validator/*Validator`: Business & input invariants.
+    - `mapper/*Mapper`: Bidirectional DTO $\leftrightarrow$ Entity conversion.
+    - `command/*CommandFactory`: Transactional command execution.
 
-### 2.7 The Observer / Event-Driven Pattern
-* **When to use**: For state transitions that trigger non-blocking side effects across services.
-* **In CodeConnect**:
-  - Publish Spring `ApplicationEvent`s for internal decoupling.
-  - Publish typed Kafka records (`CodeSubmissionEvent`, `ExecutionResultEvent`) for distributed asynchronous microservice decoupling.
+### 2.4 The Chain of Responsibility (CoR) & Validation Pipelines
+* **When to use**: When a request must pass through sequential validation, sanitization, or authentication stages.
+* **Architecture Standard**:
+  - Build sequential validation/sanitization steps where each step validates one invariant or passes to the next:
+    - Code submission pipeline: `SourceCodeSizeFilter` $\rightarrow$ `MaliciousImportFilter` $\rightarrow$ `SyntaxSanityFilter`.
+    - User registration pipeline: `EmailFormatFilter` $\rightarrow$ `UniqueEmailFilter` $\rightarrow$ `PasswordStrengthFilter`.
+
+### 2.5 The Factory & Builder Patterns
+* **When to use**: Complex object creation, aggregate assembly, and test fixture construction.
+* **Architecture Standard**:
+  - Use Lombok `@Builder` or explicit builder classes on complex domain entities and aggregates.
+  - Use Factory classes when creation requires inspecting configuration or resolving runtime dependencies.
+
+### 2.6 The Observer / Domain Event Pattern
+* **When to use**: For decoupling core transactional business state changes from secondary side effects (notifications, audit logs, cache invalidation, cross-service propagation).
+* **Architecture Standard**:
+  - Fired by domain commands / services upon significant state transitions (e.g. `MentorApprovedEvent`, `LessonCompletedEvent`, `UserRegisteredEvent`).
+  - Internal single-service events: Spring `ApplicationEventPublisher`.
+  - Cross-service distributed events: Apache Kafka topics with immutable Java 21 `record` payloads.
+
+### 2.7 The Filter / Interceptor Orchestrator Pattern (Security & Gateway)
+* **When to use**: Authentication, authorization, HMAC request signing, and security boundary filters.
+* **Architecture Standard**:
+  - Filters (such as Spring Security `OncePerRequestFilter` or Spring Cloud Gateway `GlobalFilter`) must act strictly as thin orchestrators delegating to focused collaborators:
+    1. `RouteAccessDecisionManager`: Pattern matching & RBAC access rules.
+    2. `DownstreamHeaderEnricher`: Identity header injection and HMAC generation.
+    3. `ProblemDetailsResponseWriter`: Serializing RFC 7807 ProblemDetail JSON responses.
 
 ---
 
@@ -171,6 +228,10 @@ com.codeconnect.<servicename>/
     ```
 * **Anti-Corruption Layer (No Entity Leaks)**:
   - MongoDB `@Document` models must NEVER escape the Service layer. Controllers only see DTO records.
+* **Zero N+1 Database Query Anti-Pattern (Batch Querying & In-Memory Stream Grouping)**:
+  - Never execute database queries inside iterative loops (e.g. `for (Module m : modules) { lessonRepo.findByModuleId(m.getId()); }`).
+  - Always fetch related documents in a single bulk query (e.g. `lessonRepository.findByTrackId(trackId)` or `lessonRepository.findByModuleIdIn(moduleIds)`).
+  - Group and assemble relationships in-memory using Java 21 Streams and `Collectors.groupingBy(...)` in $O(N)$ total time, avoiding $N+1$ database roundtrips.
 * **Constructor Injection Only**:
   - Field injection (`@Autowired private ...`) is strictly forbidden. All dependencies must be `private final` injected via constructors (or `@RequiredArgsConstructor`).
 * **Zero Hardcoded Route Patterns, URLs/URIs, and Domain Assumptions (Pure `@ConfigurationProperties`)**:
@@ -377,24 +438,33 @@ com.codeconnect.<servicename>/
 | **Orchestration** | Complex, stateful, multi-step workflow needs visibility and rollback | Code submission pipeline: submit -> evaluate -> grade -> unlock foothold |
 | **Hybrid** | Mix per workflow complexity | Default pattern in CodeConnect |
 
-### 6.3 Kafka Event Contract Standards
-* **Topic Naming Convention**: `<domain>.<entity>.<event-type>` — e.g.:
-  - `codeconnect.submission.code-submitted`
-  - `codeconnect.execution.result-produced`
-  - `codeconnect.foothold.unlocked`
-* **Versioning**: Events are versioned (`v1`, `v2`). Never break a published event schema. Add new optional fields; never remove or rename existing ones.
-* **Dead-Letter Queue (DLQ)**: Every consumer must configure a DLQ topic (`<topic>.dlq`) to capture failed message processing. Never silently drop a failed event. Use `@RetryableTopic` with `dltTopicSuffix = ".dlq"`.
+### 6.3 Kafka Event Contract & Enterprise Topic Taxonomy
+* **Enterprise Topic Naming Taxonomy**: `<env>.<org/domain>.<service>.<entity>.<action-or-type>.<version>` — e.g.:
+  - `${KAFKA_ENV:dev}.codeconnect.submission.code-execution.requested.v1`
+  - `${KAFKA_ENV:dev}.codeconnect.sandbox.code-execution.completed.v1`
+  - `${KAFKA_ENV:dev}.codeconnect.submission.code-execution.dlq.v1`
+  - `${KAFKA_ENV:dev}.codeconnect.sandbox.code-execution.dlq.v1`
+* **Versioning**: Events are strictly versioned (`v1`, `v2`). Never break a published event schema. Add new optional fields; never remove or rename existing ones.
+* **Dead-Letter Queue (DLQ) & Poison Pill Recovery**: Every consumer must configure a Dead-Letter Topic (`*.dlq.v1`) with `DefaultErrorHandler` and `DeadLetterPublishingRecoverer` to capture failed or unparseable messages. Never silently drop a failed event or stall the partition pipeline.
 
-### 6.4 Standard Event Envelope
+### 6.4 Standard Event Envelope (CloudEvents-Style)
+
+Every event published to Kafka MUST be wrapped in a generic `EventEnvelope<T>` carrying a standardized `EventHeader` for distributed tracing, auditability, and governance:
 
 ```java
-public record DomainEvent<T>(
-    String eventId,       // UUID for idempotency
-    String eventType,     // e.g., "SubmissionGraded"
-    String aggregateId,   // ID of the root entity
-    String aggregateType, // e.g., "Submission"
-    Instant occurredOn,   // UTC timestamp of the fact
-    T payload             // The actual event data record
+public record EventHeader(
+    String eventId,        // Unique UUID of this event instance (for consumer idempotency)
+    String eventType,      // Concrete event name (e.g., "CodeExecutionRequestedEvent")
+    String correlationId,  // Constant UUID shared across all hops of an end-to-end user request
+    String sourceService,  // Originating microservice (e.g., "submission-service")
+    String schemaVersion,  // e.g., "1.0"
+    Instant timestamp,     // UTC instant when the event occurred
+    String environment     // e.g., "production", "dev", "staging"
+) {}
+
+public record EventEnvelope<T>(
+    EventHeader header,
+    T payload              // Strongly-typed immutable Java 21 domain record
 ) {}
 ```
 
@@ -464,7 +534,13 @@ Before any story implementation is submitted for review, verify all applicable g
 
 ### Clean Code & Architecture
 - [ ] **OOAD & Clean Code**: Are class and method names intention-revealing? Are methods short and focused?
-- [ ] **Design Patterns Applied**: Are complex algorithms wrapped in Strategy? Multi-step actions in Facades/Commands? Pipelines in Chains?
+- [ ] **Design Patterns Applied Upfront**:
+  - **Command & Factory Pattern**: Are transactional state mutations encapsulated in `DomainCommand<R>` instances created via `*CommandFactory`?
+  - **Strategy & Registry Pattern**: Are swappable business rules encapsulated in Strategy interfaces resolved via a Strategy Registry (no `if/else` sprawl)?
+  - **Facade & Collaborators (SLAP)**: Are service classes clean orchestrators delegating to dedicated collaborator components (`*Manager`, `*Validator`, `*Mapper`)?
+  - **Chain of Responsibility**: Are sequential validation/sanitization steps organized as a pipeline?
+  - **Filter SRP**: Are security and gateway filters thin orchestrators delegating to route decision managers, header enrichers, and problem writers?
+- [ ] **Zero N+1 Queries**: Are hierarchical/related documents fetched in bulk and mapped in-memory using `Collectors.groupingBy(...)`?
 - [ ] **No Entity Leaks**: Are DTO records used exclusively at the Controller interface?
 - [ ] **Validation Present**: Are all incoming DTO records annotated with `@Valid` and constraints?
 - [ ] **Interface + Impl**: Does every service follow the interface separation pattern?
@@ -483,8 +559,8 @@ Before any story implementation is submitted for review, verify all applicable g
 
 ### Event-Driven Architecture
 - [ ] **Consumer Idempotency**: Does every Kafka consumer guard against duplicate event processing?
-- [ ] **DLQ Configured**: Is there a Dead-Letter Queue configured for every Kafka consumer?
-- [ ] **Event Envelope Standard**: Does every event include `eventId`, `aggregateId`, `occurredOn`, and a typed payload?
+- [ ] **DLQ Configured**: Is there a Dead-Letter Queue configured for every Kafka consumer routing to `*.dlq.v1`?
+- [ ] **Event Envelope Standard**: Does every event published to Kafka implement `EventEnvelope<T>` with a standardized `EventHeader`?
 - [ ] **No Synchronous Cross-Service State Changes**: Are all state mutations propagated asynchronously via events?
 - [ ] **Correlation ID Propagated**: Is the `correlationId` threaded through all events and logs in the flow?
 
@@ -496,6 +572,13 @@ Before any story implementation is submitted for review, verify all applicable g
 - [ ] **OpenAPI Spec Present**: Is the API contract documented in OpenAPI 3.x before or alongside the implementation?
 - [ ] **Secrets Not in Code**: Are all credentials sourced from environment, not hardcoded or in `application.yml`?
 
+### Distributed Infrastructure & Optimization (MongoDB, Redis & Kafka)
+- [ ] **MongoDB Pool Tuning**: Are pool sizes (`min: 10`, `max: 100`), fail-fast timeouts (3s selection / wait), and wire compression (`snappy,zstd`) configured via `MongoPoolProperties` and `MongoPoolOptimizationConfig`?
+- [ ] **Redis Connection Pooling & TCP Tuning**: Are Lettuce connection pools (`min-idle: 8`, `max-idle: 16`, `max-active: 32`, `max-wait: 1.5s`), low-latency `tcpNoDelay(true)`, and fail-fast timeouts configured?
+- [ ] **Distributed Redis Caching**: Are hot read queries protected by `@Cacheable(sync = true)` with Jackson 2 JSON `record` serializers and namespaced keys (`codeconnect:cache:*`)?
+- [ ] **Kafka Producer Durability & Batching**: Are `acks=all`, `enable.idempotence=true`, `max.in.flight.requests.per.connection=5`, `linger.ms=10`, `batch.size=16384`, and `snappy` compression configured?
+- [ ] **Kafka Consumer Worker Safety & Non-Blocking DLQ**: Are `enable-auto-commit=false`, `ack-mode=RECORD`, tuned `max-poll-records`, and `DefaultErrorHandler` with exponential backoff and DLQ routing active?
+
 ### Frontend (Next.js 14 + Strict TypeScript)
 - [ ] **100% Strict TypeScript**: Is the frontend 100% strict TypeScript with zero `any` types?
 - [ ] **Strict Layering & Segregation**: Is structural logic (`controller/`, `service/`, `domain/`, `validator/`, `client/`) completely separated from presentation JSX (`app/`, `presentation/`, `components/`)?
@@ -504,4 +587,76 @@ Before any story implementation is submitted for review, verify all applicable g
 - [ ] **DTO & Type Parity**: Does every backend Java DTO record have a 1:1 matching TypeScript interface in `src/dto/` or `src/types/`?
 - [ ] **SOLID Principles**: Are SRP, OCP, LSP, ISP, and DIP strictly respected in frontend components and services?
 - [ ] **Server Components Default**: Are Next.js Client Components (`'use client'`) used exclusively at interactive leaf components?
+
+---
+
+## 9. Distributed Infrastructure, Caching & Performance Optimization Standards
+
+### 9.1 MongoDB Production Optimization & Connection Pooling
+
+All MongoDB microservices (`user-service`, `curriculum-service`, `submission-service`) MUST implement production-grade connection pooling, fail-fast latency boundaries, and wire compression.
+
+1. **Configuration via Pure `@ConfigurationProperties`**:
+   - Every service configures a dedicated `MongoPoolProperties` record with zero logic or Java defaults.
+   - All settings externalized to `application.yml` via `${ENV:default}`.
+2. **Standard Sizing & Timeout Baseline**:
+   ```yaml
+   codeconnect:
+     mongodb:
+       min-pool-size: ${MONGO_MIN_POOL_SIZE:10}
+       max-pool-size: ${MONGO_MAX_POOL_SIZE:100}
+       max-wait-time-ms: ${MONGO_MAX_WAIT_TIME_MS:3000}
+       max-idle-time-ms: ${MONGO_MAX_IDLE_TIME_MS:60000}
+       max-life-time-ms: ${MONGO_MAX_LIFE_TIME_MS:1800000}
+       maintenance-frequency-ms: ${MONGO_MAINTENANCE_MS:10000}
+       connect-timeout-ms: ${MONGO_CONNECT_TIMEOUT_MS:3000}
+       read-timeout-ms: ${MONGO_READ_TIMEOUT_MS:5000}
+       server-selection-timeout-ms: ${MONGO_SERVER_SELECTION_TIMEOUT_MS:3000}
+       compressors: ${MONGO_COMPRESSORS:snappy,zstd}
+       write-concern: ${MONGO_WRITE_CONCERN:majority}
+       read-preference: ${MONGO_READ_PREFERENCE:primaryPreferred}
+   ```
+3. **Defensive Wire Compression**:
+   - `MongoPoolOptimizationConfig` registers a `MongoClientSettingsBuilderCustomizer` bean.
+   - Classpath reflection checks (`Class.forName("org.xerial.snappy.Snappy")`) MUST be used defensively to only activate compressors when driver native libraries are loaded.
+
+---
+
+### 9.2 Redis Distributed Caching & Lettuce Connection Pooling
+
+1. **Lettuce Connection Pooling (Apache Commons Pool 2)**:
+   - Configured via `RedisPoolProperties` and `RedisOptimizationConfig` with `LettuceClientConfigurationBuilderCustomizer`.
+   - Tuned pool boundaries: `min-idle: 8`, `max-idle: 16`, `max-active: 32`, `max-wait-ms: 1500`.
+   - Low-latency TCP optimizations: `tcpNoDelay(true)` (disables Nagle algorithm), `keepAlive(true)`.
+2. **Distributed Redis Caching Layer**:
+   - **Annotation**: `@EnableCaching` on configuration class.
+   - **Cache Manager**: `RedisCacheManager` configured with `RedisCacheConfiguration`.
+   - **Serialization**: `GenericJackson2JsonRedisSerializer` configured with an `ObjectMapper` registering `JavaTimeModule` and `activateDefaultTyping(NON_FINAL)` to deserialize Java 21 `record` DTO types without `ClassCastException`.
+   - **Cache Stampede Prevention**: Always use `@Cacheable(value = "...", sync = true)` on read queries to prevent thundering herd against MongoDB.
+   - **Per-Domain TTLs**: Managed via `CacheTtlProperties` (e.g., tracks: 15m, lessons: 10m, users: 15m, mentors: 5m).
+   - **Explicit Cache Eviction**: All state-mutating commands (e.g. updating a lesson, publishing a track, approving a mentor) MUST declare `@CacheEvict(value = "...", allEntries = true)`.
+
+---
+
+### 9.3 Enterprise Apache Kafka Production Architecture
+
+1. **Standardized Topic Naming Hierarchy**:
+   $$\mathbf{\langle env \rangle.\langle domain \rangle.\langle service \rangle.\langle entity \rangle.\langle action\text{-}or\text{-}type \rangle.\langle version \rangle}$$
+   - Execution Request: `${KAFKA_ENV:dev}.codeconnect.submission.code-execution.requested.v1`
+   - Execution Completed: `${KAFKA_ENV:dev}.codeconnect.sandbox.code-execution.completed.v1`
+   - Dead-Letter Topics: `${KAFKA_ENV:dev}.codeconnect.<service>.<entity>.dlq.v1`
+2. **Standardized CloudEvents `EventEnvelope<T>` Contract**:
+   - All events MUST implement `EventEnvelope<T>(EventHeader header, T payload)`.
+   - `EventHeader` contains: `eventId`, `eventType`, `correlationId`, `sourceService`, `schemaVersion`, `timestamp`, and `environment`.
+3. **Producer Production Profile**:
+   - **Durability & Zero Loss**: `acks: all`, `retries: Integer.MAX_VALUE`, `enable.idempotence: true`, `max.in.flight.requests.per.connection: 5`.
+   - **Delivery Bounds**: `delivery.timeout.ms: 180000`, `request.timeout.ms: 120000`, `max.block.ms: 60000`.
+   - **High-Throughput Batching**: `batch.size: 16384` (16 KB), `linger.ms: 10` (10ms batch coalescing), `buffer.memory: 33554432` (32 MB), `compression.type: snappy`.
+   - **Socket & Network**: `send.buffer.bytes: 131072` (128 KB), `receive.buffer.bytes: 131072` (128 KB), `connections.max.idle.ms: 540000`.
+   - **Telemetry**: `enable.jmx: true`, `metrics.recording.level: INFO`.
+4. **Consumer & Heavy Worker Production Profile**:
+   - **Offset Safety**: `enable-auto-commit: false`, `ack-mode: RECORD`, `auto-offset-reset: earliest`, `concurrency: 3`.
+   - **Heavy-Workload Polling (Sandbox Runner)**: `max-poll-records: 10` and `max.poll.interval.ms: 600000` (10 minutes) to eliminate rebalance storms during long Docker execution lifecycles.
+   - **Error Handling & Dead-Letter Queue (DLQ)**: `DefaultErrorHandler` with exponential backoff (1s $\rightarrow$ 2s $\rightarrow$ 4s; max 3 attempts) coupled with `DeadLetterPublishingRecoverer` routing poison pills to `.dlq.v1`.
+
 

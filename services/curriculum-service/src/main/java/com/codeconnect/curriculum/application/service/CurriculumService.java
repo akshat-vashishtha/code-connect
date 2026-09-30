@@ -1,9 +1,6 @@
 package com.codeconnect.curriculum.application.service;
 
-import com.codeconnect.curriculum.application.dto.LessonResponse;
-import com.codeconnect.curriculum.application.dto.ModuleResponse;
-import com.codeconnect.curriculum.application.dto.StudentProgressResponse;
-import com.codeconnect.curriculum.application.dto.TrackResponse;
+import com.codeconnect.curriculum.application.dto.response.*;
 
 import java.util.List;
 

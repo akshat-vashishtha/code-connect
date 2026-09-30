@@ -1,26 +1,26 @@
 package com.codeconnect.user.application.mapper;
 
 import com.codeconnect.user.application.dto.response.MentorApprovalResponse;
-import com.codeconnect.user.domain.model.MentorApprovalRequest;
+import com.codeconnect.user.domain.model.MentorApprovalDocument;
 import org.springframework.stereotype.Component;
 
 /**
- * Dedicated collaborator converting MentorApprovalRequest document entities to immutable response DTOs.
+ * Dedicated collaborator converting MentorApprovalDocument entities to immutable response DTOs.
  */
 @Component
 public class MentorApprovalMapper {
 
-    public MentorApprovalResponse toResponse(MentorApprovalRequest request) {
+    public MentorApprovalResponse toResponse(MentorApprovalDocument document) {
         return new MentorApprovalResponse(
-            request.getId(),
-            request.getUserId(),
-            request.getEmail(),
-            request.getLinkedInUrl(),
-            request.getBio(),
-            request.getStatus(),
-            request.getSubmittedAt(),
-            request.getReviewedAt(),
-            request.getReviewedBy()
+            document.getId(),
+            document.getUserId(),
+            document.getEmail(),
+            document.getLinkedInUrl(),
+            document.getBio(),
+            document.getStatus(),
+            document.getSubmittedAt(),
+            document.getReviewedAt(),
+            document.getReviewedBy()
         );
     }
 }

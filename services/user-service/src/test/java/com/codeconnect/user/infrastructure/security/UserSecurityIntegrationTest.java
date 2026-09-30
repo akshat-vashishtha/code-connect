@@ -1,6 +1,6 @@
 package com.codeconnect.user.infrastructure.security;
 
-import com.codeconnect.user.infrastructure.config.InternalSecurityProperties;
+import com.codeconnect.user.infrastructure.config.properties.InternalSecurityProperties;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +26,19 @@ class UserSecurityIntegrationTest {
     @Autowired
     private InternalSecurityProperties securityProperties;
 
+    @Autowired(required = false)
+    private org.springframework.cache.CacheManager cacheManager;
+
+    @org.springframework.boot.test.mock.mockito.MockBean
+    private org.springframework.kafka.core.KafkaTemplate<String, Object> kafkaTemplate;
+
+    @org.junit.jupiter.api.BeforeEach
+    void setUp() {
+        if (cacheManager != null && cacheManager.getCache("mentors") != null) {
+            cacheManager.getCache("mentors").clear();
+        }
+    }
+
     @Test
     @DisplayName("Direct unauthenticated request without HMAC headers should be rejected with 403 Forbidden")
     void shouldRejectDirectUnauthenticatedAccess() throws Exception {
@@ -41,7 +54,7 @@ class UserSecurityIntegrationTest {
         String email = "admin@codeconnect.dev";
         String timestamp = String.valueOf(System.currentTimeMillis());
 
-        String signature = calculateHmac(userId, role, email, timestamp, securityProperties.internalSecret());
+        String signature = calculateHmac("GET", "/api/v1/admin/mentors/pending", userId, role, email, timestamp, securityProperties.internalSecret());
 
         mockMvc.perform(get("/api/v1/admin/mentors/pending")
                 .header(InternalAuthenticationFilter.HEADER_USER_ID, userId)
@@ -66,8 +79,8 @@ class UserSecurityIntegrationTest {
             .andExpect(status().isForbidden());
     }
 
-    private String calculateHmac(String userId, String role, String email, String timestamp, String secret) throws Exception {
-        String payload = userId + ":" + role + ":" + email + ":" + timestamp;
+    private String calculateHmac(String method, String path, String userId, String role, String email, String timestamp, String secret) throws Exception {
+        String payload = method.toUpperCase() + ":" + path + ":" + userId + ":" + role + ":" + email + ":" + timestamp;
         Mac mac = Mac.getInstance("HmacSHA256");
         SecretKeySpec keySpec = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
         mac.init(keySpec);

@@ -4,7 +4,7 @@ import com.codeconnect.user.application.dto.request.UserAuthenticationRequest;
 import com.codeconnect.user.domain.enums.UserRole;
 import com.codeconnect.user.domain.enums.UserStatus;
 import com.codeconnect.user.domain.exception.InvalidCredentialsException;
-import com.codeconnect.user.domain.model.User;
+import com.codeconnect.user.domain.model.UserDocument;
 import com.codeconnect.user.domain.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,11 +40,11 @@ class UserCredentialAuthenticatorTest {
             "ValidPassword123!"
         );
 
-        User mockUser = User.createStudent("student@codeconnect.dev", "hashedPassword", "Aarav");
+        UserDocument mockUser = UserDocument.createStudent("student@codeconnect.dev", "hashedPassword", "Aarav");
         when(userRepository.findByEmail("student@codeconnect.dev")).thenReturn(Optional.of(mockUser));
         when(passwordEncoder.matches("ValidPassword123!", "hashedPassword")).thenReturn(true);
 
-        User authenticated = authenticator.authenticate(request);
+        UserDocument authenticated = authenticator.authenticate(request);
 
         assertThat(authenticated).isEqualTo(mockUser);
         assertThat(authenticated.getEmail()).isEqualTo("student@codeconnect.dev");
@@ -72,7 +72,7 @@ class UserCredentialAuthenticatorTest {
             "WrongPassword"
         );
 
-        User mockUser = User.createStudent("student@codeconnect.dev", "hashedPassword", "Aarav");
+        UserDocument mockUser = UserDocument.createStudent("student@codeconnect.dev", "hashedPassword", "Aarav");
         when(userRepository.findByEmail("student@codeconnect.dev")).thenReturn(Optional.of(mockUser));
         when(passwordEncoder.matches("WrongPassword", "hashedPassword")).thenReturn(false);
 

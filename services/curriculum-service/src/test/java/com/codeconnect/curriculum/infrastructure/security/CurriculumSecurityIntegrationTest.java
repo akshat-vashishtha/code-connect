@@ -1,7 +1,7 @@
 package com.codeconnect.curriculum.infrastructure.security;
 
 import com.codeconnect.curriculum.application.service.CurriculumService;
-import com.codeconnect.curriculum.infrastructure.config.InternalSecurityProperties;
+import com.codeconnect.curriculum.infrastructure.config.properties.InternalSecurityProperties;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +27,9 @@ class CurriculumSecurityIntegrationTest {
     @MockBean
     private CurriculumService curriculumService;
 
+    @MockBean
+    private org.springframework.kafka.core.KafkaTemplate<String, Object> kafkaTemplate;
+
     @Test
     @DisplayName("Should reject unauthenticated direct calls to /api/v1/curriculum/** with HTTP 403 Forbidden")
     void shouldRejectUnauthenticatedDirectCalls() throws Exception {
@@ -43,7 +46,7 @@ class CurriculumSecurityIntegrationTest {
         String email = "student@codeconnect.dev";
         String timestamp = String.valueOf(System.currentTimeMillis());
 
-        String signature = calculateHmac(userId, role, email, timestamp, securityProperties.internalSecret());
+        String signature = calculateHmac("GET", "/api/v1/curriculum/tracks", userId, role, email, timestamp, securityProperties.internalSecret());
 
         mockMvc.perform(get("/api/v1/curriculum/tracks")
                 .header(InternalAuthenticationFilter.HEADER_USER_ID, userId)
@@ -74,9 +77,9 @@ class CurriculumSecurityIntegrationTest {
             .andExpect(status().isForbidden());
     }
 
-    private static String calculateHmac(String userId, String role, String email, String timestamp, String secret) {
+    private static String calculateHmac(String method, String path, String userId, String role, String email, String timestamp, String secret) {
         try {
-            String payload = userId + ":" + role + ":" + email + ":" + timestamp;
+            String payload = method.toUpperCase() + ":" + path + ":" + userId + ":" + role + ":" + email + ":" + timestamp;
             javax.crypto.Mac mac = javax.crypto.Mac.getInstance("HmacSHA256");
             javax.crypto.spec.SecretKeySpec keySpec = new javax.crypto.spec.SecretKeySpec(secret.getBytes(java.nio.charset.StandardCharsets.UTF_8), "HmacSHA256");
             mac.init(keySpec);

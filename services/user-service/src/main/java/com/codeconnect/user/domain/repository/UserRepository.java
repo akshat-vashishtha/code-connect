@@ -1,15 +1,15 @@
 package com.codeconnect.user.domain.repository;
 
-import com.codeconnect.user.domain.model.User;
+import com.codeconnect.user.domain.model.UserDocument;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends MongoRepository<User, String> {
+public interface UserRepository extends MongoRepository<UserDocument, String> {
 
-    Optional<User> findByEmail(String email);
+    Optional<UserDocument> findByEmail(String email);
 
     boolean existsByEmail(String email);
 }

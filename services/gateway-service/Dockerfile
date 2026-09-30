@@ -3,7 +3,7 @@ FROM eclipse-temurin:21-jre-alpine AS extractor
 WORKDIR /builder
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} app.jar
-RUN java -Djarmode=tools -jar app.jar extract --layers --destination extracted
+RUN java -Djarmode=tools -jar app.jar extract --layers --launcher --destination extracted
 
 # Stage 2: Minimal, Hardened Runtime
 FROM eclipse-temurin:21-jre-alpine

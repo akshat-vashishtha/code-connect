@@ -1,6 +1,7 @@
 package com.codeconnect.gateway.infrastructure.config;
 
 import java.time.Duration;
+import com.codeconnect.gateway.infrastructure.config.properties.SessionProperties;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseCookie;
