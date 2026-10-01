@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "springboot-security": {
+      "source": "affaan-m/ecc",
+      "sourceType": "github",
+      "skillPath": "skills/springboot-security/SKILL.md",
+      "computedHash": "c518a86c3a473e0545c35065d82284d13a5d99d6f7a0e17780594f3a44af38ad"
+    }
+  }
+}

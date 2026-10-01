@@ -27,4 +27,8 @@ public record ApiResponse<T>(
     public static <T> ApiResponse<T> failure(String message, String traceId) {
         return new ApiResponse<>(false, message, null, traceId, Instant.now());
     }
+
+    public static <T> ApiResponse<T> failure(String message) {
+        return failure(message, null);
+    }
 }

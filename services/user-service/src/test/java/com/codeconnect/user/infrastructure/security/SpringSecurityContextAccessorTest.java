@@ -1,6 +1,7 @@
 package com.codeconnect.user.infrastructure.security;
 
 import com.codeconnect.user.domain.enums.UserRole;
+import com.codeconnect.user.infrastructure.security.principal.SpringSecurityContextAccessor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

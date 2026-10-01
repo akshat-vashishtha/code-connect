@@ -3,7 +3,6 @@ package com.codeconnect.curriculum.application.mapper;
 import com.codeconnect.curriculum.application.dto.request.*;
 import com.codeconnect.curriculum.application.dto.response.*;
 import com.codeconnect.curriculum.domain.model.*;
-import com.codeconnect.curriculum.domain.valueobject.*;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;

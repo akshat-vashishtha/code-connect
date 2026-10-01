@@ -3,6 +3,8 @@ package com.codeconnect.user.presentation.controller;
 import com.codeconnect.user.application.dto.response.ApiResponse;
 import com.codeconnect.user.application.dto.response.MentorApprovalResponse;
 import com.codeconnect.user.application.service.AdminMentorService;
+import com.codeconnect.user.infrastructure.security.principal.SecurityContextAccessor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,13 +20,11 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/v1/admin/mentors")
+@RequiredArgsConstructor
 public class AdminMentorController {
 
     private final AdminMentorService adminMentorService;
-
-    public AdminMentorController(AdminMentorService adminMentorService) {
-        this.adminMentorService = adminMentorService;
-    }
+    private final SecurityContextAccessor securityContextAccessor;
 
     @GetMapping("/pending")
     public ResponseEntity<ApiResponse<List<MentorApprovalResponse>>> getPendingMentors() {
@@ -35,8 +35,9 @@ public class AdminMentorController {
     @PostMapping("/{id}/approve")
     public ResponseEntity<ApiResponse<MentorApprovalResponse>> approveMentor(
         @PathVariable String id,
-        @RequestHeader(value = "X-User-Email", required = false) String adminEmail
+        @RequestHeader(value = "X-User-Email", required = false) String adminEmailHeader
     ) {
+        String adminEmail = resolveReviewerEmail(adminEmailHeader);
         MentorApprovalResponse response = adminMentorService.approveMentorApplication(id, adminEmail);
         return ResponseEntity.ok(ApiResponse.ok("Mentor application approved successfully", response));
     }
@@ -44,9 +45,17 @@ public class AdminMentorController {
     @PostMapping("/{id}/reject")
     public ResponseEntity<ApiResponse<MentorApprovalResponse>> rejectMentor(
         @PathVariable String id,
-        @RequestHeader(value = "X-User-Email", required = false) String adminEmail
+        @RequestHeader(value = "X-User-Email", required = false) String adminEmailHeader
     ) {
+        String adminEmail = resolveReviewerEmail(adminEmailHeader);
         MentorApprovalResponse response = adminMentorService.rejectMentorApplication(id, adminEmail);
         return ResponseEntity.ok(ApiResponse.ok("Mentor application rejected", response));
+    }
+
+    private String resolveReviewerEmail(String headerEmail) {
+        if (headerEmail != null && !headerEmail.isBlank()) {
+            return headerEmail;
+        }
+        return securityContextAccessor.resolveAuthenticatedUserEmail().orElse("system.admin@codeconnect.dev");
     }
 }

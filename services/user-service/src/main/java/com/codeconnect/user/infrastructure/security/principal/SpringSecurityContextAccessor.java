@@ -1,4 +1,4 @@
-package com.codeconnect.user.infrastructure.security;
+package com.codeconnect.user.infrastructure.security.principal;
 
 import com.codeconnect.user.domain.enums.UserRole;
 import org.springframework.security.core.Authentication;
@@ -8,8 +8,9 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 /**
- * Spring Security-backed implementation of SecurityContextAccessor.
- * Encapsulates static SecurityContextHolder access within the infrastructure layer.
+ * Spring Security-backed implementation of {@link SecurityContextAccessor}.
+ * Encapsulates all direct access to the static {@code SecurityContextHolder} within the
+ * infrastructure layer — keeping the application layer decoupled from Spring Security internals.
  */
 @Component
 public class SpringSecurityContextAccessor implements SecurityContextAccessor {
@@ -27,7 +28,7 @@ public class SpringSecurityContextAccessor implements SecurityContextAccessor {
         return Optional.ofNullable(resolveAuthentication())
             .filter(Authentication::isAuthenticated)
             .filter(auth -> !isAnonymous(auth))
-            .map(Authentication::getName);
+            .map(auth -> auth.getCredentials() != null ? auth.getCredentials().toString() : null);
     }
 
     @Override
