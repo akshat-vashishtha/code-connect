@@ -11,7 +11,6 @@ import com.codeconnect.user.domain.enums.UserStatus;
 import com.codeconnect.user.domain.event.MentorApprovedEvent;
 import com.codeconnect.user.domain.model.MentorApprovalDocument;
 import com.codeconnect.user.domain.model.UserDocument;
-import com.codeconnect.user.infrastructure.session.SessionElevationManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,7 +22,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,9 +32,6 @@ class ApproveMentorApplicationCommandTest {
 
     @Mock
     private UserAccountElevator accountElevator;
-
-    @Mock
-    private SessionElevationManager sessionElevationManager;
 
     @Mock
     private MentorApprovalMapper mapper;
@@ -93,7 +88,7 @@ class ApproveMentorApplicationCommandTest {
         when(mapper.toResponse(approved)).thenReturn(response);
 
         ApproveMentorApplicationCommand command = new ApproveMentorApplicationCommand(
-            appId, reviewer, approvalManager, accountElevator, sessionElevationManager, mapper, eventPublisher
+            appId, reviewer, approvalManager, accountElevator, mapper, eventPublisher
         );
 
         MentorApprovalResponse result = command.execute();
@@ -102,7 +97,6 @@ class ApproveMentorApplicationCommandTest {
         assertThat(result.status()).isEqualTo(MentorApprovalStatus.APPROVED);
 
         verify(approvalManager).validateAdjudicable(pending);
-        verify(sessionElevationManager).elevateUserSessions(userId, email);
 
         ArgumentCaptor<MentorApprovedEvent> eventCaptor = ArgumentCaptor.forClass(MentorApprovedEvent.class);
         verify(eventPublisher).publishEvent(eventCaptor.capture());

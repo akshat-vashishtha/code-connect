@@ -7,7 +7,6 @@ import com.codeconnect.user.application.dto.response.MentorApprovalResponse;
 import com.codeconnect.user.application.mapper.MentorApprovalMapper;
 import com.codeconnect.user.application.service.collaborator.mentor.MentorApprovalManager;
 import com.codeconnect.user.application.service.collaborator.mentor.UserAccountElevator;
-import com.codeconnect.user.infrastructure.session.SessionElevationManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,9 +25,6 @@ class MentorAdjudicationCommandFactoryTest {
 
     @Mock
     private UserAccountElevator accountElevator;
-
-    @Mock
-    private SessionElevationManager sessionElevationManager;
 
     @Mock
     private MentorApprovalMapper mapper;

@@ -94,8 +94,8 @@ class AdminMentorVerificationIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should approve pending mentor, update MongoDB status/role, and mutate Redis session in O(1) time")
-    void shouldApproveMentorAndUpdateMongoAndRedisSession() throws Exception {
+    @DisplayName("Should approve pending mentor and update MongoDB status/role")
+    void shouldApproveMentorAndUpdateMongoState() throws Exception {
         // 1. Seed user in MongoDB with PENDING_APPROVAL status
         UserDocument user = UserDocument.builder()
             .id(UUID.randomUUID().toString())
@@ -120,14 +120,7 @@ class AdminMentorVerificationIntegrationTest {
             .build();
         MentorApprovalDocument savedReq = mentorApprovalRepository.save(approvalReq);
 
-        // 3. Seed active Redis session for this user
-        String sessionKey = "spring:session:sessions:" + UUID.randomUUID();
-        redisTemplate.opsForHash().put(sessionKey, "sessionAttr:USER_ID", user.getId());
-        redisTemplate.opsForHash().put(sessionKey, "sessionAttr:USER_EMAIL", user.getEmail());
-        redisTemplate.opsForHash().put(sessionKey, "sessionAttr:USER_ROLE", "ROLE_MENTOR");
-        redisTemplate.opsForHash().put(sessionKey, "sessionAttr:USER_STATUS", "PENDING_APPROVAL");
-
-        // 4. Perform Admin Approval
+        // 3. Perform Admin Approval
         mockMvc.perform(post("/api/v1/admin/mentors/{id}/approve", savedReq.getId())
                 .header("X-User-Email", "admin@codeconnect.dev"))
             .andExpect(status().isOk())
@@ -135,23 +128,14 @@ class AdminMentorVerificationIntegrationTest {
             .andExpect(jsonPath("$.data.status").value("APPROVED"))
             .andExpect(jsonPath("$.data.reviewedBy").value("admin@codeconnect.dev"));
 
-        // 5. Verify MongoDB User State Elevated
+        // 4. Verify MongoDB User State Elevated
         UserDocument updatedUser = userRepository.findById(user.getId()).orElseThrow();
         assertThat(updatedUser.getStatus()).isEqualTo(UserStatus.ACTIVE);
         assertThat(updatedUser.getRole()).isEqualTo(UserRole.ROLE_MENTOR);
 
-        // 6. Verify MongoDB Approval Request Status
+        // 5. Verify MongoDB Approval Request Status
         MentorApprovalDocument updatedReq = mentorApprovalRepository.findById(savedReq.getId()).orElseThrow();
         assertThat(updatedReq.getStatus()).isEqualTo(MentorApprovalStatus.APPROVED);
-
-        // 7. Verify Redis Session Attributes Mutated
-        Object redisRole = redisTemplate.opsForHash().get(sessionKey, "sessionAttr:USER_ROLE");
-        Object redisStatus = redisTemplate.opsForHash().get(sessionKey, "sessionAttr:USER_STATUS");
-        assertThat(redisRole).isEqualTo("ROLE_MENTOR");
-        assertThat(redisStatus).isEqualTo("ACTIVE");
-
-        // Clean up test redis key
-        redisTemplate.delete(sessionKey);
     }
 
     @Test

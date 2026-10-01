@@ -27,10 +27,6 @@ spring:
           max-active: ${REDIS_POOL_MAX_ACTIVE:32}
           max-wait: ${REDIS_POOL_MAX_WAIT_MS:1500}
           time-between-eviction-runs: ${REDIS_POOL_EVICTION_MS:30000}
-  session:
-    store-type: redis
-    redis:
-      namespace: spring:session
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     producer:
@@ -38,7 +34,7 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       acks: all
       retries: 2147483647
-      batch-size: 16384
+      batch-size: 32768
       buffer-memory: 33554432
       compression-type: snappy
       properties:
@@ -48,7 +44,9 @@ spring:
         request.timeout.ms: 120000
         max.block.ms: 60000
         linger.ms: 10
-        spring.json.add.type.headers: true
+        retry.backoff.ms: 100
+        retry.backoff.max.ms: 1000
+        spring.json.add.type.headers: false
 
 codeconnect:
   kafka:

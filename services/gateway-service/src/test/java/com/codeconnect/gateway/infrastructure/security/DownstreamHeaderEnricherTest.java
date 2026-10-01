@@ -15,11 +15,9 @@ class DownstreamHeaderEnricherTest {
 
     private final GatewayProperties gatewayProperties = new GatewayProperties(
         "http://localhost:8081",
-        "http://localhost:8082",
-        "http://localhost:8083",
-        "http://localhost:8084",
         "/api/v1/admin/**",
         "/api/v1/mentor/**",
+        "/api/v1/admin/curriculum/**",
         "test-internal-secret-key-32bytes-min!"
     );
 

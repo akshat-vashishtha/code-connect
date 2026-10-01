@@ -8,7 +8,6 @@ import com.codeconnect.user.application.service.collaborator.mentor.UserAccountE
 import com.codeconnect.user.domain.event.MentorApprovedEvent;
 import com.codeconnect.user.domain.model.MentorApprovalDocument;
 import com.codeconnect.user.domain.model.UserDocument;
-import com.codeconnect.user.infrastructure.session.SessionElevationManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -20,8 +19,7 @@ import java.time.Instant;
  * 1. Validates the application is adjudicable (PENDING state)
  * 2. Elevates the user account to ROLE_MENTOR
  * 3. Marks the application as APPROVED with reviewer attribution
- * 4. Propagates role elevation to all active Redis sessions
- * 5. Publishes MentorApprovedEvent for downstream asynchronous processing
+ * 4. Publishes MentorApprovedEvent for downstream asynchronous processing via Kafka
  *
  * Follows the Command Pattern (GoF): the workflow is a first-class, self-contained object,
  * enabling retryability, audit logging, and independent testability.
@@ -34,7 +32,6 @@ public class ApproveMentorApplicationCommand implements DomainCommand<MentorAppr
     private final String reviewerAdminEmail;
     private final MentorApprovalManager approvalManager;
     private final UserAccountElevator accountElevator;
-    private final SessionElevationManager sessionElevationManager;
     private final MentorApprovalMapper mapper;
     private final ApplicationEventPublisher eventPublisher;
 
@@ -47,8 +44,6 @@ public class ApproveMentorApplicationCommand implements DomainCommand<MentorAppr
 
         UserDocument elevatedUser = accountElevator.elevateToMentor(application.getUserId(), application.getEmail());
         MentorApprovalDocument approvedApplication = approvalManager.markApproved(application, reviewerAdminEmail);
-
-        sessionElevationManager.elevateUserSessions(elevatedUser.getId(), elevatedUser.getEmail());
 
         eventPublisher.publishEvent(new MentorApprovedEvent(
             approvedApplication.getId(),

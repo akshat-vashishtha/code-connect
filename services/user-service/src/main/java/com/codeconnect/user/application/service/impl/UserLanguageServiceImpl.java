@@ -5,14 +5,12 @@ import com.codeconnect.user.application.dto.response.LanguageDetectionResponse;
 import com.codeconnect.user.application.service.collaborator.language.LanguageDetector;
 import com.codeconnect.user.application.service.UserLanguageService;
 import com.codeconnect.user.domain.enums.LanguagePreference;
-import com.codeconnect.user.infrastructure.session.UserSessionPreferenceManager;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /**
- * Implementation of UserLanguageService orchestrating detection heuristics and session state updates.
+ * Implementation of UserLanguageService orchestrating stateless language detection heuristics.
  */
 @Slf4j
 @Service
@@ -20,14 +18,11 @@ import org.springframework.stereotype.Service;
 public class UserLanguageServiceImpl implements UserLanguageService {
 
     private final LanguageDetector languageDetector;
-    private final UserSessionPreferenceManager sessionPreferenceManager;
 
     @Override
-    public LanguageDetectionResponse evaluatePreference(LanguageDetectionRequest request, HttpSession session) {
+    public LanguageDetectionResponse evaluatePreference(LanguageDetectionRequest request) {
         LanguagePreference detected = languageDetector.detectLanguage(request.message());
-        sessionPreferenceManager.setLanguagePreference(session, detected);
-
-        log.debug("Evaluated language preference: detected={}, sessionUpdated={}", detected, session != null);
+        log.debug("Evaluated language preference: detected={}", detected);
         return new LanguageDetectionResponse(detected, detected);
     }
 }

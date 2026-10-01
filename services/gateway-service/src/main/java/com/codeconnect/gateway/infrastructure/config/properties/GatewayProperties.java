@@ -9,10 +9,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "codeconnect.gateway")
 public record GatewayProperties(
     String userServiceUri,
-    String curriculumServiceUri,
-    String submissionServiceUri,
-    String collabServiceUri,
     String adminPathPattern,
     String mentorPathPattern,
+    String adminCurriculumPathPattern,
     String internalSecret
 ) {}

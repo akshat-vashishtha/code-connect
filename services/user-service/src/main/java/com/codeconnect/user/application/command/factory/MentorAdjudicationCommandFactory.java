@@ -7,7 +7,6 @@ import com.codeconnect.user.application.dto.response.MentorApprovalResponse;
 import com.codeconnect.user.application.mapper.MentorApprovalMapper;
 import com.codeconnect.user.application.service.collaborator.mentor.MentorApprovalManager;
 import com.codeconnect.user.application.service.collaborator.mentor.UserAccountElevator;
-import com.codeconnect.user.infrastructure.session.SessionElevationManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -27,7 +26,6 @@ public class MentorAdjudicationCommandFactory {
 
     private final MentorApprovalManager approvalManager;
     private final UserAccountElevator accountElevator;
-    private final SessionElevationManager sessionElevationManager;
     private final MentorApprovalMapper mapper;
     private final ApplicationEventPublisher eventPublisher;
 
@@ -37,7 +35,6 @@ public class MentorAdjudicationCommandFactory {
             reviewerAdminEmail,
             approvalManager,
             accountElevator,
-            sessionElevationManager,
             mapper,
             eventPublisher
         );

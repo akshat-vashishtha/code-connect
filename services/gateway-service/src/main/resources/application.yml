@@ -105,11 +105,9 @@ spring:
 codeconnect:
   gateway:
     user-service-uri: ${USER_SERVICE_URI:http://localhost:8081}
-    curriculum-service-uri: ${CURRICULUM_SERVICE_URI:http://localhost:8082}
-    submission-service-uri: ${SUBMISSION_SERVICE_URI:http://localhost:8083}
-    collab-service-uri: ${COLLAB_SERVICE_URI:http://localhost:8084}
     admin-path-pattern: ${ADMIN_PATH_PATTERN:/api/v1/admin/**}
     mentor-path-pattern: ${MENTOR_PATH_PATTERN:/api/v1/mentor/**}
+    admin-curriculum-path-pattern: ${ADMIN_CURRICULUM_PATH_PATTERN:/api/v1/admin/curriculum/**}
     internal-secret: ${INTERNAL_SECURITY_SECRET:c0d3c0nn3ct-1nt3rn4l-s3cur1ty-h256-s3cr3t-k3y-m1n32byt3s!}
   session:
     cookie-name: ${SESSION_COOKIE_NAME:APP_SESSION}
